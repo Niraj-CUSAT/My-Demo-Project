@@ -1,0 +1,121 @@
+<apex:page controller="EditRegistrationController">
+<apex:messages style="color:red;size:5" />
+
+<apex:form >
+
+
+
+        <apex:pageBlock title="Edit Asset Registration">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons> 
+            <apex:pageBlockSection title="" showHeader="false" columns="3" >
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Owner First Name" />
+                    <apex:inputField value="{!ownerContact.FirstName}" id="tabIndex1"/>
+                </apex:pageblocksectionitem>
+                
+                                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Install Street" />
+                    <apex:inputField value="{!selectedAsset.Install_Street__c}" id="tabIndex6"/>
+                </apex:pageblocksectionitem>    
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Install Date" />
+                    <apex:inputField value="{!selectedAsset.InstallDate}" id="tabIndex11"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Owner Last Name" />
+                    <apex:inputText value="{!lastName}" id="tabIndex2"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Install City" />
+                    <apex:inputField value="{!selectedAsset.Install_City__c}" id="tabIndex7"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Physical Location" />
+                    <apex:inputField value="{!selectedAsset.Physical_Location__c}" id="tabIndex12"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Owner Phone" />
+                    <apex:inputField value="{!ownerContact.Phone}" id="tabIndex3"/>
+                </apex:pageblocksectionitem>
+                
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Install State" />
+                    <apex:inputField value="{!selectedAsset.Install_State__c}" id="tabIndex8"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Installation type" />
+                    <apex:inputField value="{!selectedAsset.Installation_Type__c}" id="tabIndex13"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Owner Email" />
+                    <apex:inputField value="{!ownerContact.Email}" id="tabIndex4"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Install Postal Code" />
+                    <apex:inputField value="{!selectedAsset.Install_Postal_Code__c}" id="tabIndex9"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Registration Method" />
+                    <apex:inputField value="{!selectedAsset.Registration_Method__c}" id="tabIndex14"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Pop Received" />
+                    <apex:inputField value="{!selectedAsset.POP_Received__c}" id="tabIndex5"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Install Country" />
+                    <apex:inputField value="{!selectedAsset.Install_Country__c}" id="tabIndex10"/>
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+                    <apex:outputLabel value="Professionally Installed" />
+                    <apex:inputField value="{!selectedAsset.Professionally_Installed__c}" id="tabIndex15"/>
+                </apex:pageblocksectionitem>
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+<script language="javascript">
+    function fixElements(tagn,attrib) {
+        var tags = document.getElementsByTagName(tagn);
+        var ti;
+        var pos;
+        // Since Salesforce builds a complex Id using the Id's of previous elements, we need
+        // to find the one that we want.
+        // Note: this means we're searching for tags like:
+        // apex:inputfield id="tabIndex4" ....>
+        var pat = /:tabIndex[0-9]+/; 
+        for (var i=0; i < tags.length; i++) {
+            
+            if (tags[i].getAttribute(attrib) != null) {
+                pos = tags[i].getAttribute(attrib).search(pat);
+                if (pos != -1) {
+                    ti = tags[i].getAttribute(attrib).slice(pos+9);
+                
+                    tags[i].setAttribute('tabIndex',ti);
+                }
+            }
+        }
+    }   
+    fixElements("input","id");
+    fixElements("select","id");
+</script>       
+</apex:form>        
+</apex:page>

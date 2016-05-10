@@ -1,0 +1,183 @@
+<apex:page extensions="ISP_StoreAlbum" standardcontroller="ISP_Store_Album__c" sidebar="false"> 
+     <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugin,'jsor-jcarousel-60e2338/examples/connected-carousels/jcarousel.connected-carousels.css')}"/>
+     <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jsor-jcarousel-60e2338/libs/jquery/jquery.js')}"/>
+     <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jsor-jcarousel-60e2338/dist/jquery.jcarousel.min.js')}"/>
+     <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jsor-jcarousel-60e2338/examples/connected-carousels/jcarousel.connected-carousels.js')}"/>
+    
+    <div id="Preloader" style="display:none;position:fixed;width:100%;height:100%;top:49%;left:49%"> <img src="{!$Resource.ISP_Preloader}"/> </div>
+    <style>
+        #bgFade_plan {
+              display: none;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              position: fixed;
+              opacity: 0.5;
+              filter:alpha(opacity=50);
+              background: #000;
+              text-align: center; 
+              vertical-align: middle;
+              z-index: 220;
+        }
+        #Preloader {
+                  display: none;
+                  position: fixed;
+                  z-index: 221;
+                  width: 32px;
+                  height: 32px;
+                  top: 120px;
+                  left: 50%;
+                  margin-left: -16px; 
+            }  
+        #Preloader img {
+              width: 32px;
+              height: 32px;
+        }  
+        .picCounter{
+            width: 40px;
+            height: 40px;
+            text-decoration: none;
+            text-shadow: 0 0 1px #000;
+            color: #fff;
+            margin: auto;
+            
+            background: #4E443C;
+            position: relative;
+            font: 15px/15px Arial, sans-serif;
+            text-align: center;
+            display: block;
+            -webkit-border-radius: 30px;
+            -moz-border-radius: 30px;
+            border-radius: 30px;
+            -webkit-box-shadow: 0 0 1px #999;
+            -moz-box-shadow: 0 0 1px #999;
+            box-shadow: 0 0 1px #999;
+            
+        }
+        .picCounter span{
+            opacity: 1;
+            filter:alpha(opacity=100);
+            margin: auto;
+            text-align: center;
+            padding-top:10px;
+            padding-right:1px;
+            position:relative;
+            display:block;
+            color:#fff;
+        }
+                
+        .horizantalStyle{
+            width:581px;
+            height:400px;
+            
+        }
+        .verticalStyle{
+            width:581px;
+            height:400px;
+        }
+        
+        .approvalHead{
+           font-size: 24px;
+           font-weight : bold;
+        }
+        
+        .chatterexpando .feedpage {
+    padding-left: 20px;
+    width: 559px;
+    height : 500px;
+}
+    </style>
+    
+    <table border="0">
+        <tr>
+            <td colspan="2" align="center">
+                <h1 style="font-size:24px;"><apex:outputtext value="{!album.name}" rendered="{!imageList.size>0}"/></h1> <br/>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align:top;" width="60%">
+    
+            <apex:form >
+                 <apex:pageMessages id="myMsg"/>
+                    <apex:actionFunction name="functionToNavigate" action="{!toNavigate}" rerender="chatterFeed,panelId,approvalHistoryBlk,aprrovalId,myMsg" > <!--oncomplete="click2();"-->
+                        <apex:param value="" assignTo="{!listIndexNum}" name="listIndexNum"/>
+                    </apex:actionFunction> 
+                        <apex:outputpanel rendered="{!imageList.size>0}">
+                           <div class="wrapper" >
+                            <div class="connected-carousels" >
+                                <div class="stage">
+                                    <div class="carousel carousel-stage" id="carouselStageId" style="margin-top:-1.5%;">
+                                        <ul>
+                                            <apex:variable value="{!1}" var="imgNum"/>
+                                            <apex:repeat value="{!imageList}" var="item">
+                                                 <li><apex:image id="ImgId"  styleClass="imageClass{!Round(imgNum,0)}" style="width:581px;height:400px;" value="/servlet/servlet.FileDownload?file={!item.Attchment_ID__c}"  />
+                                                     <apex:inputfield id="imgtextid" style="display:none;" value="{!item.View_Attchment__c}"/>
+                                                 </li>
+                                                 
+                                                 <apex:variable value="{!imgNum+1}" var="imgNum"/>
+                                             </apex:repeat>
+                                        </ul>
+                                    </div>
+                                    <a href="#" class="prev prev-stage"><span>&lsaquo;</span></a>
+                                    <a href="#" class="next next-stage"><span>&rsaquo;</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        </apex:outputpanel>
+                         
+                </apex:form>
+               </td>
+             
+               <td><chatter:feedWithFollowers id="chatterFeed"  rendered="true" entityId="{!pictureId}" showHeader="False"/></td>
+              </tr>
+              <tr>
+                 <td colspan="2" align="center"  width="40%">
+                     <apex:form >
+                        <apex:outputpanel >
+                               <div class="approvalHead">Approval History</div>
+                                <!--<apex:commandButton action="{!pictureApprove}" value=" Approve " id="commandLinkApprove" rerender="aprrovalId,pb,chatterFeed,myMsg"/>&nbsp;&nbsp;
+                                <apex:commandButton action="{!pictureReject}" value=" Reject " id="commandLinkReject" rerender="pb,chatterFeed,myMsg"/>-->
+                        </apex:outputpanel> 
+                     </apex:form>
+                 </td>
+              </tr>
+              <tr>
+                  <td colspan="2" align="center">
+                      <apex:outputpanel id="approvalHistoryBlk" >
+                         <iframe src="/apex/ISP_ImageApproval?id={!pictureId}" id="iframe-{!pictureId}" width="90%" height="300px" frameborder="0" scrolling="false" ></iframe> 
+                      </apex:outputpanel> 
+                  </td>
+              </tr>
+          
+          
+       </table>
+       <script>                         
+            var lstIndex=0;
+            $('.carousel-stage').on('jcarousel:scroll', function(event, carousel, target, animate) {
+                var symbol=target.substr(0, target.indexOf('='));
+                var intt= target.substr(target.indexOf('=')+1,target.length);
+                if(symbol=='+'){
+                    lstIndex=lstIndex+parseInt(intt) ;
+                }else if(symbol=='-'){
+                    lstIndex=lstIndex-parseInt(intt) ;
+                }
+                functionToNavigate(lstIndex);
+                //click1();
+            });   
+            
+            function click1(){
+                $('#bgfade_plan').css('display','block');
+               $('#Preloader').css('display','block');
+              //$('#bgfade_plan').show();
+              // $('#Preloader').show();
+            }
+            
+            function click2(){
+               $('#bgfade_plan').css('display','none');
+                $('#Preloader').css('display','none');
+              // $('#bgfade_plan').hide();
+              // $('#Preloader').show();
+            }
+       </script>
+</apex:page>

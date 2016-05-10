@@ -1,0 +1,41 @@
+<apex:page standardController="ISP_Store_Album__c"> 
+
+    <script type="text/javascript">
+         var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script> 
+    <script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+    <!-----------Script to redicted to standard page based on record type------------>
+    <script>
+         window.onload = function(){
+
+             var userId = "{!$user.Id}";
+             //alert(userId);
+             //var query  = "select Profile.Name from User where Id = +'\'' + userId + '\''";
+             var query  = "select Profile.Name from User where Id = '{!$user.Id}'";
+             result = sforce.connection.query(query);
+             albumRec = result.getArray("records");
+             //alert(albumRec);
+             
+             if(albumRec[0].Profile.Name == 'Promoter User'){
+
+                 window.top.location = '/apex/PromoterAlbumLightning?id={!ISP_Store_Album__c.Id}'; 
+             
+             }else{          
+                   
+                window.top.location = '/apex/ISP_StoreAlbum?id={!ISP_Store_Album__c.Id}';
+             }
+         }  
+         
+         /*
+         if ( (typeof window.sforce !== 'undefined') && (window.sforce !== null) ){
+                alert('sf1 others');
+                window.top.location = sforce.one.navigateToURL('apex/PromoterAlbumLightning?id={!ISP_Store_Album__c.Id}');
+            }else{
+                alert('sf others');
+                window.top.location = 'apex/PromoterAlbumLightning?id={!ISP_Store_Album__c.Id}';
+        }
+         */ 
+   </script>
+</apex:page>

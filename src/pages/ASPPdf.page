@@ -1,0 +1,410 @@
+<apex:page standardController="ASP__c" renderAs="pdf">
+   <head>  
+         
+    <style type="text/css">        
+         
+        
+        @PageBreak{
+            page-break:always;
+            page-break-inside:avoid;
+        } 
+        
+        @media print
+        {
+            table {page-break-inside:auto }
+            tr    { page-break-inside:avoid; page-break-after:auto }
+        }          
+                    
+        @page:first { 
+            margin-left:0%; margin-right:0%;
+            margin-top:12%;  margin-bottom:110px;  
+            
+            @top-center {                   
+                content: element(header);               
+            }
+            @bottom-left {
+                content: element(footer);
+                height: 500px;
+            }           
+        } 
+        
+        @page {    
+            margin-left:0%; margin-right:0%;
+            margin-top: 13%;  margin-bottom: 110px;  
+            @top-center {                   
+                content: element(header);               
+            }
+            @bottom-left {
+                content: element(footer);
+                height: 500px;
+            }           
+        }            
+        
+        div.footer {   
+            
+            position: running(footer);
+                          
+                    }                      
+        
+        div.header {  
+            margin:0 50px 0 0;                         
+            position: running(header);           
+        }                                           
+        .paraCommon {
+            text-align: justify;
+            margin: 10px 0 0 0;
+            padding: 0;
+            width: 100%;
+            font-size:11px;                 
+        }        
+    </style>            
+</head>
+
+         
+    <apex:form > 
+    
+         <div class="header" align="center">
+             <img  src='{!URLFOR($Resource.AOSI_Header)}' />
+         </div>  
+          <div class="footer"> 
+            <img  src='{!URLFOR($Resource.AOSI_Footer)}' />
+         </div> 
+         
+                 
+        <table align="center" border="1" style="width:90%;border-collapse:collapse; page-break-after:always;font-size:12px;">
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                    <p><strong>AO Smith Water Products Pvt. Ltd </strong></p>
+                    <p><strong>APPLICATION FORM - AUTHORISED SERVICE PROVIDER</strong></p>
+                </td>
+            </tr>
+             <tr>
+                <td>Company / Proprietorship / Partnership Firm</td>
+                <td colspan="3">{!ASP__c.AOSI_Company_Name__c}</td>
+            </tr>  
+            <tr>
+                <td width = "50%">Company Profile/ Nature Of Business </td>
+                <td colspan="3">{!ASP__c.AOSI_Company_Profile__c}</td>
+            </tr> 
+            <tr>
+                <td style="text-align:" width = "50%">Product Category:&nbsp; </td> <td colspan="3">{!ASP__c.AOSI_Product_Category__c}</td>
+                </tr>
+                <tr>
+                <td style="text-align:" width = "50%">Service Detail : &nbsp; </td> <td colspan="3">{!ASP__c.AOSI_Service_detail__c} </td>
+            </tr>                    
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                    <strong>PROPRIETOR / PARTNER / DIRECTOR DETAILS</strong>
+                </td>
+            </tr>
+            <tr>
+                <td>Name of Proprietor / Partner / Director</td>
+                <td colspan="3">{!ASP__c.AOSI_Name_of_Proprietor__c}</td>
+            </tr>
+            <tr>
+                <td>Mobile No</td>
+                <td colspan="3">{!ASP__c.AOSI_Mobile_No__c}</td>
+            </tr>
+            <tr>
+                <td>Telephone No </td>
+                <td colspan="3">{!ASP__c.AOSI_Telephone_No__c}</td>
+            </tr>
+            <tr>
+                <td>Email ID</td>
+                <td colspan="3">{!ASP__c.AOSI_Email_ID__c}</td>
+            </tr>            
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                <strong>ADDRESS</strong></td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td colspan="3">{!ASP__c.AOSI_Address__c}</td>
+            </tr>
+            <tr>
+                <td>City</td>
+                <td colspan="3">{!ASP__c.AOSI_City__c}</td>
+            </tr>
+            <tr>
+                <td>Country</td>
+                <td colspan="3">{!ASP__c.AOSI_Country__c}</td>
+            </tr>
+            <tr>
+                <td>Pin Code</td>
+                <td colspan="3">{!ASP__c.AOSI_Pin_Code__c}</td>
+            </tr>
+            <tr>
+                <td>Telephone 1</td>
+                <td colspan="3">{!ASP__c.AOSI_Telephone_1__c}</td>
+            </tr>
+            <tr>
+                <td>Telephone 2</td>
+                <td colspan="3">{!ASP__c.AOSI_Telephone_2__c}</td>
+            </tr>
+            <tr>
+                <td>Company Email ID</td>
+                <td colspan="3">{!ASP__c.AOSI_Company_Email_ID__c}</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                <strong>BANK ACCOUNT INFORMATION</strong></td>
+            </tr>
+            <tr>
+                <td>Account Type</td>
+                <td colspan="3">{!ASP__c.AOSI_Account_Type__c}</td>
+            </tr>
+            <tr>
+                <td>Account Name (Firm / Person)</td>
+                <td colspan="3">{!ASP__c.AOSI_Account_Name_Firm_Person__c}</td>
+            </tr>
+            <tr>
+                <td>Bank Name</td>
+                <td colspan="3">{!ASP__c.AOSI_Bank_Name__c}</td>
+            </tr>
+            <tr>
+                <td>Branch / Location</td>
+                <td colspan="3">{!ASP__c.AOSI_Branch_Location__c}</td>
+            </tr>
+            <tr>
+                <td>Account Number</td>
+                <td colspan="3">{!ASP__c.AOSI_Account_Number__c}</td>
+            </tr>
+            <tr>
+                <td>IFSC Code (For RTGS / NEFT)</td>
+                <td colspan="3">{!ASP__c.AOSI_IFSC_Code_For_RTGS_NEFT__c}</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                <strong>BUSINESS INFORMATION</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Financials</strong></td>
+                <td style="text-align: center; width:25%;"><strong>Service</strong></td>
+                <td colspan="2" style="text-align: center;"><strong>Sale-FG (Finished Goods)</strong></td>
+            </tr>
+            <tr>
+                <td>Sales Turnover This Year </td>
+                <td style="text-align: center;">{!ASP__c.AOSI_Sales_Turnover_This_Year__c}</td>
+                <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_Sales_Turnover_This_Year_Sale_FG__c}</td>
+            </tr>
+            <tr>
+                <td>Growth Over Last Year</td>
+                <td style="text-align: center;">{!ASP__c.AOSI_Growth_Over_Last_Year_Service__c}</td>
+                <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_Growth_Over_Last_Year_Service__c}</td>
+            </tr>
+            <tr>
+                <td colspan="4"><strong>Taxation Details</strong></td>
+            </tr>
+            <tr>
+                <td>CST No </td>
+                <td colspan="3">{!ASP__c.AOSI_CST_No__c}</td>
+            </tr>
+            <tr>
+                <td>VAT Registration No</td>
+                <td colspan="3">{!ASP__c.AOSI_VAT_Registration_No__c}</td>
+            </tr>
+            <tr>
+                <td>Service Tax Registration No</td>
+                <td colspan="3">{!ASP__c.AOSI_Service_Tax_Registration_No__c}</td>
+            </tr>
+            <tr>
+                <td>PAN No</td>
+                <td colspan="3">{!ASP__c.AOSI_PAN_No__c}</td>
+            </tr>
+            <tr>
+                <td>Excise Registration No</td>
+                <td colspan="3">{!ASP__c.AOSI_Excise_Registration_No__c}</td>
+            </tr>
+        </table>
+        
+        <table align="center" border="1" style="width:90%;border-collapse:collapse;font-size:12px;">
+            <tr>
+                <td colspan="4" style="text-align: center; width : 50%;"><strong>INFRASTRUCTURE DETAILS</strong></td>
+            </tr>
+             
+            <tr>
+                <td colspan="2"><strong>Resources</strong></td>
+                <td style="text-align: center;"><strong>Current</strong></td>
+                <td style="text-align: center;"><strong>For AO SMITH</strong></td>
+            </tr>
+            <tr>                
+                <td colspan="2">Technical Graduates</td>
+                <td style="text-align: center;" ><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Technical_Graduates_Current__c}" /></apex:outputText></td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Technical_Graduates_For_AOS__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Technical - Under Graduates / Diploma </td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Technical_UG_Diploma_Current__c}" /></apex:outputText></td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Technical_UG_Diploma_For_AOS__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Technician - Skilled / ITI Trained </td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Tech_Skilled_ITI_Trained_Current__c}" /></apex:outputText></td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Tech_Skilled_ITI_Trained_For_AOS__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Technician - Semiskilled / Unskilled </td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Tech_Semiskilled_Unskilled_Current__c}" /></apex:outputText></td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Tech_Semiskilled_Unskilled_For_AOS__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Supervisor</td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Supervisor_Current__c}" /></apex:outputText></td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Supervisor_For_AOS__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Call Co-Ordinator</td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Call_Co_Ordinator_Current__c}" /></apex:outputText></td>
+                <td style="text-align: center;"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Call_Co_Ordinator_For_AOS__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="4"><strong>Office Details</strong></td>
+            </tr>
+            <tr>
+                <td colspan="2">Workshop Area (in Sq Ft)</td>
+                <td colspan="2"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Workshop_Area_in_Sq_Ft__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Office Area (in Sq Ft)</td>
+                <td colspan="2"><apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Office_Area_in_Sq_Ft__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="2">Computers &nbsp; &nbsp;<apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Computers__c}" /></apex:outputText>   &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; With Internet</td>
+                <td colspan="2">{!ASP__c.AOSI_With_Internet__c} </td>
+                
+            </tr>           
+            <tr>
+                <td colspan="4" style="text-align: center;"><strong>Executive Justification</strong></td>
+            </tr>
+            <tr>
+                <td colspan="4"><strong>A O SMITH PRODUCT POPULATION (Approx)</strong></td>
+            </tr>
+            <tr>
+                <td colspan="4">WATER HEATER &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I/W &nbsp;<apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_WATER_HEATER_I_W__c}" /></apex:outputText>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O/W &nbsp;<apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_WATER_HEATER_O_W__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="4">WATER PURIFIER &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I/W&nbsp; <apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Water_Purifier_I_W__c}" /></apex:outputText> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O/W&nbsp; <apex:outputText value="{0, number,###,###,##0}"><apex:param value="{!ASP__c.AOSI_Water_Purifier_O_W__c}" /></apex:outputText></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="height: 80px;padding-bottom:50px;"><b>REMARKS</b>	 {!ASP__c.AOSI_REMARKS__c}</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: center;"><strong>PROPOSED WARRANTY SERVICE COMPENSATION</strong></td>
+            </tr>
+            <apex:panelGroup rendered="{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.Name == 'A'}">
+                <tr>
+                    <td colspan="2" style="text-align: center;"><strong>CITY/ DISTRICT &nbsp;NAME</strong></td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.Name}</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.Name}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;"><strong>Category</strong></td>
+                    <td style="text-align: center;"><strong>Installation/Service City</strong></td>
+                    <td style="text-align: center;"><strong>Installation/ServiceUpcountry</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">TAT</td>
+                    <td style="text-align: center;">Rate per Call</td>
+                    <td style="text-align: center;">Rate per Call</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&lt; 6hrs</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_6hrs__c}</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_X6hrs_Upcountry__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">6hrs to 24hrs</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_6hrs_to_24hrs__c}</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_X6hrs_to_24hrs_Upcountry__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&gt; 24hrs</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_24hrs__c}</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_X24hrs_Upcountry__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">If 80% calls completed within 24hrs</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_If_80_calls_completed_within_24hrs__c}</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_If_80_calls_completed_24hrs_Upcont__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&gt; 48 Hrs</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_48_Hrs__c}</td>
+                    <td style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_X48_Hrs_Upcountry__c}</td>
+                </tr>
+            </apex:panelGroup>
+            <apex:panelGroup rendered="{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.Name != 'A'}">
+                <tr>
+                    <td colspan="2" style="text-align: center;"><strong>CITY/ DISTRICT NAME</strong></td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.Name}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;"><strong>Category</strong></td>
+                    <td colspan="2" style="text-align: center;"><strong>Service</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">TAT</td>
+                    <td colspan="2" style="text-align: center;">Rate Per Call</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&lt; 24 hrs</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_6hrs_to_24hrs__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">24 hrs to 48 hrs</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_24hrs__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&gt; 48 Hrs</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_48_Hrs__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Fixed Compensation</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_Fixed_Compensation__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&gt;= 70% calls completed within 24Hrs</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_70_calls_completed_within_24Hrs__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Only 60% to 69%</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_Only_60_to_69__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Only 50% to 59%</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_Only_50_to_59__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">&lt; 50 %</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_50__c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Upcountry TA</td>
+                    <td colspan="2" style="text-align: center;">{!ASP__c.AOSI_CITY_DISTRICT_NAME__r.AOSI_Upcountry_TA__c}</td>
+                </tr>
+            </apex:panelGroup>
+           
+            <tr>
+                <td colspan="2"><strong>Contract Effective Date</strong></td><td colspan="2" style="text-align: center;"> <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!ASP__c.AOSI_Contract_Effective_From_Date__c}" /></apex:outputText> &nbsp;- &nbsp;                  
+                <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!ASP__c.AOSI_Contract_Effective_To_Date__c}" /></apex:outputText>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Vendor Code</strong></td><td colspan="2" style="text-align: center;"> {!ASP__c.AOSI_Vendor_Code__c}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Agreement Number : </strong></td><td colspan="2" style="text-align: center;"> {!ASP__c.AOSI_Agreement_Number__c}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Proposal Submitted By:  </strong>&nbsp; {!ASP__c.CreatedBy.Name}</td>
+                <td colspan="2"><strong>Approved By: </strong>&nbsp;{!ASP__c.AOSI_Approved_By__c},  <strong>Approved On: </strong>&nbsp;<apex:OutputField value="{!ASP__c.Approved_On__c}" /></td>
+            </tr>            
+                    
+        </table>
+        <table align="center" width="90%" style="font-size:12px;font-weight:bold;"><tr><td>
+        <p>NOTE : ABOVE APPLICATION IS A PROPOSAL &amp; CANNOT BE UTILISED AS AN AGREEMENT. USE SEPRATE SHEET FOR ANY ADDITIONAL CITIES TO BE ADDED<br/><br/><br/>
+        <b>THIS IS A COMPUTER GENERATED DOCUMENT, NO NEED OF SIGNATURE</b>
+        </p>  
+        </td></tr></table>      
+    </apex:form>
+</apex:page>

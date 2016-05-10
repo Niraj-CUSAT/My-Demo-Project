@@ -1,0 +1,25 @@
+<apex:page controller="AWS_Upload" >
+ <script> 
+ 
+        AWS_Upload.createNewDocument('{!$CurrentPage.parameters.parentIdForRedirect}','{!$CurrentPage.parameters.key}',
+                                                '{!$CurrentPage.parameters.bucket}','{!$CurrentPage.parameters.cid}',function(result,event){
+                    if (event.status) {
+                   
+                             var confirmChk = confirm("Your Document is Uploaded Successfully.");  
+
+                            if(confirmChk ){ 
+                                 window.location.href = '/'+result.Id;
+                            }
+                    } else if (event.type === 'exception') {
+                        alert('Something wrong happened' );
+                    } else {
+                       alert('Something wrong happened' );
+                    } 
+                                     
+ 
+ 
+ })
+
+</script>
+  
+</apex:page>

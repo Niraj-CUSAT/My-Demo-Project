@@ -1,0 +1,58 @@
+<!-- 
+@PageName       :   AOSI_GPS_CaseDetailPage
+@CreatedDate    :   17-03-2016
+@Description    :   Display the all open cases on this vf-page.
+-->
+<apex:page controller="AOSI_GPS_CaseDetailController"  sidebar="false" tabStyle="Case_Detail__tab"> 
+    <!-- Script and stylesheet for datatable to show records in scrollable -->
+	<apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+	<apex:includescript value="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" />
+	<apex:stylesheet value="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
+	<script>
+		j$ = jQuery.noConflict(); 
+		j$(document).ready( function () {
+			contactTable = j$('[id$="contacttable"]'). DataTable({
+																	"paging":   false,
+																	"scrollY": "400px"
+			}); 
+		});
+	</script> 
+    <apex:form >
+        <apex:sectionHeader title="Unassigned Open Cases" subtitle="Home" />
+        <apex:outputpanel rendered="{! IF(ListOfOpenCases.size > 0, true, false)}">
+            <table id="contacttable" class="display">
+                <thead>
+                    <tr>
+                        <th>Case Number</th>
+                        <th>Contact Name</th>
+                        <th>Serial Number</th>
+                        <th>Case Origin</th>
+                        <th>Status</th>
+                        <th>City</th>
+                        <th>Product Vertical</th>
+                        <th>Date-Time Opened</th>
+                        <!-- <th>Is Closed</th> -->
+                    </tr>
+                </thead>
+                
+                <tbody> 
+                    <apex:repeat value="{! ListOfOpenCases}" var="objOpenCase">
+                        <tr>
+                            <td><apex:outputLink value="/apex/AOSI_GPS_CaseDetailWithResourceAndMap?caseId={!objOpenCase.Id}" id="theLink"> {! objOpenCase.CaseNumber} </apex:outputLink></td>
+                            <td>{! objOpenCase.Contact.Name}</td>
+                            <td>{! objOpenCase.Serial_Number__c}</td>
+                            <td>{! objOpenCase.Origin}</td>
+                            <td>{! objOpenCase.Status}</td>
+                            <td>{! objOpenCase.AOSI_ASP_City__c}</td>
+                            <td>{! objOpenCase.CreatedDate}</td>
+                            <td>{! objOpenCase.AOSI_Product_Vertical__c}</td>
+                        </tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+		</apex:outputpanel>
+        <apex:outputpanel rendered="{! IF(ListOfOpenCases.size <= 0, true, false)}">
+			<span>Congratulations, There is no open case !!</span>
+        </apex:outputpanel>
+    </apex:form>
+</apex:page>

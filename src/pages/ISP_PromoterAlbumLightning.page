@@ -1,0 +1,25 @@
+<apex:page standardController="ISP_Store_Album__c" showHeader="false" extensions="ISP_PromoterAlbumLightningCon" ><!--action="{!redicectBasedOnProfile}"-->
+    
+    <!-- Including lightning script to visualforce page -->
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    
+    <div id="lightning" style="overflow:overlay;"/>
+    
+<!-- 
+    java script to call the lightning component of aura application 
+    ('C' is used since no namespace is created if there exists a namespace then replace c to the organization namespace) -->
+
+    
+    <script>
+        $Lightning.use("c:Album", function() {
+          $Lightning.createComponent("c:InsertAlbum",
+          { parentId: "{!ISP_Store_Album__c.Id}",
+          },
+          "lightning",
+          function(cmp) {
+            
+          });
+        });
+    </script>
+    
+</apex:page>

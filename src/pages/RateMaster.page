@@ -1,0 +1,451 @@
+<apex:page sidebar="false" standardController="ASP_Rate_Master__c" extensions="RateMasterController" >
+<head>
+<style>
+#mytable input[type="text"]
+{
+width: 70px;
+}
+</style>
+</head>
+<apex:form >
+<table border="0" cellspacing="0" id="mytable"><colgroup width="32"></colgroup> <colgroup width="332"></colgroup> <colgroup width="133"></colgroup> <colgroup width="168"></colgroup> <colgroup width="279"></colgroup> <colgroup width="249"></colgroup> <colgroup width="162"></colgroup> <colgroup width="528"></colgroup> <colgroup width="114"></colgroup> <colgroup width="168"></colgroup> <colgroup width="122"></colgroup> <colgroup width="249"></colgroup>
+    <tbody>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Water Heater</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Water Treatment</span></strong></td>
+
+        </tr>
+        <tr>
+            <td align="center" valign="middle" height="17"></td>
+            <td  valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Product Category</span></strong></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat_wh}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat_wt}"/></td>
+            
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+          
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Instant</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Storage</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Gas</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">RO</span></strong></td>
+
+        </tr>
+        <tr>
+            <td align="center" valign="middle" height="17"></td>
+            <td  valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Product Family</span></strong></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!ratemaster.Product_Family_Instant__c}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!ratemaster.Product_Family_Storage__c}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!ratemaster.Product_Family_Gas__c}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!ratemaster.Product_Family_RO__c}"/></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Service</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Free Installation</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">PM Service</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Dealer Stock</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Contract Request</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Field Trail</span></strong></td>
+            <td align="left" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Exchange Pickup</span></strong></td>
+
+        </tr>
+        <tr>
+            <td align="center" valign="middle" height="17"></td>
+            <td  valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Case Types</span></strong></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!casetype_service}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!casetype_freeinstallation}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!casetype_pmservice}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!casetype_dealerstock}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!casetype_contractrequest}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!casetype_fieldtrial}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!casetype_exchangepickup}"/></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Power of 1 Applicability</span></strong></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}"/></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Local</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Upcountry</span></strong></td>
+
+        </tr>
+        <tr>
+            <td align="center" valign="middle" height="17"></td>
+            <td  valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Only Additional Value in case excess/Deduction from Actual Rate master</span></strong></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+
+        </tr>
+        <tr>
+            <td align="center" valign="middle" bgcolor="#FFFFFF" height="16"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Fixed Compensation</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Rates/Calls</span></strong></td>
+
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle" bgcolor="#FFFFFF"><span style="color: #000000;">Fixed Compensation</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Number of Calls applicable (Up to)</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+
+        </tr>
+        <tr>
+            <td align="center" valign="middle" bgcolor="#FFFFFF" height="16"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Rate / Call - Closed Slab Wise - local</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Rates/Calls</span></strong></td>
+            <td  valign="right" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}" style="float: right;"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Rate / Call - Closed Slab Wise - Upcountry</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Rates/Calls</span></strong></td>
+ 
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">&lt; 6 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">&lt; 12 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+
+        </tr>
+        
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">6 Hrs to 12 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">12 Hrs to 24 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">12 Hrs to 24 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">&gt; 24 Hrs - &lt; 48 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color:#000000;">&gt; 24 Hrs - &lt; 48 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">&gt; 48 Hrs - &lt; 96 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">&gt; 48 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">&gt; 96 Hrs</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="18"><span style="color: #007934;">&nbsp;</span></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="18"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" colspan="3" valign="middle"><span style="color: #000000;">Rates will be flat based on Master-Local</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;"><span style="color: #000000;text-align: 100px;">Only Additional Value in case excess/Deduction from Actual Rate master</span></span></td>
+     
+        </tr>
+        <tr>
+            <td align="center" valign="middle" height="18"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><span style="color: #ffffff;">Rate/Call - Closed Action Wise</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Installation</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Explanation /Adjustment</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Part Replacement</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Tank Cleaning / Product Replacement</span></strong></td>
+            <td  valign="right" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}" style="float: right;"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><span style="color: #ffffff;">Rate/Call - Closed Action Wise</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Installation</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Explanation /Adjustment</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Part Replacement</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Tank Cleaning / Product Replacement</span></strong></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage up to 35 L</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage up to 35 L</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage Above 35 L</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage Above 35 L</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Instant</span></td>
+            <td align="center" valign="middle"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="center" valign="middle"><span style="color: #000000;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Instant</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="18"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" colspan="3" valign="middle"><span style="color: #000000;">Rates will be flat based on Master-Upcountry</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" colspan="3" valign="middle" ><span style="color: #000000;margin: -95%;text-align: 100px;">Only Additional Value in case excess/Deduction from Actual Rate master</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+        </tr>
+        <tr>
+            <td align="center" valign="middle" height="18"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><span style="color: #ffffff;">Rate/Call - Closed Action Wise</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Installation</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Explanation /Adjustment</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Part Replacement</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Tank Cleaning / Product Replacement</span></strong></td>
+            <td  valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}" style="float: right;"/></td>
+            <td align="left" valign="middle" bgcolor="#007934"><span style="color: #ffffff;">Rate/Call - Closed Action Wise</span></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Installation</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Explanation /Adjustment</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Part Replacement</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Tank Cleaning / Product Replacement</span></strong></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage up to 35 L</span></td>
+            <td align="center" valign="middle"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle"><span style="color:#000000;">125</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;">175</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;">200</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage up to 35 L</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage Above 35 L</span></td>
+            <td align="center" valign="middle"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle"><span style="color: #000000;">125</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;">200</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;">200</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Storage Above 35 L</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Instant</span></td>
+            <td align="center" valign="middle"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle"><span style="color: #000000;">125</span></td>
+            <td align="center" valign="middle"><span style="color:#000000;">200</span></td>
+            <td align="center" valign="middle"><span style="color: #000000;">200</span></td>
+            <td align="left" valign="bottom"><span style="color: #007934;">&nbsp;</span></td>
+            <td  valign="middle"><span style="color: #000000;">Instant</span></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            
+        </tr>
+        <tr>
+            <td align="center" valign="middle" bgcolor="#FFFFFF" height="16"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td colspan="3" align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Deduction Category by Performance - Local</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Deduction Slab</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Applicable</span></strong></td>
+            <td  valign="middle" bgcolor="#FFFFFF"><apex:inputCheckbox value="{!productcat}" style="float: right;"/></td>
+            <td colspan="3" align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Deduction Category by Performance - Upcountry</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Deduction Slab</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Applicable</span></strong></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">&lt; 90% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">&lt; 70% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">89.99% - 81% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">69.99% - 61% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">80.99% - 71% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">59.99% - 51% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">70.99% - 61 Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="left" valign="middle"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3"  valign="middle" bgcolor="#FFFFFF">&lt; 50.99% Resolution in 24 Hrs</td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputText value="{!fixedcompensation}"/></td>
+            <td align="center" valign="middle" bgcolor="#ffffff"><apex:inputCheckbox value="{!productcat}"/></td>
+        </tr>
+        <tr>
+            <td align="left" valign="bottom" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            
+         </tr>
+        <tr>
+            <td align="center" valign="middle" height="16"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td colspan="5" align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Incentives, Upcountry TA &amp; Other Charges</span></strong></td>
+            
+        </tr>
+        <tr>
+            <td align="left" valign="middle" height="16"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3" align="left" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Title</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Applicable</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Slab/Rate Per Call</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Value</span></strong></td>
+            <td align="center" valign="middle" bgcolor="#007934"><strong><span style="color: #ffffff;">Remarks</span></strong></td>
+           
+        </tr>
+        <tr>
+            <td align="left" valign="middle" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3" align="left" valign="middle" bgcolor="#FFFFFF">Travel Claim</td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF">Rs.2.5/Km</td>
+            <td align="center" valign="middle"><span style="color: #007934;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="middle"><span style="color: #000000;">2.5 Rs * 1200 Km Details Attached</span></td>
+           
+        </tr>
+        <tr>
+            <td align="left" valign="middle" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3" align="left" valign="middle" bgcolor="#FFFFFF">DA</td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF">Actual</td>
+            <td align="center" valign="middle"><span style="color: #007934;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="middle"><span style="color: #000000;">Details Attached</span></td>
+           
+        </tr>
+        <tr>
+            <td align="left" valign="middle" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3" align="left" valign="middle" bgcolor="#FFFFFF">Incentives If any</td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF">As per Agreement</td>
+            <td align="center" valign="middle"><span style="color: #007934;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="middle"><span style="color: #000000;">100*4 AMC Incentives-Details attached</span></td>
+            
+        </tr>
+        <tr>
+            <td align="left" valign="middle" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3" align="left" valign="middle" bgcolor="#FFFFFF">Others</td>
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF">As per Agreement</td>
+            <td align="center" valign="middle"><span style="color: #007934;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="middle"><span style="color: #000000;">Freelancer Salary-10000 + 500 Courier Charges - Details attached</span></td>
+        </tr>
+        <tr>
+            <td align="left" valign="middle" height="17"><span style="color: #007934;">&nbsp;</span></td>
+            <td colspan="3" align="left" valign="middle"><span style="color: #000000;">Power of 1 Incentive/Call</span></td>     
+            <td align="center" valign="middle"><apex:inputCheckbox value="{!productcat}"/></td>
+            <td align="center" valign="middle" bgcolor="#FFFFFF">25/Call (75 Calls Achieved)</td>
+            <td align="center" valign="middle"><span style="color: #007934;"><apex:inputText value="{!fixedcompensation}"/></span></td>
+            <td align="left" valign="middle"><span style="color: #000000;">450 Calls Achieved PO1-Details Attached</span></td>
+
+        </tr>
+    </tbody>
+</table>
+</apex:form>
+</apex:page>

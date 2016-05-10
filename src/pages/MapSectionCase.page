@@ -1,0 +1,21 @@
+<apex:page standardController="Case" extensions="fetchresource">
+    <apex:pageBlock > 
+
+    <apex:map width="100%" height="600px" zoomLevel="15">
+    
+    <apex:mapMarker title="{!Case.Contact.Name }"
+       position="{!Case.Contact.Pincode__c}+' India'" >
+    </apex:mapMarker>
+        
+       
+    <apex:repeat value="{!lstResource}" Var="r">
+        <apex:mapMarker title="{!r.name},{!r.Type__c}"
+             position="{!r.PIN_Code__c}" icon="{! URLFOR($Resource.MarkerIcon) }">
+        </apex:mapMarker>
+    </apex:repeat>
+    
+    </apex:map>
+        
+    </apex:pageBlock>
+    
+</apex:page>

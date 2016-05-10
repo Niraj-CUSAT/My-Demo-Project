@@ -1,0 +1,159 @@
+<apex:page controller="LOC_TBN_MapAccounts" sidebar="false">
+	<apex:form >
+	    <script src="{!googleMapstr}" type="text/javascript"></script>
+	    <script type="text/javascript">
+	      	function initialize() 
+	      	{
+				var mapOptions ={ 
+									zoom: 4,
+		          					mapTypeId: google.maps.MapTypeId.ROADMAP
+								};
+		        var map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
+				//Getting the selected value for both picklist
+				var selectRec;
+		      	var sel = document.getElementById('{!$Component.selectTimeRange}').selectedIndex;
+		      	if(document.getElementById('{!$Component.selectTimeRange}').options[sel] != undefined)
+					selectRec = document.getElementById('{!$Component.selectTimeRange}').options[sel].text;
+					
+				var selectZip;
+				
+		      	var sel2 = document.getElementById('{!$Component.selectZipCode}').selectedIndex;
+		      	
+		      	if(document.getElementById('{!$Component.selectZipCode}').options[sel2] != undefined)
+					selectZip = document.getElementById('{!$Component.selectZipCode}').options[sel2].text;
+					
+				TBN_MapAccounts.getAccountLocations('{!recId}',selectRec,selectZip,function(result, event){ 
+					if(result != null && result != undefined)
+						for(var i=0; i < result.length; i++)
+						{
+							var projectPosition1 = new google.maps.LatLng(result[i].lat,result[i].longt); 
+							putmarker(projectPosition1,map,result[i].objName,result[i].address, result[i].objAccId); 
+							map.setCenter(projectPosition1);
+						}
+				});
+	      	}
+	    
+			function  putmarker(str2,map,nm,addRess,idAcc)
+			{
+				var infoWindow = new google.maps.InfoWindow;
+				var marker1 = new google.maps.Marker(
+				{
+					map: map,
+					position: str2
+				});
+                            
+				var html = "<div class='infowin'><strong>" +"<a class='anchorTagCl' href='/"+idAcc +"'>"+ nm + "</a></strong><hr>"+addRess;
+				    
+			  	//binds the infoWindow to the point
+			  	bindInfoWindow(marker1, map, infoWindow, html);
+			  	
+			
+			}
+			
+			function bindInfoWindow(marker, map, infoWindow, html) 
+			{
+				google.maps.event.addListener(marker, 'mouseover', function(){ 
+					infoWindow.setContent(html);
+					infoWindow.open(map, marker);
+					
+				});
+			//	google.maps.event.addListener(marker, 'mouseout', function() {
+			//		infoWindow.close();
+			//	});
+			}
+	    </script>
+	    <script>
+	    	window.onload = function(){initialize();};
+	    </script>
+		<style>
+		    Filter
+			{
+				color:#000000;
+				font-size:0.9em;
+				font-weight:bold;
+				border:5px;
+			}
+			.FilterItem
+			{
+			  color:#4A4A56;
+			  font-weight:bold;
+			  text-align: right;
+			}
+		  
+		</style>
+		
+	<!-- Start: Page Message -->
+		<apex:outputPanel rendered="{!!hasRecords}">
+			<apex:commandLink action="{!goBackToRecord}" rendered="{!recId != null && productName != null }" value="<<Back to {!productName}" />
+			<apex:pageMessages rendered="{!!hasRecords}" />
+		</apex:outputPanel>
+	<!-- End: Page Message -->	
+			
+		<apex:actionfunction name="callZipCodes" action="{!zipCodes}" rerender=" selTR,selZC" />
+		
+		<apex:outputPanel rendered="{!hasRecords}">
+			<table>
+				<tr>
+					<td style="padding-bottom:20px">
+						<apex:commandLink action="{!goBackToRecord}" value="<<Back to {!productName} " />
+					</td>
+				</tr>
+			</table>
+			<table align="left" cellspacing="0" cellpadding="0">
+				<tr>
+					<td >
+						<apex:outputPanel id="opPanel1" >
+							<table>
+								<tr>
+									<td valign="top" align="left">
+										<b>Select Range </b>        
+									</td>
+									<td width="10px">
+									</td>
+									<td valign="top" align="left">
+									 	<b>Zip Code  </b>       
+									</td>
+									<td width="10px">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										
+										<apex:outputPanel id="selTR">
+											<apex:selectList id="selectTimeRange" value="{!selectedTimeRange}" onchange="callZipCodes();" size="3" >
+												<apex:selectOptions value="{!lstFilterTimeOptions}"/>
+											</apex:selectList>
+										</apex:outputPanel>
+									</td>
+									<td width="10px">
+									</td>
+									<td>
+										<apex:outputPanel id="selZC">
+											<apex:selectList id="selectZipCode" value="{!selectedZipCode}"  size="3" >
+												<apex:selectOptions value="{!lstZipCodeOptions}"/>
+											</apex:selectList>
+										</apex:outputPanel>
+									</td>
+									<td width="10px">
+									</td>
+									<td style="float:right;align:right">
+		                     			<button type="button" onclick="initialize();">Filter</button>
+									</td>
+								</tr>
+							</table>
+						</apex:outputPanel>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding-bottom:10px">
+					</td>
+				</tr>
+			    <tr >
+			        <td align="left" valign="top" width="100%">
+			            <div id="map_canvas" style="float:left;width:1100px; height:500px;border:5px solid #029acc ;"></div>
+			        </td>
+			    </tr>
+			</table>
+		</apex:outputPanel>
+	</apex:form>
+</apex:page>

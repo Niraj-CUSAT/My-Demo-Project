@@ -1,0 +1,100 @@
+<!--<apex:page standardController="ISP_Store_Album__c" showHeader="false" extensions="Inputalbum">-->
+<apex:page showHeader="false" controller="Inputalbum">
+   <!-- <c:MultiAttachment objId="{!$CurrentPage.Parameters.id}"/> -->
+    <apex:form >
+     <apex:outputPanel rendered="{!albumId == null}">
+        <apex:pageBlock title="Store Album">
+            <apex:pageBlockTable value="{!albumlist}" var="st">
+                <apex:column >
+                    <apex:inputField value="{!st.name}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:inputField value="{!st.Store_Location__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:inputField value="{!st.To__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:inputField value="{!st.From__c}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        
+        
+        
+        <apex:pageBlock title="Upload Multiple Attachment to Object">  
+              
+            <apex:pageBlockButtons location="bottom">  
+                <apex:commandButton value="Upload"  action="{!SaveAttachments}"/>  
+            </apex:pageBlockButtons>  
+              
+            <apex:pageMessages id="MSG"/>  
+            <apex:actionFunction name="ChangeCount" action="{!ChangeCount}"/>  
+              
+            <apex:pageblocksection >  
+                              
+                <apex:pageBlockSectionItem >  
+                    <apex:outputLabel value="How many files you want to upload?"/>  
+                    <apex:selectList onchange="ChangeCount() ;" multiselect="false" size="1" value="{!FileCount}">  
+                        <apex:selectOption itemLabel="--None--" itemValue=""/>  
+                        <apex:selectOptions value="{!filesCountList}"/>  
+                    </apex:selectList>  
+                </apex:pageBlockSectionItem>  
+              
+            </apex:pageblocksection>  
+              
+            <apex:pageBlockSection title="Select Files" rendered="{!IF(FileCount != null && FileCount != '', true , false)}">  
+                <apex:repeat value="{!allFileList}" var="AFL">  
+                    <apex:inputfile value="{!AFL.body}" filename="{!AFL.Name}" />  
+                      
+  
+                </apex:repeat>  
+            </apex:pageBlockSection>  
+              
+        </apex:pageBlock>  
+   </apex:outputPanel>
+   
+   
+   <!---------------------------------Edit ------------------------------------>
+   <apex:outputPanel rendered="{!albumId != null}">
+   
+        <apex:pageBlock title="Store Album">
+            <apex:pageblockSection title="Album Information" columns="1">
+                <apex:pageBlockTable value="{!albumlist}" var="st">
+                    <apex:column >
+                        <apex:outputField value="{!st.name}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:outputField value="{!st.Store_Location__c}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:outputField value="{!st.To__c}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:outputField value="{!st.From__c}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageblockSection>
+            
+            
+            <apex:pageblockSection title="Store Images" columns="1">
+           
+                <apex:pageBlockTable value="{!imageList}" var="img">
+                   
+                    <apex:column headerValue="File upload/Download">
+                       <apex:outputlink value="/servlet/servlet.FileDownload?file={!img.Attchment_ID__c}">View Image</apex:outputlink>&nbsp;
+                       <apex:inputFile value="{!att.body}" rendered="{!img.Status__c =='Rejected'}"></apex:inputFile>
+                    </apex:column>
+                    <apex:column headerValue="Status">
+                        <apex:outputField value="{!img.Status__c}"/>
+                    </apex:column>
+                   
+                </apex:pageBlockTable>
+                
+            </apex:pageblockSection>
+        </apex:pageBlock>
+    
+
+   </apex:outputPanel>     
+    </apex:form>
+</apex:page>

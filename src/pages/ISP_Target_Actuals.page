@@ -1,0 +1,71 @@
+<apex:page standardController="ISP_Target__c" extensions="ISP_Target_ext" showHeader="false">
+ <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+ <apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"/>
+ <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+ <style>
+     .control-label:after {
+          content:"*";color:red;
+    }
+ </style>
+
+ <apex:form >
+  <div class="container">
+  <br/>
+       <center>
+      
+        <h4>  Targets :&nbsp;<apex:outputfield value="{!Tname.Assigned_To__r.name}"/> </h4>
+      </center>
+  <div  class="table-responsive"> <!--style="display: block;min-height: 9.25in;padding: 15px;"-->
+      <table width="60%" border="1" align="center" class=" table table-striped">
+         <thead>
+           <tr>
+                <th>Name</th>
+                <th>Product</th>
+                <th>Duration</th>
+                <th>Target</th>
+                <th>Actual</th>
+                
+             
+           </tr>
+         </thead>
+         <tbody>
+           <apex:repeat value="{!lTarget }" var="tar">
+                <tr> 
+                   <td>{!tar.Name}</td>
+                   <td>{!tar.Product1__c}</td>
+                    <td>
+                     <apex:outputText value="{0,date,dd-MMM-yyyy}">
+                         <apex:param value="{!tar.From_date__c}" />
+                     </apex:outputText>
+                       -
+                     <apex:outputText value="{0,date,dd-MMM-yyyy}">
+                         <apex:param value="{!tar.To_date__c}" />
+                     </apex:outputText>
+                   </td>
+                   <td>{!tar.Target_Units__c}</td> 
+                   <td>{!tar.Target_Actulas__c }</td>
+                   
+                </tr>
+           </apex:repeat>
+         </tbody>
+       </table>
+  </div>
+  </div>
+
+
+
+   <!-- 
+ 
+  <apex:pageBlock >
+    <apex:pageBlockSection >
+    <apex:pageBlockTable value="{!lTarget }" var="tar" >
+    <apex:column value="{!tar.name}"/>
+    <apex:column value="{!tar.Assigned_To__r.name}"/>
+    <apex:column value="{!tar.Target_Actulas__c }"/>
+    </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+      -->
+ </apex:form>
+
+</apex:page>

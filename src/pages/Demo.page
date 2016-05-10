@@ -1,0 +1,60 @@
+<apex:page controller="DemoController">
+
+  <apex:pageBlock >
+  <apex:map width="600px" height="400px" mapType="roadmap">
+
+    <apex:repeat value="{! accList  }" var="acc">
+    <apex:mapMarker title="{! acc.Name }"
+       position="{!acc.ShippingStreet},{!acc.ShippingCity},{!acc.ShippingState},{!acc.ShippingPostalCode}" icon="{! URLFOR($Resource.MarkerIcon) }">
+         <apex:mapInfoWindow >
+            <apex:outputPanel layout="block" style="font-weight: bold;">
+              <apex:outputText >{! acc.Name }</apex:outputText>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block">
+              <apex:outputText >{! acc.ShippingStreet}</apex:outputText>
+            </apex:outputPanel>               
+
+            <apex:outputPanel layout="block">
+              <apex:outputText >{! acc.ShippingCity}, {! acc.ShippingPostalCode}</apex:outputText>
+            </apex:outputPanel>               
+
+            <apex:outputPanel layout="block">
+                  <apex:outputText >{! acc.ShippingState}</apex:outputText>
+              
+            </apex:outputPanel>               
+          </apex:mapInfoWindow>
+
+        </apex:mapMarker>
+      </apex:repeat>
+      <apex:repeat value="{!conList}" var="con">
+      
+    <apex:mapMarker title="{! con.Name }"
+       position="{!con.MailingStreet },{!con.MailingCity},{!con.MailingState},{!con.MailingPostalCode}" >
+         <apex:mapInfoWindow >
+            <apex:outputPanel layout="block" style="font-weight: bold;">
+              <apex:outputText >{! con.Name }</apex:outputText>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block">
+              <apex:outputText >{! con.MailingStreet}</apex:outputText>
+            </apex:outputPanel>               
+
+            <apex:outputPanel layout="block">
+              <apex:outputText >{! con.MailingCity}, {! con.MailingPostalCode}</apex:outputText>
+            </apex:outputPanel>               
+
+            <apex:outputPanel layout="block">
+                  <apex:outputText >{! con.MailingState}</apex:outputText>
+              
+            </apex:outputPanel>               
+          </apex:mapInfoWindow>
+
+        </apex:mapMarker>
+      </apex:repeat>
+
+    
+  </apex:map>
+
+ 
+  </apex:pageBlock>
+
+</apex:page>

@@ -1,0 +1,175 @@
+<apex:page standardController="Case" extensions="CaseNewController">
+<head>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+</head>
+<apex:sectionHeader title="New Case"/>
+<apex:form id="frmId">
+<apex:pageMessages id="pgmsg"></apex:pageMessages>
+<apex:messages />
+<apex:pageBlock title="Case Edit" mode="edit">
+<apex:pageBlockButtons location="top">
+<apex:commandButton value="Save" action="{!Save}"/>
+<apex:commandButton value="Cancel" action="{!cancel}" />
+</apex:pageBlockButtons>
+<apex:pageBlockSection title="Case Information" columns="2">
+<apex:inputField value="{!Case.status}" rendered="{!$Profile.Name!='Call Centre Agent - AOS India'}" required="true" id="status">
+</apex:inputField>
+<apex:inputField value="{!Case.SMS_Status__c}"/>
+<apex:inputField value="{!Case.AOSI_Cancelled_On_HOLD_Reason__c}"/>
+<apex:inputField value="{!Case.FeedbackSMS_Firing_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Appointment_Date__c}"/>
+<apex:inputField value="{!Case.SMSFiringTime__c}"/>
+<apex:inputField value="{!Case.Origin}" required="true"/>
+<apex:inputField value="{!Case.SMS_SENT_TO_CONTACT__c}"/>
+<apex:inputField value="{!Case.ContactId}" required="true"/>
+<apex:inputField value="{!Case.SMS_SENT_TO_INSTALLER__c}"/>
+
+<apex:actionRegion immediate="true">
+<apex:outputLabel for="product" value="{!$ObjectType.Case.fields.AOSIProduct__c.label}" styleClass="labelCol vfLabelColTextWrap "></apex:outputLabel>
+<apex:inputField value="{!Case.AOSIProduct__c}" id="product">
+<apex:actionSupport action="{!processconcerens}" event="onchange" reRender="customerconcern"/>
+</apex:inputField>
+</apex:actionRegion>
+
+<apex:inputField value="{!Case.WE_CARE__c}"/>
+<apex:inputField value="{!Case.AssetId}"/>
+<apex:inputField value="{!Case.AOSI_Case_Closed__c}"/>
+<apex:inputField value="{!Case.AOSI_Replaced_Asset__c}"/>
+<apex:inputField value="{!Case.AOSI_Call_Escalated__c}"/>
+<apex:inputField value="{!Case.AOSI_Resend_SMS__c}"/>
+<apex:inputField value="{!Case.AOSI_Escalate_to_HO__c}"/>
+<apex:inputField value="{!Case.AOSI_Warranty_Status_I__c}"/>
+<apex:inputField id="casereason" value="{!Case.Reason}" required="true"></apex:inputField>
+<apex:inputField value="{!Case.Quantity__c}" required="true"/>
+<apex:inputField value="{!Case.AOSI_Vertical__c}"/>
+<apex:inputField value="{!Case.CC_SSV__c}"/>
+<apex:inputField value="{!Case.AOSI_Preferred_Color__c}"/>
+<apex:inputField value="{!Case.AOSI_Count_Sales_Query_On_Hold__c}"/>
+<apex:inputField value="{!Case.AOSI_City__c}"/>
+<apex:inputField value="{!Case.AOSI_City__c}"/> 
+<apex:inputField value="{!Case.AOSI_Sales_Query_Reference__c}"/>
+<apex:inputField value="{!Case.AOSI_PO_Criteria_1__c}"/> 
+<apex:inputField value="{!Case.AOSI_Category_of_Sales_Query__c}"/>
+<apex:inputField value="{!Case.AOSI_PO_Criteria_2__c}"/>
+<apex:inputField value="{!Case.AOSI_Call_Escalated_Date__c}"/>
+<apex:inputField value="{!Case.AOSI_Power_of_1__c}"/>
+<apex:inputField value="{!Case.AOSI_Call_Escalated_to_HO_Date__c}"/>
+<apex:inputField value="{!Case.AOSI_PO_Criteria_3__c}"/>
+<apex:inputField value="{!Case.AOSI_WECARE_Escaltion_Date_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_SMS_TO_CUST_ON_SERVCHARGE__c}"/>
+<apex:inputField value="{!Case.AOSI_Purchase_Date__c}"/>
+<apex:inputField value="{!Case.AOSI_Repeat_Call__c}"/>
+<apex:inputField value="{!Case.AOSI_Purchase_Value__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.ParentId}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_Region_picklist__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_State_Picklist__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_City_Master__c}"/>
+<apex:inputField value="{!Case.AOSI_No_Of_Parts__c}"/>
+
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Contract Information" columns="2" >
+<apex:inputField value="{!Case.AOSI_AMC_Pin__c}"/>
+<apex:inputField value="{!Case.AOSI_Contract_Pin_Registration_Time__c}"/>
+<apex:inputField value="{!Case.Contract_Type__c}"/>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Time Calculation" columns="2" >
+<apex:inputField value="{!Case.AOSI_Response_Clock_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Response_Time_New__c}"/>
+<apex:inputField value="{!Case.AOSI_Resolution_Clock_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Resolution_Time_New__c}"/>
+<apex:inputField value="{!Case.AOSI_Job_Clock_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Job_Time_New__c}"/>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Owner and Registration Information" columns="2" >
+<apex:inputField value="{!Case.AccountId}"/>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Call Allocation Summary" columns="2" >
+<apex:inputField value="{!Case.Service_Engineer__c}"/>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Description Information" columns="2" >
+<apex:inputField value="{!Case.AOSI_Customer_Concern__c}" id="customerconcern" required="true">
+
+</apex:inputField>
+
+
+<!--
+<apex:outputLabel > Concerens : </apex:outputLabel>
+    <apex:selectList size="1" value="{!Case.AOSI_Customer_Concern__c}" id="sellist">
+      <apex:selectOptions value="{!countrieLst }"/>
+    </apex:selectList> <br/>
+-->
+
+<apex:inputField value="{!Case.Subject}"/>
+<apex:inputField value="{!Case.Courier_Number__c}"/>
+<apex:inputField value="{!Case.Description}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_Work_Done__c}"/>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Case Closure Details" columns="2" >
+<apex:inputField value="{!Case.AOSI_Discount__c}"/>
+<apex:inputField value="{!Case.Assignment_Start_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_New_Final_Amount__c}"/>
+<apex:inputField value="{!Case.Assignment_End_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Mode_of_Payment__c}"/>
+<apex:inputField value="{!Case.Assignment_End_Time_Minute_Value__c}"/>
+<apex:inputField value="{!Case.AOSI_Cheque_Number__c}"/>
+<apex:inputField value="{!Case.AOSI_Case_Close_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Transaction_Number__c}"/>
+<apex:inputField value="{!Case.Customer_Satisfaction_Status__c}"/>
+<apex:inputField value="{!Case.AOSI_Bank_Branch_Details__c}"/>
+<apex:inputField value="{!Case.AOSI_Hardness__c}"/>
+<apex:inputField value="{!Case.AOSI_Water_Source__c}"/>
+<apex:inputField value="{!Case.AOSI_TDS_Input__c}"/>
+<apex:inputField value="{!Case.AOSI_pH__c}"/>
+<apex:inputField value="{!Case.AOSI_TDS_Output__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_Water_Storage__c}"/>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="System Information" columns="2" >
+<apex:inputField value="{!Case.RecordTypeId}"/>
+<apex:inputField value="{!Case.Priority}"/>
+<apex:inputField value="{!Case.AOSI_ASP_Owner_Email__c}"/>
+<apex:inputField value="{!Case.AOSI_SYS_SMS_to_Cust__c}"/>
+<apex:inputField value="{!Case.OwnerId}"/>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Web Information" columns="2" >
+<apex:inputField value="{!Case.AOSI_Respond_Time__c}"/>
+<apex:inputField value="{!Case.Region__c}"/>
+<apex:inputField value="{!Case.AOSI_Region__c}"/>
+<apex:inputField value="{!Case.AOSI_State__c}"/>
+</apex:pageBlockSection>
+
+<script>
+$(document).ready(function(){
+    $("[id$='casereason']").attr('disabled', 'disabled');
+    $("[id$='product']").on("blur", function(){
+        if($(this).val()){
+          $("[id$='casereason']").removeAttr("disabled");
+        }
+        else{
+         $("[id$='casereason']").attr('disabled', 'disabled');
+        }
+    });
+});
+</script>
+</apex:pageBlock> 
+</apex:form>       
+</apex:page>

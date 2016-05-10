@@ -1,0 +1,99 @@
+<apex:page controller="LOC_contCustomLookupCustomer" title="Search" showHeader="false" sideBar="false" id="pg" tabStyle="Case"> 
+ <apex:outputPanel id="jspanel">
+<apex:pageMessages />
+<script >  
+     javascript:top.window.opener.lookupPick2('{!ValueFormTag}','{!ValueTextBox}_lkid','{!ValueTextBox}','{!Id}','{!name}', false);
+  </script>
+  </apex:outputPanel>
+  <apex:form id="myForm" >
+  <apex:pageBlock title="Contact">
+  <apex:outputPanel id="page" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+    <apex:tabPanel switchType="client" selectedTab="name1" id="tabbedPanel">
+ 
+      <apex:tab label="Search" name="tab1" id="tabOne"> 
+        <apex:actionRegion >  
+          <apex:outputPanel id="top" >
+          <apex:pageBlock >
+            <apex:pageBlockSection columns="4" >
+            <apex:outputLabel value="Name" />
+            <apex:inputText id="txtSearch" value="{!SearchCustomer}" />
+            <apex:outputLabel value="Email" />
+            <apex:inputText id="txtSearch2" value="{!SearchEmail}" />
+            <apex:outputLabel value="Phone" />
+            <apex:inputText id="txtSearch3" value="{!SearchPhone}" /> 
+            <c:LOC_BindEnterButton />  
+            <apex:commandButton id="btnGo" value="Go" action="{!Search}" rerender="searchResults"></apex:commandButton>          
+          </apex:pageBlockSection>          
+          </apex:pageBlock>
+          </apex:outputPanel>
+          <apex:outputPanel id="pnlSearchResults" style="margin:10px;height:350px;overflow-Y:auto;" layout="block">
+            <apex:pageBlock id="searchResults"> 
+              <apex:pageBlockTable value="{!lstResults}" var="a" id="tblResults">
+                <apex:column >
+                  <apex:facet name="header">
+                    <apex:outputPanel >Name</apex:outputPanel>
+                  </apex:facet>
+                   <apex:outputLink value="javascript:top.window.opener.lookupPick2('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.Id}','{!a.Name}', false)" rendered="{!NOT(ISNULL(a.Id))}">{!a.Name}</apex:outputLink>     
+                </apex:column>
+                 <apex:column headerValue="Email" >
+                <apex:outputLabel value="{!a.Email}"  />
+                </apex:column>
+                <apex:column headerValue="Phone" >
+                <apex:outputLabel value="{!a.Phone}"  />
+                </apex:column>
+              </apex:pageBlockTable>
+            </apex:pageBlock>
+          </apex:outputPanel>
+        </apex:actionRegion>
+ 
+      </apex:tab>
+ 
+      <!-- NEW CONTACT TAB -->
+      <apex:tab label="New Contact" name="tab2" id="tabTwo">
+        <apex:actionFunction name="doControllerSave" action="{!saveCustomer}" rerender="jspanel" status="processingImg"/> 
+        <apex:actionFunction name="onControllerReturn" action="{!dummy}" rerender="jspanel" status="processingImg"/>
+     
+        <apex:pageBlock id="newCustomer" title="New Contact" >
+ 
+          <apex:pageBlockButtons >
+            <apex:commandButton onclick="doControllerSave();"  value="Save" oncomplete="onControllerReturn();" />
+          </apex:pageBlockButtons>
+          <apex:pageMessages />
+ 
+          <apex:pageBlockSection title="Contact Information" columns="2">
+           <apex:inputField value="{!Customer.FirstName}" taborderhint="1" />
+           <apex:inputField value="{!Customer.LastName}" taborderhint="2" />
+           <apex:inputField required="false" value="{!Customer.Email}" taborderhint="3" />
+           <apex:inputField required="true" value="{!Customer.Phone}" taborderhint="4" />
+          </apex:pageBlockSection>
+        </apex:pageBlock>
+ 
+      </apex:tab>
+    </apex:tabPanel>
+  </apex:outputPanel>
+  </apex:pageBlock>
+  <apex:actionstatus id="processingImg" startText="Loading...">
+        <apex:facet name="start">
+            <div id="salesforceSource_blurybackground"
+                style="position: absolute; left: 1px; z-index: 9999; top: 1px; width: 100%; height: 100%; text-align: center; vertical-align: middle; background-color: #dcdcdc; opacity: 0.5; filter: alpha(opacity =   50)"></div>
+            <div id="ManageMembersViewport_loading" class="waitingSearchDiv"
+                style="width: 100%; height: 80%; display: '';">
+                <div style="width: 144px; vertical-align: middle;"
+                    class="waitingHolder">
+                    <table align="center" valign="top"
+                        style="width: 100%; height: 30%">
+                        <tr align="center" valign="top" style="width: 100%; height: 30%">
+                            <td valign="top"><img class="waitingImage"
+                                src="/img/loading.gif" /><span class="waitingDescription">Loading......</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="ManageMembersViewport_loading" class="waitingSearchDiv"
+                style="width: 100%; height: 100%; display: '';"></div>
+            <script>document.getElementById('ManageMembersViewport_loading').height = window.innerHeight * (3/4);</script>
+        </apex:facet>
+        <apex:facet name="stop"></apex:facet>
+    </apex:actionstatus>
+  </apex:form>
+</apex:page>

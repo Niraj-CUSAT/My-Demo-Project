@@ -1,0 +1,223 @@
+<!------------------------------------------------------------------
+Createdby     :    Bhanu Vallabhu, KVP Business Solutions.
+Created on    :    7/3/2013
+Modified by   :    Bhanu Vallabhu, KVP Business Solutions.
+Modified on   :    18/3/2013
+-------------------------------------------------------------------->
+
+<apex:page standardController="Case" renderAs="pdf">
+<head>        
+        <style type="text/css" media="print">           
+            @page {  
+            
+                margin: 100pt .5in .9in .5in;               
+                @top-center {                   
+                    content: element(header);               
+                }
+                @bottom-left {
+                    content: element(footer);
+                }           
+            }                       
+             
+             
+             Arial10 {
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 10pt;
+                    }
+
+        Arial8 {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 8pt;
+                    }
+
+                red {
+                    color: red;
+                }
+             
+             
+             
+            div.header {                
+                padding: 10px;              
+                position: running(header);           
+            }           
+            div.footer {                
+                display: block;             
+                padding: 5px;               
+                position: running(footer);          
+            }                       
+ 
+            .pagenumber:before {                
+                content: counter(page);             
+            }                       
+            .pagecount:before {             
+                content: counter(pages);            
+            }    
+            
+            body {
+            background-image: url('{!$Resource.WaterMark}');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+            
+                           
+        </style>            
+    </head>     
+ <div class="footer">   
+     
+    <hr />
+   <center> <Arial8> Reg.Off. Plot No.300 KIADB Industrial Area, Phase 2,
+    Harohalli, Kanakpura Taluk, Ramanagara Taluk, Ramanagara District -
+    561112, Karnataka. <br />
+    Tel: +91 80 28011200 &nbsp;&nbsp;&nbsp; Fax: +9128011205
+    www.aosmithindia.com </Arial8></center>
+  </div>    
+  
+
+<!-- Header -->
+    <div class="header"><Arial10>
+    <Center><apex:image value="{!$Resource.Logo}" height="50px" /><br />
+    <b>A.O.Smith India Water Heating Private Limited</b></Center>
+    </Arial10>
+    <hr />
+    <Arial10>
+    <center>{!Case.Service_Engineer__r.Service_Center_Address__c}</center>
+    </Arial10>
+    </div>
+<!-- End of Header -->
+
+<apex:pageBlock title="Case Information">
+
+        <table width='100%' cellspacing='0' cellpadding='0'>
+            <tr height='10px'>
+                <td width='50%'><b>CaseNumber :</b> &nbsp; <apex:outputField value="{!Case.CaseNumber}" /></td>
+                <td width='50%'><b>Call Escalated : </b> &nbsp; <apex:outputField value="{!Case.AOSI_Call_Escalated__c}" /></td>
+            </tr>
+            <tr height='10px'>
+                <td width='50%'><b>Status :</b> &nbsp; <apex:outputField value="{!Case.Status}" /></td>
+                <td width='50%'><b>Escalate to HO :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Escalate_to_HO__c}" /></td>
+            </tr>
+            <tr height='10px'>
+                <td width='50%'><b>Case Origin :</b> &nbsp; <apex:outputField value="{!Case.Origin}" /></td>
+                <td width='50%'><b>Case Reason : </b> &nbsp; <apex:outputField value="{!Case.Reason}" /></td>
+            </tr>
+
+            <tr height='10px'>
+                <td width='50%'><b>Product :</b> &nbsp; <apex:outputField value="{!Case.AOSIProduct__r.Name}" /></td>
+                <td width='50%'><b>Preferred Color : </b> &nbsp; <apex:outputField value="{!Case.AOSI_Preferred_Color__c}" /></td>
+            </tr>
+            <tr height='10px'>
+                <td width='50%'><b>Asset :</b> &nbsp; <apex:outputField value="{!Case.Asset.Name}" /></td>
+                <td width='50%'><b>City : </b> &nbsp; <apex:outputField value="{!Case.AOSI_City__c}" /></td>
+            </tr>
+            <tr height='10px'>
+                <td width='50%'><b>Contact Name :</b> &nbsp; <apex:outputField value="{!Case.Contact.Name}" /></td>
+                <td width='50%'><b>Service Engineer :</b> &nbsp; <apex:outputField value="{!Case.Service_Engineer__r.Name}" /></td>
+            </tr>
+            <tr height='10px'>
+                    <td width='50%'><b>Customer Concern :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Customer_Concern__c}" /></td>
+                    <td width='50%'><b>Subject :</b> &nbsp; <apex:outputField value="{!Case.Subject}" /></td>
+                </tr>
+
+        </table>
+
+
+        </apex:pageblock>
+
+
+        <apex:pageBlock title="Customer Information">
+
+            <table width='100%' cellspacing='0' cellpadding='0'>
+                <tr height='10px'>
+                    <td width='50%'><b>Contact Name :</b> &nbsp; <apex:outputField value="{!Case.Contact.Name}" /></td>
+                    <td width='50%'><b>Phone :</b> &nbsp; <apex:outputField value="{!Case.Contact.phone}" /></td>
+                </tr>
+                <tr height='10px'>
+                    <td width='50%'><b>Contact Address:</b></td>
+
+                </tr>
+                <tr height='10px'>
+                    <td width='50%'>{!case.Contact.MailingStreet},
+                    {!case.Contact.MailingCity}</td>
+                </tr>
+                <tr height='10px'>
+                    <td width='50%'>{!case.Contact.MailingState},
+                    {!case.Contact.MailingPostalCode}.</td>
+                </tr>
+                
+            </table>
+            
+             
+            </apex:pageblock>
+
+
+
+            <apex:pageBlock title="Case Closure Details"
+                rendered="{!case.status=='Closed'}">
+
+                <table width='100%' cellspacing='0' cellpadding='0'>
+                    <tr height='10px'>
+                        <td width='50%'><b>Customer Concern :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Customer_Concern__c}" /></td>
+                        <td width='50%'><b>Subject : </b> &nbsp; <apex:outputField value="{!Case.Subject}" /></td>
+                    </tr>
+
+                    <tr height='10px'>
+                        <td width='50%'><b>Cause :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Cause__c}" /></td>
+                        <td width='50%'><b>Description : </b> &nbsp; <apex:outputField value="{!Case.Description}" /></td>
+                    </tr>
+
+                    <tr height='10px'>
+                        <td width='50%'><b>Action:</b> &nbsp; <apex:outputField value="{!Case.AOSI_Action__c}" /></td>
+                        <td width='50%'><b>Work Done : </b> &nbsp; <apex:outputField value="{!Case.AOSI_Work_Done__c}" /></td>
+                    </tr>
+
+                    <tr height='10px'>
+                        <td><br />
+                        </td>
+                    </tr>
+                    <tr height='10px'>
+                        <td width='50%'><b>Assignment Start Time:</b> &nbsp; <apex:outputField value="{!Case.Assignment_Start_Time__c}" /></td>
+                        <td width='50%'><b>Assignment End Time : </b> &nbsp; <apex:outputField value="{!Case.Assignment_End_Time__c}" /></td>
+                    </tr>
+                    <tr height='10px'>
+                        <td width='50%'><b>Appointment Date :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Appointment_Date__c}" /></td>
+                        <td width='50%'><b>Case Close Time(Manual Entry) :</b> &nbsp;
+                        <apex:outputField value="{!Case.AOSI_Case_Close_Time__c}" /></td>
+                    </tr>
+                    <tr height='10px'>
+                        <td width='50%'><b>Date/Time Opened :</b> &nbsp; <apex:outputField value="{!Case.CreatedDate}" /></td>
+                        <td width='50%'><b>Date/Time Closed :</b> &nbsp; <apex:outputField value="{!Case.ClosedDate}" /></td>
+                    </tr>
+                    <tr height='10px'>
+                        <td><br />
+                        </td>
+                    </tr>
+                    <tr height='10px'>
+                        <td width='50%'><b>Total Charges :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Total_Charges__c}" /></td>
+
+                    </tr>
+                    <tr height='10px'>
+                        <td width='50%'><b>Discount :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Discount__c}" /></td>
+
+                    </tr>
+                    <tr height='10px'>
+                        <td width='50%'><b>Final Amount :</b> &nbsp; <apex:outputField value="{!Case.AOSI_Final_Amount__c}" /></td>
+
+                    </tr>
+
+                </table>
+                
+               
+
+
+                </apex:pageblock>
+
+
+                <!-- end of Table for Service Charges -->
+
+
+                
+
+    
+    
+    
+</apex:page>

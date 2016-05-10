@@ -1,0 +1,282 @@
+<apex:page standardController="Case" Extensions="AddServiceCharges" id="pageid" tabStyle="case">
+    
+     <script type="text/javascript">
+        var __sfdcSessionId = '{!GETSESSIONID()}';
+     </script>
+     <script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+     <script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+      
+    <script>
+        function createNewAsset()
+        {    
+            window.open('{!URLFOR($Action.Asset.New)}','_blank','width=800,height=800');         
+        }
+       /* function updatechargable(rownumber){
+            //alert('onchange' +rownumber);
+            //alert('Type'+document.getElementById('pageid:formid:pb1:spares:0:type').value);
+            //alert('Type'+document.getElementById('pageid:formid:pb1:spares:'+rownumber+':type').value);
+            if(document.getElementById('pageid:formid:pb1:spares:'+rownumber+':type').value == 'Part Replacement'){
+                //alert('selectedAssetatatus'+'{!selectedAssetatatus}');
+                document.getElementById('pageid:formid:pb1:spares:'+rownumber+':chargable').value = 'Yes';
+            }
+        }*/
+        
+        function updateCharges(){
+            var vall=document.getElementById('pageid:formid:pgblk:ccdetails:asstid').value;
+            var queryresult = "SELECT AOSI_Asset_Status__c FROM Asset where name = '"+vall+"'";
+            result = sforce.connection.query(queryresult);
+            records = result.getArray("records");
+        
+            for(var i=0; i< records.length; i++) {
+              var stus = records[i].AOSI_Asset_Status__c;
+              
+            }
+        }    
+        function spearsCheck(rownumber){
+           // alert(rownumber);
+            var vall=document.getElementById('pageid:formid:pb1:spares:'+rownumber+':spareid_lkid').value;
+            //alert(vall);
+            //alert(''+document.getElementById('pageid:formid:pb1:spares:'+rownumber+':spareid_lkid').value);
+            var queryresult = "SELECT Chargeable_Under_Warrenty__c FROM Spares__c where Id = '"+vall+"'";
+            result = sforce.connection.query(queryresult);
+            records = result.getArray("records");
+           // alert(records.length);
+            for(var i=0; i< records.length; i++) {
+              var stus = records[i].Chargeable_Under_Warrenty__c;
+              //alert('sts'+stus );
+             if(stus =='true'){
+                 document.getElementById('pageid:formid:pb1:spares:'+rownumber+':chargable').value = 'Yes';
+              }
+              
+            }        
+               
+        }
+        //window.onload = updateCharges();
+    </script>
+    
+    
+    <apex:sectionHeader title="Close Case" />
+    <apex:form id="formid">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Close Case" mode="edit" id="pgblk">
+
+            <apex:pageBlockButtons location="Top">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:commandButton Value="Save" action="{!Save}" title="Save" />
+                <apex:commandButton Value="Cancel" action="{!Cancel}" title="Cancel" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection title="Case Closure Details" columns="2" id="pbs1">
+                <apex:inputField value="{!Case.Assignment_Start_Time__c}"
+                    required="false" />
+
+                <apex:inputField value="{!Case.Assignment_End_Time__c}"
+                    required="false" />
+                 <apex:inputHidden value="{!Case.AOSI_Asset_Purchase_Date__c }" rendered="false"/>   
+                <apex:inputField value="{!Case.AOSI_Case_Close_Time__c}"
+                    required="false" />
+
+
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Customer Concern & Work Done Details"
+                columns="2" id="ccdetails">
+                <apex:inputField value="{!Case.ContactId}"/>
+                <apex:outputLabel value=""/>
+                <apex:inputField value="{!Case.AOSIProduct__c}" required="false" />
+                <apex:inputField value="{!Case.Assetid}" required="false" id="asstid" /> <!--onblur="updateCharges()"/>-->
+                <apex:inputField value="{!Case.Reason}" required="false" />
+                <apex:outputField value="{!Case.AOSI_Customer_Concern__c}"/>
+                <apex:inputField value="{!Case.AOSI_Category_of_Sales_Query__c}" />
+                <apex:inputField value="{!Case.Subject}" required="false" />
+                <!--<apex:inputField value="{!Case.AOSI_Cause__c}" required="false" />-->
+                <apex:inputField value="{!Case.Description}" required="false" />
+                <!--<apex:inputField value="{!Case.AOSI_Action__c}" required="false" /> -->
+                <apex:inputField value="{!Case.AOSI_Work_Done__c}" required="false" />
+                <apex:inputField value="{!Case.Courier_Number__c}" required="false" />
+                <apex:inputField value="{!Case.Quantity__c}" required="false"  />
+                <apex:inputField value="{!Case.AOSI_Purchase_Value__c}"  rendered="{!Case.AOSI_Asset_Purchase_Value__c==0 && Case.Reason=='Free Installation'}"/>
+                <apex:outputField value="{!Case.AOSI_Asset_Purchase_Value__c}"  rendered="{!Case.AOSI_Asset_Purchase_Value__c!=0 && Case.Reason=='Free Installation'}"/>
+                 <apex:inputField value="{!Case.AOSI_Purchase_Date__c}"  rendered="{!Case.AOSI_Asset_Purchase_Date__c ==null && Case.Reason=='Free Installation'}"/>
+                <apex:outputField value="{!Case.AOSI_Asset_Purchase_Date__c}"  rendered="{!Case.AOSI_Asset_Purchase_Date__c != null && Case.Reason=='Free Installation' }"/>
+            </apex:pageBlockSection>
+
+
+
+            </Apex:pageBlock>
+           
+            <apex:outputPanel >
+            <!-- Added by Vishwanath 'Customer consern adding ----------------------------------------   -->
+            <apex:pageblock id="PBUpdateCC" title="Update Customer Concern" tabstyle="case" >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <table width='100%' cellspacing='0' border='0'>
+                        <tr>
+                            <td colspan='3'></td>
+                        </tr>
+                        <tr>
+                            
+                            <th align='center' height='20px'>Customer Concern</th>
+                            <th align='center'>Cause </th>
+                            <th align='center'>Reason </th>
+                            <th align='center'>Action</th>  
+                            <th align='center'>Call Category Type</th>                          
+                                                        
+                        </tr>
+                       <!-- <apex:variable var="Amt" value="{!0}" /> -->
+                        <apex:repeat value="{!Customerconsernlist}" var="cc1" id="customerconcernlist">
+                            <tr>
+                                
+                                <td><apex:inputField id="custcon" value="{!cc1.Customer_Concern__c}">
+                                <script>document.getElementById('{!$Component.custcon}').disabled =true; </script>
+                                </apex:inputField>
+                                </td>
+                                <td><apex:inputField value="{!cc1.Cause__c}" required="true" /></td>
+                                <td><apex:inputField value="{!cc1.Reason__c}" required="true" /></td>   
+                                <td><apex:inputField value="{!cc1.Action__c}" required="true" /></td>  
+                                <!--<td><input type="text" value="{!cc1.Call_Category_Type__c}" disabled="true"/>{!cc1.Call_Category_Type__c}</td>-->
+                                <td><apex:inputField value="{!cc1.Call_Category_Type__c }"  required="true" /></td>
+                                                             
+                               <!-- <td><apex:inputField value="{!dl.Quantity__c}" /></td> -->
+                                </tr>
+                        </apex:repeat>
+
+
+
+                    </table>
+                    <br />
+                    <br />
+
+                    <apex:actionStatus id="status">
+                        <apex:facet name="start">
+                            <apex:outputPanel >
+                                <b> <apex:outputtext value="Please Wait...."
+                                    style="color:#1797C0;font-size:120%;font-family:sans-serif,Calibri,Arial,Helvetica;" />
+                                </b>
+                            </apex:outputPanel>
+                        </apex:facet>
+
+                        <apex:facet name="stop">
+                            <apex:outputPanel >
+                                <center><apex:commandButton value="Add"
+                                    action="{!addmore1}" title="Add Row" reRender="cc1,pb2,PBUpdateCC"
+                                    status="status" /> &nbsp;&nbsp;&nbsp;<!-- <apex:commandButton Value="SaveCusCon" action="{!SaveCustomerconsern}" title="Save"
+                                    reRender="cc1,pb2" status="status" /> --> &nbsp;&nbsp;&nbsp;
+
+                                &nbsp;&nbsp;&nbsp; <apex:commandButton Value="Delete"
+                                    action="{!deleterow1}" title="Delete Row" reRender="cc1,pb2,PBUpdateCC"
+                                    status="status" /></center>
+                            </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <br />
+                    </apex:pageblock>
+                    <!-- end of customer consern adding -------------- -->
+                <apex:pageblock id="pb1" title="Service Charges / Spare Usage" tabstyle="case">
+                    <apex:pageMessages ></apex:pageMessages>
+                    <table width='100%' cellspacing='0' border='0'>
+                        <tr>
+                            <td colspan='3'></td>
+                        </tr>
+                        <tr>
+                            <th align='center' height='20px'>Type</th>
+                            <th align='center'>Chargeable</th>
+                            <th align='center'>Spares / Accessories</th>                            
+                            <th align='center'>Quantity</th>
+                            <th align='center'>Charges/Price</th>
+                            <th align='center'>Amount<img src="/s.gif" alt=""
+                                class="helpOrb"
+                                title="This field will auto populate amount w.r.t MRP of spares/accessories. also visit charges/ Installation charges based on product warranty and other factors" />
+                            </th>
+                            
+                        </tr>
+                        <apex:variable var="Amt" value="{!0}" />
+                         <apex:variable value="{!0}" var="rowNum"/>
+                        <apex:repeat value="{!defaultlist}" var="dl" id="spares">
+                            <tr>
+                                <td><apex:inputField value="{!dl.Type__c}" required="True" id="type" onchange="updatechargable({!rowNum})"/></td>
+                                <td><apex:inputField value="{!dl.Chargable__c}" required="True"  id="chargable"/></td>
+                                <td><apex:inputField value="{!dl.Spares__c}"  id="spareid"  onchange="spearsCheck({!rowNum})"/></td>                                
+                                <td><apex:inputField value="{!dl.Quantity__c}" /></td>
+                                <td><apex:outputField value="{!dl.MRP_Charges__c}" rendered="{!dl.Chargable__c=='Yes'}"/></td>
+                              
+                                <td><apex:outputField value="{!dl.Final_Charges__c}" rendered="{!dl.Chargable__c=='Yes'}"/></td>
+                            </tr>
+                            <apex:variable var="Amt" value="{!Amt+dl.Final_Charges__c}" />
+                             <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                        </apex:repeat>
+
+
+
+                    </table>
+
+                    <br />
+                    <br />
+
+                    <apex:actionStatus id="status">
+                        <apex:facet name="start">
+                            <apex:outputPanel >
+                                <b> <apex:outputtext value="Please Wait...."
+                                    style="color:#1797C0;font-size:120%;font-family:sans-serif,Calibri,Arial,Helvetica;" />
+                                </b>
+                            </apex:outputPanel>
+                        </apex:facet>
+
+                        <apex:facet name="stop">
+                            <apex:outputPanel >
+                                <center><apex:commandButton value="Add"
+                                    action="{!addmore}" title="Add Row" reRender="pb1"
+                                    status="status" /> &nbsp;&nbsp;&nbsp; <apex:commandButton Value="Save Charges" action="{!SaveCharges}" title="Save"
+                                    reRender="pb1,pb2" status="status" /> &nbsp;&nbsp;&nbsp;
+
+                                &nbsp;&nbsp;&nbsp; <apex:commandButton Value="Delete"
+                                    action="{!deleterow}" title="Delete Row" reRender="pb1,pb2"
+                                    status="status" immediate="true" /></center>
+                            </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <br />
+                     <apex:pageBlockSection columns="2" title="Refund/Replacement Detail" collapsible="false" rendered="{!Case.AOSI_SYS_Replaced__c =TRUE || Case.AOSI_SYS_Refund__c =TRUE}">
+                        <apex:inputfield value="{!case.AOSI_Replaced_Asset__c }">
+                        <apex:outputLink onclick="createNewAsset()">New Asset</apex:outputLink></apex:inputfield>
+                        <apex:inputfield value="{!case.AOSI_Refund_date__c }" />
+                        <apex:inputfield value="{!case.AOSI_Refund_Amount__c}" />                      
+                        <apex:inputfield value="{!case.AOSI_Customer_Approved__c}" />
+                        </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2" title="Case Close Details"
+                        collapsible="false">
+
+                        <apex:inputfield value="{!case.status}" required="True" />
+                        <apex:inputField value="{!Case.AOSI_Cancelled_On_HOLD_Reason__c}" required="false" />                        
+                        <apex:outputText id="pb2" value="Rs.{!Amt}" label="Total Charges" />
+                        <apex:inputField value="{!Case.CaseNumber}" required="false" />                        
+                        <apex:inputField value="{!Case.AOSI_Discount__c}" required="false" />
+                        <apex:inputfield value="{!case.AOSI_Mode_of_Payment__c}" />
+                        <apex:inputfield value="{!case.AOSI_Cheque_Number__c}" />                        
+                        <apex:inputfield value="{!case.AOSI_Bank_Branch_Details__c }" />
+                        <apex:outputField value="{!case.AOSI_Contract_Charges__c }" />
+                        <apex:inputfield value="{!case.AOSI_Transaction_Number__c}" />
+                        <!--<apex:outputLabel value=""/>-->
+                        <apex:inputfield value="{!case.AOSI_Cash_Receipt__c}" rendered="{!case.Service_Engineer__c != null}"/>
+                        <apex:inputField value="{!Case.AOSI_Hardness__c}" />                               
+                        <apex:inputfield value="{!case.AOSI_Water_Source__c}" />
+                        <apex:inputfield value="{!case.AOSI_Water_Storage__c}" />
+                        <apex:inputfield value="{!case.AOSI_TDS_Input__c }" />
+                        <apex:inputfield value="{!case.AOSI_TDS_Output__c}" />
+                        <apex:inputfield value="{!case.AOSI_pH__c}" />
+                    </apex:pageBlockSection>
+                    
+
+
+                    <apex:pageBlockButtons location="Bottom">
+                        <apex:commandButton Value="Save" action="{!Save}" title="Save" />
+                        <apex:commandButton Value="Cancel" action="{!Cancel}"
+                            title="Cancel" />
+                    </apex:pageBlockButtons>
+
+                </apex:pageblock>
+            </apex:outputPanel>
+    </apex:form>
+    
+ 
+</apex:page>

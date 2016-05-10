@@ -1,0 +1,200 @@
+<!------------------------------------------------------------------
+Createdby     :    Bhanu Vallabhu, KVP Business Solutions.
+Created on    :    7/3/2013
+Modified by   :    Bhanu Vallabhu, KVP Business Solutions.
+Modified on   :    19/4/2013
+-------------------------------------------------------------------->
+
+<apex:page standardController="Case" renderAs="pdf">
+<head>        
+        <style type="text/css" media="print">           
+            @page {  
+            
+                margin: 100pt .5in .9in .5in;               
+                @top-center {                   
+                    content: element(header);               
+                }
+                @bottom-left {
+                    content: element(footer);
+                }           
+            }                       
+             
+             
+             Arial10 {
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 10pt;
+                    }
+
+        Arial8 {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 8pt;
+                    }
+
+                red {
+                    color: red;
+                }
+             
+             
+             
+            div.header {                
+                padding: 10px;              
+                position: running(header);           
+            }           
+            div.footer {                
+                display: block;             
+                padding: 5px;               
+                position: running(footer);          
+            }                       
+ 
+            .pagenumber:before {                
+                content: counter(page);             
+            }                       
+            .pagecount:before {             
+                content: counter(pages);            
+            }    
+            
+            body {
+            background-image: url('{!$Resource.WaterMark}');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+            
+                           
+        </style>            
+    </head>     
+ <div class="footer">   
+     <center><Arial10> <red>System generated cash
+    receipt. signature or seal not required.</red> </Arial10>
+    <hr />
+    <Arial8> Reg.Off. Plot No.300 KIADB Industrial Area, Phase 2,
+    Harohalli, Kanakpura Taluk, Ramanagara Taluk, Ramanagara District -
+    561112, Karnataka. <br />
+    Tel: +91 80 28011200 &nbsp;&nbsp;&nbsp; Fax: +9128011205
+    www.aosmithindia.com </Arial8></Center>
+  </div>    
+  
+
+<!-- Header -->
+    <div class="header"><Arial10>
+    <Center><apex:image value="{!$Resource.Logo}" height="50px" /><br />
+    <b>A.O.Smith India Water Heating Private Limited</b></Center>
+    </Arial10>
+    <hr />
+    <Arial10>
+    <center>{!Case.Service_Engineer__r.Service_Center_Address__c}</center>
+    </Arial10>
+    </div>
+    <!-- End of Header -->
+    
+    
+    
+     <!-- Table for Contact Details -->
+
+
+    <table width='100%' cellspacing='0' cellpadding='0'>
+
+        <tr>
+            <td align='left' width='50%'>TIN:
+            {!Case.Service_Engineer__r.TIN__c}</td>
+            <td align='Right' width='50%'>PAN:
+            {!Case.Service_Engineer__r.PAN__c}</td>
+        </tr>
+    </table>
+
+    <center><u><b>CASH RECEIPT</b></u></center>
+    <br />
+    <br />
+
+    <table width='100%' cellspacing='0' cellpadding='0'>
+        <tr>
+            <td width='50%'>Sold to :</td>
+            <td width='50%'>Receipt No / Case No : <u>{!Case.CaseNumber}</u></td>
+        </tr>
+
+        <tr>
+            <td width='50%'><u>{!case.Contact.Name}</u></td>
+            <td width='50%'></td>
+        </tr>
+
+        <tr>
+            <td width='50%'><u>{!case.Contact.MailingStreet},
+            {!case.Contact.MailingCity}</u></td>
+            <td width='50%'>Date :<U> <apex:outputText value="{0, date, dd MMMMMM yyyy}">
+                <apex:param value="{!today()}" />
+            </apex:outputText></u></td>
+        </tr>
+
+        <tr>
+            <td><u>{!case.Contact.MailingState},
+            {!case.Contact.MailingPostalCode}.</u></td>
+            <td width='50%'></td>
+        </tr>
+    </table>
+
+    <!--  end of Table for Contact Details -->
+    <br />
+    <br />
+    
+    
+    <!-- Table for Service Charges  from child object-->
+    <table width='100%' cellspacing='0' cellpadding='0' border='1'>
+        <tr>
+            <th align='center' width='10%' height='20px'>Quantity</th>
+            <th align='center' width='40%'>Item Description</th>
+            <th align='center' width='20%'>Price / Unit</th>
+            <th align='center' width='20%'>Charges</th>
+            <th align='center' width='20%'>Total Charges</th>
+        </tr>
+        <apex:repeat value="{!Case.Service_Charges__r}" var="sc">
+            <tr>
+                <td align='center' height='20px'><apex:outputfield value="{!sc.Quantity__c}" /></td>
+                <td align='left'>{!sc.Type__c} <apex:panelgroup rendered="{!sc.Spares__c != Null}"> - {!sc.Spares__r.Name} </apex:panelgroup>
+                </td>
+                <td align='center'><apex:outputfield value="{!sc.MRP_Charges__c}" /></td>
+                <td><apex:outputfield value="{!sc.AmountMRP__c}" /></td>
+                <td align='center'><apex:outputfield value="{!sc.Final_Charges__c}" /></td>
+            </tr>
+        </apex:repeat>
+        <tr>
+            <td height='20px'></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td height='20px'></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height='10pt'>
+            <td height='20px'></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan='4' align='right' height='20px'><b> Gross Total
+            &nbsp;</b></td>
+            <td align='center'><apex:outputfield value="{!Case.AOSI_Total_Charges__c}" /></td>
+        </tr>
+        <tr>
+            <td colspan='4' align='right' height='20px'><b> Discount
+            &nbsp;</b></td>
+            <td align='center'><apex:outputfield value="{!Case.AOSI_Discount__c}" /></td>
+        </tr>
+        <tr>
+            <td colspan='4' align='right' height='20px'><b> Final Amount
+            &nbsp;</b></td>
+            <td align='center'><apex:outputfield value="{!Case.AOSI_Final_Amount__c}" /></td>
+        </tr>
+    </table>
+
+
+    <!-- end of Table for Service Charges -->
+    
+
+</apex:page>

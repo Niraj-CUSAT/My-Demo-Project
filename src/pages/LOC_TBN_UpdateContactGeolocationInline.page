@@ -1,0 +1,29 @@
+<apex:page standardcontroller="Contact" extensions="LOC_TBN_UpdateContactGeolocationInline">
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="/soap/ajax/20.0/connection.js"></script>
+    <script>
+    var result;
+    if('{!strAddress}' != '')
+    {    
+        geocoder = new google.maps.Geocoder();
+        sforce.connection.sessionId = '{!$Api.Session_ID}'; 
+        
+        
+            var objContact = new sforce.SObject("Contact");
+            
+            objContact.Id = '{!strRecId}';
+            
+            geocoder.geocode( { 'address': '{!strAddress}' }, function(results, status) 
+            {
+                if (status == google.maps.GeocoderStatus.OK) 
+                {
+                    objContact.LOC_Latitude_x__c = results[0].geometry.location.lat();
+                    objContact.LOC_Longitude_x__c = results[0].geometry.location.lng();
+                    result = sforce.connection.update([objContact]);
+                }
+                redirectToDetail();
+            });
+    }   
+    </script>
+</apex:page>

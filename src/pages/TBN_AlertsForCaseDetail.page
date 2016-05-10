@@ -1,0 +1,7 @@
+<apex:page controller="TBN_AlertsForCaseDetail" readOnly="true">
+	<ul>
+		<apex:repeat value="{!setAlertMessages}" var="alert">
+			<li>{!alert}</li> 			
+		</apex:repeat>
+	</ul>		
+</apex:page>

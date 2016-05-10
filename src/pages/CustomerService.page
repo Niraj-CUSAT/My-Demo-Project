@@ -1,0 +1,509 @@
+<apex:page controller="CustomerServiceController"  action="{!execute}" title="Technical Support">  
+	<apex:outputPanel id="errorMessage">
+		<apex:messages style="color:red;size:5" />
+	</apex:outputPanel>
+    <style>
+        .smallText   
+        {
+            font-size: 12px;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            valign:middle;
+        }
+        
+        .listheader
+        {
+            font-size: 11px;
+            font-weight: bold;
+            font-family: 'Arial', 'Helvetica', sans-serif; 
+            background-color: #E3F3FF;
+            height:25px;
+            vertical-align:middle;
+            margin:13px; 
+            border:1;
+        }       
+        .smallCaption
+        {
+            font-size: 11px;
+            font-weight: bold;
+        }
+    
+        
+    </style>
+    <script>
+    	 
+        function openWindow(id, searchId, paramId)
+        {
+            if(searchId !=null && searchId !=''){
+                searchId = searchId.substring(0,15);
+                id +='&'+paramId+'='+searchId;
+            }
+            window.open('/' + id);
+            return false;
+        }
+        
+        function openWindowLocation(id, searchId, paramId)
+        {
+            if(searchId !=null && searchId !=''){
+                searchId = searchId.substring(0,15);
+                id +='&'+paramId+'='+searchId;
+            }
+            window.location = '/' + id;
+            return false;
+        }
+        
+         function openPopUpWindow(id, searchId, paramId)
+        {
+            if(searchId !=null && searchId !=''){
+                searchId = searchId.substring(0,15);
+                id +='&'+paramId+'='+searchId;
+            }
+            window.open( id,'WarrantyInfo','height=700,width=800,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');
+            return false;
+        }
+        
+        function submitFormWithEnter(e,cmdHiddenId)  
+		{  
+		   var keycode;  
+		   if (window.event)  
+		   {  
+		      keycode = window.event.keyCode;  
+		   }  
+		   else if (e)  
+		   {  
+		      keycode = e.which;  
+		   }  
+		   else  
+		   {  
+		      return true;  
+		   }  
+		  
+		   if (keycode == 13)  
+		   {  
+		      //alert('Hello...' + cmdHiddenId);
+		      document.getElementById(document.getElementById(cmdHiddenId).value).click();  
+		      return false;  
+		   }  
+		   else  
+		   {  
+		      return true;  
+		   }  
+		}  
+        
+    </script>
+    <apex:sectionHeader title="Technical Support"/>
+    <apex:form >
+        <apex:pageBlock title="" mode="detail">
+        	<apex:pageBlockButtons location="Top">
+        		<apex:commandButton value="  Service Provider "  action="{!callServiceProviderPage}"></apex:commandButton>
+        	
+        	</apex:pageBlockButtons>
+                        
+            <table width="100%">
+            	<tr>
+                 <td><apex:outputLabel ></apex:outputLabel></td>
+                 <td><apex:outputText styleClass="smallCaption" value="Asset Serial Number" id="assetSerialNumberId"/></td> 
+                 <td><apex:outputText styleClass="smallCaption" value="Owner Full Name" id="ownerLastNameId"/></td>
+                 <td><apex:outputText styleClass="smallCaption" value="Contact Phone" id="contactPhoneId"/></td>
+                 <td><apex:outputText styleClass="smallCaption" value="Case Number" id="caseNumberId"/></td>
+                 <td><apex:outputText styleClass="smallCaption" value="Install Street" /></td>
+                 <td><apex:outputText styleClass="smallCaption" value="Install City" /></td>
+                 <td><apex:outputText styleClass="smallCaption" value="Install State" /></td>
+                 <td><apex:outputLabel ><b><apex:actionStatus id="assetSearchStatus" 
+                       startText=" (Searching...)" 
+                       stopText=" "/></b> 
+                </apex:outputLabel></td>
+                </tr>
+                <tr>
+                 <td align="center"><apex:commandButton value="  Search"  style="background:white" status="assetSearchStatus" action="{!SearchAssets}" rerender="panelMain,errorMessage,assetInformation"/></td>
+                 <td><apex:inputText size="13" value="{!searchAssetSerialNumber}" id="txtAssetNumber" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:inputText size="13" value="{!searchOwnerLastName}" id="txtOwnerLastName" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:inputText size="13" value="{!searchContactPhone}" id="txtContactPhone" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:inputText size="13" value="{!searchCaseNumber}" id="txtCaseNumber" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:inputText size="13" value="{!searchInstallStreet}" id="txtInstallStreet" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:inputText size="13" value="{!searchInstallCity}" id="txtInstallCity" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:inputText size="13" value="{!searchInstallState}"  id="txtInstallState" onKeyPress="return submitFormWithEnter(event,'cmdSearchAssetId')"/></td>
+                 <td><apex:commandButton id="cmdSearchAsset" value="  Search  "  style="background:white" status="assetSearchStatus" action="{!SearchAssets}" rerender="panelMain,errorMessage,assetInformation"/></td>
+                </tr>
+               </table> 
+               <input type="hidden" id="cmdSearchAssetId" value="{!$Component.cmdSearchAsset}"/>
+                 
+             <apex:pageBlockSection columns="1" id="panelMain">
+                <apex:outputPanel id="panelAssetList">
+                    <table width="98%" border="0">
+                        <tr class="listheader">
+                            <td width="10%">Serial Number</td>
+                            <td width="15%">Model Number</td>
+                            <td width="15%">Owner Full Name</td>
+                            <td width="10%">Owner Phone</td>
+                            <td width="25%">Owner Street Address</td> 
+                            <td width="15%">Account/Distributor</td>
+                         </tr>
+                    </table>
+                        
+                    <div class="over" style="background-color: #ffffff; border-right: 1px solid #d3d3d3; border-left: 1px solid #d3d3d3; height: 150px; overflow-y: scroll;">
+                            <table width="100%" border="0" class="tableClass">
+                                <apex:repeat value="{!pageAssets}" var="asset" id="theRepeat">
+                                    <tr class="odd">
+                                        <td width="10%">
+                                            <apex:outputpanel id="counter">
+                                                <a href="#" onclick="return false"><apex:outputText value="{!asset.Name}" /></a>
+                                                <apex:actionSupport action="{!selectAsset}" event="onclick" rerender="assetInformation">
+                                                    <apex:param name="Id" assignTo="{!selectedAssetNumber}" value="{!asset.Name}"/>
+                                                </apex:actionSupport>
+                                            </apex:outputpanel>
+                                        </td>
+                                        <td width="15%"><apex:outputText value="{!asset.Product2.ProductCode}"/></td>
+                                        <td width="15%"><apex:outputText value="{!IF((asset.AssetContactJunction__r.size >0) ,asset.AssetContactJunction__r[0].contact__r.Name,'')}"/></td>
+                                        <td width="10%"><apex:outputText value="{!IF((asset.AssetContactJunction__r.size >0) ,asset.AssetContactJunction__r[0].Contact__r.Phone,'')}"/></td>
+                                        <td width="25%"><apex:outputText value="{!IF((asset.AssetContactJunction__r.size >0) ,asset.AssetContactJunction__r[0].Contact_Mailing_Address_del__c,'')}"/></td>
+                                        <td width="15%"><a href="#" onclick="javascript:return openWindow('{!asset.Account.Id}','','')"><apex:outputText value="{!asset.account.Name}"/></a></td>
+                                     </tr>
+                                    
+                                </apex:repeat>  
+                                
+                            </table> 
+                            
+                        <apex:outputPanel rendered="{!IF(TotalAssets=0,true,false)}">No Results found. Please search again</apex:outputPanel>
+                    </div>
+                    <table style="width:100%">
+                    	<tr>
+                    		<td style="width:50%">
+                    			<font size="1pt">Page #:&nbsp;<apex:outputLabel value="{!PageNumber}"/>&nbsp;out of&nbsp;<apex:outputLabel value="{!totalPageNumber}"/>&nbsp;&nbsp;&nbsp;&nbsp;</font>
+								<apex:commandButton value="Previous" action="{!previousBtnClick}" disabled="{!previousButtonEnabled}" reRender="panelMain"></apex:commandButton>
+								<apex:commandButton value="Next" action="{!nextBtnClick}" reRender="panelMain" disabled="{!nextButtonDisabled}" ></apex:commandButton>
+                    		</td>
+                    		<td style="width:50%" align="right">
+                    			 <apex:outputPanel rendered="{!IF(TotalAssets > 0 ,true,false)}">Total number of records searched : {!TotalAssets}</apex:outputPanel>
+                    		</td>
+                    	</tr>
+                    </table>
+                   
+					
+					
+                </apex:outputPanel> 
+             </apex:pageBlockSection> 
+             <br/>
+             
+             <apex:outputPanel id="assetInformation">
+             
+             <apex:outputPanel id="sectionSelectedAsset1" rendered="{!IF(TotalAssets == 0,true,false)}">
+             
+	             <apex:PageBlock >
+		                <apex:pageBlockButtons location="top">
+			             	<apex:commandButton id="NewAsset1" value="New Asset" action="{!newAsset}"/>
+			             </apex:pageBlockButtons>
+			     </apex:PageBlock>
+			     	
+             </apex:outputPanel>
+             
+             <apex:outputPanel id="sectionSelectedAsset" rendered="{!IF(ISNULL(selectedAsset),false,true)}">
+                <apex:PageBlock title="Asset Detail">
+	                <apex:pageBlockButtons location="top">
+		             	<apex:commandButton id="editAsset" value="Edit Asset" action="{!editAsset}"/>
+		                <apex:commandButton id="newAsset" value="New Asset" action="{!newAsset}"/>
+		                <apex:commandButton id="WarrantyInfo" value="Warranty Info" onclick="javascript:return openPopUpWindow('http://warranty.hotwater.com/sf_ada/standalonegrid.aspx?sn={!selectedAsset.Name}','','')"/>
+		            </apex:pageBlockButtons>    
+	      <apex:pageBlockSection title="" showHeader="false" columns="3" >
+            	
+            	<apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Serial Number" />
+            		<apex:commandLink onclick="javascript:return openWindow('{!selectedAsset.Id}','','')" value="{!selectedAsset.Name}"/>
+                </apex:pageblocksectionitem>
+                           	
+            	<apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Status" />
+              		<apex:outputLabel value="{!selectedAsset.Status}"  />
+                </apex:pageblocksectionitem>	
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Account" />
+              		<apex:outputLabel value="{!selectedAsset.Account__c}"  />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Model Number" />
+              		<apex:outputLabel value="{!selectedAsset.Model_Number__c}"  />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Product" />
+            		<apex:commandLink onclick="javascript:return openWindow('{!selectedAsset.Product2.Id}','','')" value="{!selectedAsset.ProductName__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Labor Warranty Expiration" />
+            		<apex:outputLabel value="{!MONTH(selectedAsset.Labor_Warranty_Expiration__c)}/{!DAY(selectedAsset.Labor_Warranty_Expiration__c)}/{!YEAR(selectedAsset.Labor_Warranty_Expiration__c)}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Replacement Unit Name" />
+            		<apex:commandLink onclick="javascript:return openWindow('{!selectedAsset.Replacement__c}','','')" value="{!selectedAsset.Replacement_Unit_Name__c}"/>
+              	</apex:pageblocksectionitem>
+               
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Product Family"/>
+              		<apex:outputLabel value="{!selectedAsset.Product_Family_New__c}"  />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Tank Warranty Expiration" />
+            		<apex:outputLabel value="{!MONTH(selectedAsset.Tank_Warranty_Expiration__c)}/{!DAY(selectedAsset.Tank_Warranty_Expiration__c)}/{!YEAR(selectedAsset.Tank_Warranty_Expiration__c)}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Manufacture Date" />
+            		<apex:outputLabel value="{!MONTH(selectedAsset.Manufacture_Date__c)}/{!DAY(selectedAsset.Manufacture_Date__c)}/{!YEAR(selectedAsset.Manufacture_Date__c)}" />
+              	</apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Purchase Date" />
+            		<apex:outputLabel value="{!MONTH(selectedAsset.PurchaseDate)}/{!DAY(selectedAsset.PurchaseDate)}/{!YEAR(selectedAsset.PurchaseDate)}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Parts Warranty Expiration" />
+            		<apex:outputLabel value="{!MONTH(selectedAsset.Parts_Warranty_Expiration__c)}/{!DAY(selectedAsset.Parts_Warranty_Expiration__c)}/{!YEAR(selectedAsset.Parts_Warranty_Expiration__c)}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Void Reason" />
+              		<apex:outputLabel value="{!selectedAsset.Void_Reason__c}"  />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Version" />
+              		<apex:outputLabel value="{!selectedAsset.Version__c}"  />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="" />
+            		<apex:outputLabel value="" />
+                </apex:pageblocksectionitem>
+                
+            </apex:pageBlockSection>
+	              
+	               
+             </apex:PageBlock>	
+             </apex:outputPanel>
+             
+             <br/>
+             <br/>
+             <apex:outputPanel id="assetRegistration" rendered="{!IF(ISNULL(selectedAsset),false,true)}">
+                <apex:PageBlock title="Registration Details" >
+	                <apex:pageBlockButtons location="top">
+		             	<apex:commandButton id="editContact" value="Edit Registration" action="{!editOwner}"/>
+		            </apex:pageBlockButtons> 
+		     	        	
+	           <apex:pageBlockSection title="" showHeader="false" columns="3" >
+            	
+            	<apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Owner First Name" />
+              		<apex:outputLabel value="{!contactOwner.Contact__r.FirstName}" />
+                </apex:pageblocksectionitem>
+                
+                            	
+            	<apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Install Street" />
+              		<apex:outputLabel value="{!selectedAsset.Install_Street__c}" />
+                </apex:pageblocksectionitem>	
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Install Date" />
+              		<apex:outputLabel value="{!MONTH(selectedAsset.InstallDate)}/{!DAY(selectedAsset.InstallDate)}/{!YEAR(selectedAsset.InstallDate)}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Owner Last Name" />
+              		<apex:outputLabel value="{!contactOwner.Contact__r.lastName}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Install City" />
+              		<apex:outputLabel value="{!selectedAsset.Install_City__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Physical Location" />
+              		<apex:outputLabel value="{!selectedAsset.Physical_Location__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Owner Phone" />
+              		<apex:outputLabel value="{!contactOwner.Contact__r.Phone}" />
+                </apex:pageblocksectionitem>
+                
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Install State" />
+              		<apex:outputLabel value="{!selectedAsset.Install_State__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Installation type" />
+              		<apex:outputLabel value="{!selectedAsset.Installation_Type__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Owner Email" />
+              		<apex:outputLabel value="{!contactOwner.Contact__r.Email}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Install Postal Code" />
+              		<apex:outputLabel value="{!selectedAsset.Install_Postal_Code__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Registration Method" />
+              		<apex:outputLabel value="{!selectedAsset.Registration_Method__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Pop Received" />
+              		<apex:outputLabel value="{!selectedAsset.POP_Received__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="InstallCountry" />
+              		<apex:outputLabel value="{!selectedAsset.Install_Country__c}" />
+                </apex:pageblocksectionitem>
+                
+                <apex:pageblocksectionitem dataStyle="width:50px;" labelStyle="width:50px">
+            		<apex:outputLabel value="Professionaly Installed" />
+              		<apex:outputLabel value="{!selectedAsset.Professionally_Installed__c}" />
+                </apex:pageblocksectionitem>
+                
+            </apex:pageBlockSection>
+	               
+             </apex:PageBlock>	
+             </apex:outputPanel>
+             <br/><br/>
+             
+            <apex:outputPanel id="contactSection" rendered="{!IF(ISNULL(selectedAsset),false,true)}">
+                <apex:PageBlock >
+	                <apex:pageBlockButtons location="top">
+		             	<apex:commandButton id="addContact" value="Lookup Contact" action="{!addContact}"/>
+		               <apex:commandButton id="newContact" value="Create a Contact" onclick="javascript:return openWindowLocation('setup/ui/recordtypeselect.jsp?ent=Contact&retURL=%2Fapex%2FcustomerService%3FassetId%3D{!selectedAsset.Id}&save_new_url=/003/e%3FsaveURL%3D%2Fapex%2FcustomerService%3Fsource%3Dcontact%2526assetId%3D{!selectedAsset.Id}%26retURL=%2Fapex%2FCustomerService%3FassetId={!selectedAsset.Id}&accid={!selectedAsset.AccountId}','','')"/>
+		            </apex:pageBlockButtons> 
+		           <apex:pageBlockSection columns="1"  title="Contact Information" rendered="true" collapsible="false"> 
+		              <apex:pageBlockTable value="{!contList}" var="contact" >
+								<apex:column headerValue="Action"  >
+									<apex:outputLink target="_blank" value="/setup/ui/recordtypeselect.jsp?ent=Case&retURL=%2Fapex%2FcustomerService%3FassetId%3D{!selectedAsset.Id}&save_new_url=/500/e?retURL=%2Fapex%2FCustomerService%3FassetId={!selectedAsset.Id}&def_asset_id={!selectedAsset.Id}&def_account_id={!selectedAsset.AccountId}&def_contact_id={!contact.contact__r.Id}&def_product_id={!selectedAsset.Product2.Id}&{!CreateCaseLink}">Create Case</apex:outputLink>
+								</apex:column>
+								<apex:column headerValue="Contact Name"  >
+									<a href="#" onclick="javascript:return openWindow('{!contact.Contact__r.Id}','','')"><apex:outputLabel value="{!contact.Contact__r.Name}" /></a> 
+								</apex:column>
+								<apex:column headerValue="Type"  >
+									<apex:outputLabel value="{!contact.Contact__r.Contact_Type__c}" />
+								</apex:column>
+								<apex:column headerValue="Phone"  >
+									<apex:outputLabel value="{!contact.Contact__r.Phone}" />
+								</apex:column>
+								<apex:column headerValue="Mobile"  >
+									<apex:outputLabel value="{!contact.Contact__r.MobilePhone}" />
+								</apex:column>
+								<apex:column headerValue="Email"  >
+									<apex:outputLabel value="{!contact.Contact__r.Email}" />  
+								</apex:column>
+				 	 </apex:pageBlockTable> 
+	             </apex:pageBlockSection>  
+	               
+				</apex:PageBlock>	
+			</apex:outputPanel>
+             
+               <br/><br/>
+             <apex:outputPanel id="caseSection" rendered="{!IF(ISNULL(selectedAsset),false,true)}">
+                <apex:PageBlock >
+	                
+		           <apex:pageBlockSection title="Case Information" columns="1"  rendered="true" collapsible="false"> 
+		             <apex:pageBlockTable value="{!selectedCaseList}" var="case" >
+							<apex:column headerValue="Case Number"  >
+								<a href="#" onclick="javascript:return openWindow('{!case.Id}','','')"><apex:outputLabel value="{!case.CaseNumber}" /></a>
+							</apex:column>
+							<apex:column headerValue="Contact Name"  >
+								<apex:outputLabel value="{!case.Contact.Name}" />
+							</apex:column>
+							<apex:column headerValue="Case Status"  >
+								<apex:outputLabel value="{!case.Status}" />
+							</apex:column>
+							<apex:column headerValue="Subject"  >
+								<apex:outputLabel value="{!case.Subject}" />
+							</apex:column>
+							<apex:column headerValue="Created Date"  >
+								<apex:outputField value="{!case.CreatedDate}"/>
+								
+							</apex:column>
+							<apex:column headerValue="Solution Code"  >
+								<apex:outputLabel value="{!case.Solution_Code__c}" />
+							</apex:column>
+							<apex:column headerValue="Created By"  >
+								<apex:outputLabel value="{!case.CreatedBy.Name}" />
+							</apex:column>
+					   </apex:pageBlockTable>  
+	             </apex:pageBlockSection>  
+	               
+				</apex:PageBlock>	
+			</apex:outputPanel> 
+			  <br/><br/>
+			<apex:outputPanel id="caseCommentSection" rendered="{!IF(ISNULL(selectedAsset),false,true)}">
+                <apex:PageBlock >
+	                
+		           <apex:pageBlockSection title="Case Comments" columns="1"  rendered="true" collapsible="false"> 
+		             <apex:pageBlockTable value="{!selectedCaseCommentList}" var="CaseComment" >
+							<apex:column headerValue="Case Comments" width="15%" >
+								<a href="#" onclick="javascript:return openWindow('{!CaseComment.Parent.Id}','','')"><apex:outputLabel value="{!CaseComment.Parent.CaseNumber}" /></a>
+							</apex:column>
+							<apex:column headerValue="Created Date"  width="15%">
+								<apex:outputField value="{!CaseComment.CreatedDate}"/>
+																	
+							</apex:column>
+							<apex:column headerValue="CreatedBy"  width="20%">
+								<apex:outputLabel value="{!CaseComment.createdBy.Name}" />
+							</apex:column>
+							<apex:column headerValue="Comment"  width="50%">
+								<apex:outputLabel value="{!CaseComment.CommentBody}" />
+							</apex:column>
+							
+					   </apex:pageBlockTable>  
+	             </apex:pageBlockSection>  
+	               
+				</apex:PageBlock>	
+			</apex:outputPanel> 
+			  <br/><br/>
+			<apex:outputPanel id="caseActionSection" rendered="{!IF(ISNULL(selectedAsset),false,true)}">
+                <apex:PageBlock >
+	                
+		           <apex:pageBlockSection title="Case Actions" columns="1"  rendered="true" collapsible="false"> 
+		             <apex:pageBlockTable value="{!selectedCaseActionList}" var="CaseAction" >
+							<apex:column headerValue="Case Action"  >
+								<apex:outputLink value="/{!CaseAction.Id}/e?parent_id={!CaseAction.Case__r.Id}&retURL=/apex/CustomerService?assetId={!CaseAction.Case__r.Asset.Id}">Edit</apex:outputLink>
+								&nbsp;&nbsp;<a href="#" onclick="javascript:return openWindow('{!CaseAction.Id}','','')"><apex:outputLabel value="{!CaseAction.Name}" /></a>
+							</apex:column>
+							<apex:column headerValue="Case Number"  >
+								<a href="#" onclick="javascript:return openWindow('{!CaseAction.Case__r.Id}','','')"><apex:outputLabel value="{!CaseAction.Case__r.CaseNumber}" /></a>
+							</apex:column>
+							<apex:column headerValue="Type"  >
+								<apex:outputLabel value="{!CaseAction.RecordType.Name}" />
+							</apex:column>
+							<apex:column headerValue="Product"  >
+								<apex:outputLabel value="{!CaseAction.Case__r.Asset.Product2.Name}" />
+							</apex:column>
+							<apex:column headerValue="Model Number"  >
+								<apex:outputLabel value="{!CaseAction.Case__r.Asset.Product2.ProductCode}" />
+							</apex:column>
+							<apex:column headerValue="Created Date"  >
+							    <apex:outputField value="{!CaseAction.CreatedDate}"/>
+																	
+							</apex:column>
+							<apex:column headerValue="Created By"  >
+								<apex:outputLabel value="{!CaseAction.CreatedBy.Name}" />
+							</apex:column>
+					   </apex:pageBlockTable>  
+	             </apex:pageBlockSection>  
+	               
+				</apex:PageBlock>	
+			</apex:outputPanel> 
+			</apex:outputPanel>
+        </apex:pageBlock>   
+    </apex:form>
+</apex:page>

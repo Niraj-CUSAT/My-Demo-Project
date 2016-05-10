@@ -1,0 +1,29 @@
+<apex:page standardcontroller="User" extensions="LOC_TBN_UpdateUserGeolocationInline">
+
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="/soap/ajax/20.0/connection.js"></script>
+	<script>
+	var result;
+	if('{!strAddress}' != '')
+	{    
+		geocoder = new google.maps.Geocoder();
+		sforce.connection.sessionId = '{!$Api.Session_ID}'; 
+		
+		
+			var objUser= new sforce.SObject("User");
+			
+			objUser.Id = '{!strRecId}';
+			
+			geocoder.geocode( { 'address': '{!strAddress}' }, function(results, status) 
+			{
+				if (status == google.maps.GeocoderStatus.OK) 
+				{
+					objUser.LOC_Latitude__c = results[0].geometry.location.lat();
+					objUser.LOC_Longitude__c = results[0].geometry.location.lng();
+					result = sforce.connection.update([objUser]);
+				}
+				redirectToDetail();
+			}); 
+	}	
+	</script>
+</apex:page>

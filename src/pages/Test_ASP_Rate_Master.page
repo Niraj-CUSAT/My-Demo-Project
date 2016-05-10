@@ -1,0 +1,55 @@
+<apex:page standardController="ASP__c" extensions="TestRateMaster" >
+<center>
+<apex:form >
+<apex:pageBlock >
+<apex:pageBlockSection title="Product Category" >
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Water Heater"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Water Treatment"/>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Product Family" >
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Instant"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Storage"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Gas"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="RO"/>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Case Types" >
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Service
+"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Free Installation
+"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="PM Service"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Dealer Stock"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Contract Request"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Field Trail"/>
+
+
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Power of 1 Applicability" >
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Service
+"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Free Installation
+"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="PM Service"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Dealer Stock"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Contract Request"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Field Trail"/>
+
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Geographical Category"  >
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Local"/>
+<apex:inputCheckbox value="{!pro_cat_WH}" label="Upcountry"/>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Fixed Compensation" >
+<apex:inputtext value="{!pro_cat_WH}" label="Fixed Compensation"/>
+<apex:inputtext value="{!pro_cat_WH}" label="Number of Calls applicable (Up to)"/>
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+ </apex:form>      
+ </center>
+</apex:page>

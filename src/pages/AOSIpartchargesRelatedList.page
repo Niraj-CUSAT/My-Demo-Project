@@ -1,0 +1,116 @@
+<apex:page StandardController="Asset" extensions="AOSIPartChargesRelatedList" showChat="false">
+   <head>
+        <apex:includeScript value="{!$Resource.jqueryken}"/>
+        <apex:includeScript value="{!$Resource.kendoui}"/>
+        <apex:includeScript value="{!$Resource.KendoJS}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS1}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS2}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS3}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS4}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS5}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS6}"/>
+        <apex:stylesheet value="{!$Resource.Angularjs}"/>
+        <apex:stylesheet value="{!$Resource.JS}"/>
+   </head>  
+    <script>   
+            $(document).ready(function () {
+                var gridData =({!strJsonData});
+                console.log(gridData);
+                var dataSource = new kendo.data.DataSource({
+                                   
+                autoSync: true,                        
+                batch: true, 
+                pageSize:20,  
+                transport: {  
+                    read: function(e) {
+                        dataSource.sync();
+                        e.success(gridData);
+                    }                                                         
+                }                           
+                });
+                                  
+                gridOverview = $("#serviceCharges").kendoGrid ({
+                    dataSource: dataSource, 
+                    pageSize: 20,
+                    editable:false,           
+                    sortable: true,
+                    scrollable: false,
+                    pageable: {
+                                refresh: true,
+                                pageSizes: true,                           
+                              },
+                    columns: [               
+                            {
+                                field: "name",
+                                title: "Service charges Name",template :"#=getActionService(serviceChargesId,name)#", width: "6%",                                               
+                            },               
+                            {
+                            
+                                field: "caseNumber",
+                                title: "Case Number",template :"#=getAction(caseId,caseNumber)#", width: "6%",                                               
+                            },        
+                            {
+                                field: "type   ",
+                                title: "Type",
+                            },                    
+                            {
+                                field: "chargable",
+                                title: "Chargeable",                     
+                            },                    
+                            {
+                                field: "spares",
+                                title: "Spares",template :"#=getActionSpare(spareId,spares)#", width: "6%",                     
+                            },
+                            {
+                                field: "partCharges",
+                                title: "Part Charges",                     
+                            },
+                            {
+                                field: "accesoryCharges",
+                                title: "Accessory Charges",                     
+                            },
+                            {
+                                field: "mrpCharges",
+                                title: "MRP Charges",                     
+                            },
+                            {
+                                field: "finalCharges",
+                                title: "Final Charges",                     
+                            },
+                           
+                            ],
+                });                                                                       
+            });
+            function getAction(caseId,caseNumber){ 
+                console.log(caseId);
+                return "<a  onClick = 'viewCase(\""+caseId+"\");' title='Click to View Case Details' style='cursor:pointer' target='_blank'><u>"+caseNumber+"</u></a>";
+            }
+            function getActionService(serviceChargesId,name){
+               console.log(serviceChargesId);
+                return "<a  onClick = 'viewServiceCharge(\""+serviceChargesId+"\");' title='Click to View Service Charge Details' style='cursor:pointer' target='_blank'><u>"+name+"</u></a>";
+            }
+            
+            function getActionSpare(spareId,spares){
+               console.log(spareId);
+               return "<a  onClick = 'viewServiceCharge(\""+spareId+"\");' title='Click to View part Details' style='cursor:pointer' target='_blank'><u>"+spares+"</u></a>";
+            }
+            
+            function viewCase(caseId){
+               window.open('/'+caseId);
+            }
+            
+            function viewSpare(spareId){
+               window.open('/'+spareId);
+            }
+            
+            function viewServiceCharge(serviceChargesId){
+               window.open('/'+serviceChargesId);
+            }
+    </script> 
+ <apex:form >
+    <apex:pageBlock title="Service Charges Details">
+        <div id="serviceCharges"/>
+    </apex:pageBlock>
+ </apex:form>
+</apex:page>

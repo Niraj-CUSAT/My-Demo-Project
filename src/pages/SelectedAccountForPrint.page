@@ -1,0 +1,44 @@
+<apex:page controller="GoogleMapDrivingDistanceController" sidebar="false" showHeader="false" title="Selected Account Preview">
+
+	 <style> body { font-family: Arial Unicode MS; } </style>
+ 	<form>
+		 <table border="0" width="100%">
+	 		<tr>
+		 			<td>
+		 				 
+		 				<center><input type="button" value=" Close " onClick="window.close();" /></center>
+		 			</td>
+		 		
+		 		</tr>
+		</table>
+	   <table border="0" width="100%">
+	  		
+		 		<tr>
+		 			<th align="left">
+		 			
+		 				Selected Service Provider/Distributor Addresses<br />
+		 			</th>
+		 		
+		 		
+	 			</tr>
+		 		<ul>
+			 		 <apex:repeat value="{!listToPrint}" var="listPrint" id="theRepeat">
+			 			<tr>
+			 				<td>
+			 					<li>{!listPrint.accutObj.Name},
+			 				
+			 				     {!listPrint.address},Phone : {!listPrint.accutObj.phone},Fax : {!listPrint.accutObj.fax} 
+			 				     
+			 				 	 </li>		
+			 				</td>
+			 			
+			 			</tr>
+			 		
+			 		</apex:repeat>
+		 		 </ul>
+	 	</table>
+	 
+	 </form>
+ 	<script>window.print()</script>
+  
+</apex:page>
