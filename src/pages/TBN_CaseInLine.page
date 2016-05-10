@@ -1,0 +1,62 @@
+<apex:page standardController="Case" extensions="TBN_CaseInLine" sidebar="false" showheader="false">
+    <apex:form > 
+       <apex:actionfunction name="getAlertMessages" action="{!getAlertMessages}" status="processingImg" rerender="alertsPanel, processingImg" oncomplete="getAlertMessagesCase();">
+       <apex:param name="SObject" value="Account" assignTo="{!strObjectType}"/> 
+        </apex:actionfunction> <!--
+       <apex:actionfunction name="getAlertMessagesContact" action="{!getAlertMessages}" status="processingImg" rerender="alertsPanel, processingImg" oncomplete="getAlertMessagesAsset();">
+       <apex:param name="SObject" value="Contact" assignTo="{!strObjectType}"/> 
+        </apex:actionfunction>
+        <apex:actionfunction name="getAlertMessagesAsset" action="{!getAlertMessages}" status="processingImg" rerender="alertsPanel, processingImg" oncomplete="getAlertMessagesProduct();">
+            <apex:param name="SObject" value="Asset" assignTo="{!strObjectType}"/> 
+        </apex:actionfunction>
+        <apex:actionfunction name="getAlertMessagesProduct" action="{!getAlertMessages}" status="processingImg" rerender="alertsPanel, processingImg" oncomplete="getAlertMessagesCaseAction();">
+            <apex:param name="SObject" value="Product" assignTo="{!strObjectType}"/> 
+        </apex:actionfunction> 
+        <apex:actionfunction name="getAlertMessagesCaseAction" action="{!getAlertMessages}" status="processingImg" rerender="alertsPanel, processingImg" oncomplete="getAlertMessagesCase();">
+            <apex:param name="SObject" value="CaseAction" assignTo="{!strObjectType}"/> 
+        </apex:actionfunction> -->
+        <apex:actionfunction name="getAlertMessagesCase" action="{!getAlertMessages}" status="processingImg" rerender="alertsPanel, processingImg">
+            <apex:param name="SObject" value="Case" assignTo="{!strObjectType}"/> 
+        </apex:actionfunction>
+    </apex:form>  
+    
+    <!-- Start : Alerts Section -->
+    <apex:outputPanel id="alertsPanel">
+        <div border="1" style="background-color: rgba(255, 255, 51, 1.25);border-radius: 25px;font-weight:bold;">
+            <ul>
+                <apex:repeat value="{!setAlertMessages}" var="alert">
+                    <li>{!alert}</li><br/>          
+                </apex:repeat>
+            </ul> 
+        </div>
+    </apex:outputPanel>
+    <!-- End : Alerts Section -->
+    
+  
+    <!-- Start : ActionStatus Part -->
+     <apex:actionstatus id="processingImg" startText="Loading...">
+        <apex:facet name="start">
+            <div id="salesforceSource_blurybackground" style="z-index: 9999; position: absolute; left: 1px; top: 1px; width: 100%; height: 100%; text-align: center; vertical-align: middle; background-color: #dcdcdc; opacity: 0.1; filter: alpha(opacity = 50)"></div>
+            <div id="ManageMembersViewport_loading" class="waitingSearchDiv" style="width: 100%; height: 80%; display: '';">
+                <div style="width: 144px; vertical-align: middle;" class="waitingHolder">
+                    <table align="center" valign="top" style="width: 100%; height: 30%">
+                        <tr align="center" valign="top" style="width: 100%; height: 30%">
+                            <td valign="top"><img class="waitingImage"
+                                src="/img/loading.gif" /><span class="waitingDescription">Loading alerts...</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="ManageMembersViewport_loading" class="waitingSearchDiv" style="width: 100%; height: 100%; display:'';" />
+            <script>
+                document.getElementById('ManageMembersViewport_loading').height = window.innerHeight * (3/4);
+            </script>
+        </apex:facet>
+        <apex:facet name="stop"></apex:facet>
+    </apex:actionstatus> 
+    <!-- Start : ActionStatus Part -->  
+    
+    <script type="text/javascript">
+        getAlertMessages();
+    </script>
+</apex:page>

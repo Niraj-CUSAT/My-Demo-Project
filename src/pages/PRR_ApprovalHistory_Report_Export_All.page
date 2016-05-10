@@ -1,0 +1,54 @@
+<!--File Name: PRR_ApprovalHistory_Report_Export_All
+    Created By:Dhriti Krishna Ghosh Moulick
+    Modified By:
+    Description:This Page is used to export PRR Approval History records
+ -->
+<apex:page controller="PRRApprovalHistory" contentType="application/vnd.ms-excel#PRR_ApprovalHistory_Report_Export_All.xls">
+	<apex:form > 
+		<apex:sectionHeader title="PRR Approval History"/>
+			<apex:pageBlock > 
+                <apex:pageBlockTable value="{!prrApprovalHistory}" var="PRRHistory">
+					<apex:column headerValue="PRR Name">
+						<apex:outputField value="{!PRRHistory.Name}"/>     
+					</apex:column>
+					<apex:column headerValue="Case Number">
+						<apex:outputField value="{!PRRHistory.AOSI_Case__r.CaseNumber}"/>     
+					</apex:column>
+					<apex:column headerValue="Case Open Date">
+						<apex:outputField value="{!PRRHistory.AOSI_Case__r.CreatedDate}"/>     
+					</apex:column>
+					<apex:column headerValue="GIN Date">
+						<apex:outputField value="{!PRRHistory.GIN_Date__c}"/>     
+					</apex:column>
+					<apex:column headerValue="Delivered Date">
+						<apex:outputField value="{!PRRHistory.Delivered_Date__c}"/>     
+					</apex:column>
+					<apex:column headerValue="Approval History Details">
+						<apex:pageBlockTable value="{!PRRHistory.processsteps}" var="pin" rendered="{!PRRHistory.processsteps.size>0}">
+							<apex:column headerValue="Assigned To">
+								<apex:outputField value="{!pin.OriginalActorId}"/>      
+							</apex:column>
+							<apex:column headerValue="Actual Approver">
+								<apex:outputField value="{!pin.ActorId}"/>      
+							</apex:column>
+							<apex:column headerValue="Status">
+								<apex:outputField value="{!pin.StepStatus}"/>      
+							</apex:column>
+							<apex:column headerValue="Created Date">
+								<apex:outputField value="{!pin.CreatedDate}"/>      
+							</apex:column>
+							<apex:column headerValue="Completed Date">
+								<apex:outputField value="{!pin.SystemModstamp}"/>      
+							</apex:column>
+							<apex:column headerValue="Comments">
+								<apex:outputField value="{!pin.Comments}"/>      
+							</apex:column>
+							<apex:column headerValue="Total Days">
+								<apex:outputField value="{!pin.ElapsedTimeInDays}"/>      
+							</apex:column>
+						</apex:pageBlockTable>  
+					</apex:column>
+				</apex:pageBlockTable>
+            </apex:pageBlock>
+    </apex:form>
+ </apex:page>

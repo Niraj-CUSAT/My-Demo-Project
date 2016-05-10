@@ -1,0 +1,99 @@
+<apex:page standardController="Contact" extensions="ISP_Customer_Ext" showHeader="false" standardStylesheets="false" id="pge">
+
+ <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+ <apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"/>
+ <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+ <style>
+     .control-label:after {
+          content:"*";color:red;
+    }
+    #deppicklistCategory select, #deppicklistModel select {
+      background-color: #fff;
+      background-image: none;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+      color: #555555;
+      display: block;
+      font-size: 14px;
+      height: 34px;
+      line-height: 1.42857;
+      padding: 6px 12px;
+      transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+      width: 100%;
+    }
+ </style>
+ <apex:form id="frm">
+ <apex:messages style="color:red;"></apex:messages>
+   <div class="container">
+        <div class="form-group">
+            <label>{!$ObjectType.Contact.fields.firstName.label}</label>
+            <apex:inputField value="{!contact.firstName}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">{!$ObjectType.Contact.fields.LastName.label}</label>
+            <apex:inputField value="{!contact.LastName}" styleClass="form-control" required="true"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">{!$ObjectType.Contact.fields.Mobile__c.label}</label>
+            <apex:inputField value="{!contact.Mobile__c}" styleClass="form-control" required="true"/>
+        </div>
+        <div class="form-group">
+            <label>{!$ObjectType.Contact.fields.email.label}</label>
+            <apex:inputField value="{!contact.email}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label >{!$ObjectType.Contact.fields.Company_Name__c.label}</label>
+            <apex:inputField value="{!contact.Company_Name__c}" styleClass="form-control"/>
+        </div>
+        
+         <div class="form-group">
+            <label >City</label>
+            <apex:inputField value="{!contact.MailingCity}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label >State</label>
+            <apex:inputField value="{!contact.MailingState}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label >Country</label>
+            <apex:inputField value="{!contact.MailingCountry}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label >PostalCode</label>
+            <apex:inputField value="{!contact.MailingPostalCode}" styleClass="form-control"/>
+        </div>
+        
+        
+        <!--<div class="form-group">
+            <label >{!$ObjectType.Contact.fields.Product_category__c.label}</label>
+            <apex:inputField value="{!contact.Product_category__c}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label >{!$ObjectType.Contact.fields.Brand_preferred__c.label}</label>
+            <apex:inputField value="{!contact.Preferred_Model__c}" styleClass="form-control"/>
+        </div>
+        <div class="form-group">
+            <label >{!$ObjectType.Contact.fields.Preferred_Model__c.label}</label>
+            <apex:inputField value="{!contact.Preferred_Model__c}" styleClass="form-control"/>
+        </div> -->
+        <apex:commandButton value="Save" action="{!save}" styleclass="btn btn-success btn-md"/>&nbsp;
+        <apex:commandButton value="Cancel" action="{!Cancel}" styleclass="btn btn-danger btn-md"/>
+   </div>  
+ </apex:form>
+ 
+ <!--
+     <apex:pageBlock >
+            <apex:inputField value="{!contact.name}"/>
+            <apex:inputField value="{!contact.Mobile__c}"/>
+            <apex:inputField value="{!contact.Email}"/>
+            <apex:inputField value="{!contact.Company_Name__c}"/>
+            <apex:inputField value="{!contact.Customer_Address__c}"/>
+            <apex:inputField value="{!contact.Product_category__c}"/>
+            <apex:inputField value="{!contact.Brand_preferred__c}"/>
+            <apex:inputField value="{!contact.Preferred_Model__c}"/>
+
+            
+        </apex:pageBlock>
+    -->
+</apex:page>

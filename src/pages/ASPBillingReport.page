@@ -1,0 +1,147 @@
+<apex:page controller="ASPBillingReport"  tabstyle="ASP__c">
+
+   <style type="text/css">
+        .myOtherTable { background-color:#FFFFE0;border-collapse:collapse;color:#000;font-size:12px; }
+        .myOtherTable th { background-color:rgb(158, 79, 165);color:#FFFFE0;width:50%;font-weight:bold; }<!-- #BDB76B -->
+        .myOtherTable td, .myOtherTable th { padding:5px;border:1; }
+        .myOtherTable td { font-family:Georgia, Garamond, serif; border-bottom:1px dotted #BDB76B; }
+    </style>
+    <apex:form >
+          
+        <apex:pageBlock id="pbNoRec" title="ASP Billing Report - {!TODAY()}" rendered="{!IF(Cases.size == 0 , true, false)}" >
+            <h1 style="color:red;"> NO RECORDS FOUND !!! </h1>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="pb" title="ASP Billing Report - {!TODAY()}" rendered="{!IF(Cases.size > 0 , true, false)}">
+   
+            <apex:pageBlockButtons >
+                <apex:commandbutton value="Export Excel" action="{!exportExcel}"/>                      
+            </apex:pageBlockButtons>
+            <table border="2" width="80%" class="myOtherTable"> 
+                <tr>
+                    <th width="10" bgcolor="#DCDCDC"> SL.No </th>
+                    <th width="15" bgcolor="#DCDCDC"> Type </th>
+                    <th width="15" bgcolor="#DCDCDC"> Resolution Time</th>
+                    <th width="15" bgcolor="#DCDCDC"> Rate</th>
+                    
+                    <th width="15" bgcolor="#DCDCDC"> Case Number</th>
+                    <th width="15" bgcolor="#DCDCDC"> Date/Time Opened</th>
+                    <th width="15" bgcolor="#DCDCDC"> Appointment Date</th>
+                 
+                    <th width="15" bgcolor="#DCDCDC"> Responded Time</th>
+                    <th width="15" bgcolor="#DCDCDC"> Assignment End Time</th>
+                    <th width="15" bgcolor="#DCDCDC"> Case Close Time(Manual Entry)</th>
+                    <th width="15" bgcolor="#DCDCDC"> Partial closed Date/Time </th>
+                    <th width="15" bgcolor="#DCDCDC"> Case Reason</th>
+                    <th width="15" bgcolor="#DCDCDC"> Customer Concern </th>
+                    <th width="15" bgcolor="#DCDCDC"> Status   </th>
+                 
+                    <th width="15" bgcolor="#DCDCDC"> Product</th>
+                    <th width="15" bgcolor="#DCDCDC"> Product Vertical</th> 
+                 
+                    <th width="15" bgcolor="#DCDCDC"> Serial Number</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Asset Purchase Date</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Asset Status</th> 
+                 
+                    <th width="15" bgcolor="#DCDCDC"> Contact Name(IND)</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Contact Address(IND)</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Mailing City</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Mailing State/Province</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Region</th>  
+                    <th width="15" bgcolor="#DCDCDC"> Contact Pin Code</th>
+                    <th width="15" bgcolor="#DCDCDC"> Contact Phone(IND)</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Resource</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Resource Number</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Resource Type</th> 
+                    <th width="15" bgcolor="#DCDCDC"> Account Name</th> 
+                </tr>
+                <apex:variable var="i" value="{!index+1}"/>
+                <apex:repeat value="{!Cases}" var="oCase" >
+                    <tr>
+                        <td>{!i}</td>
+                        <td><apex:outputText value="{!oCase.Reason + ' ' + oCase.AOSI_ASP_Class_Type__c}" /></td>
+                        <td> {!CEILING(oCase.AOSI_Resolution_Clock_Time__c)} Hour</td>
+                        <td>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[0]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[1]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[2]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[3]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[4]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[5]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[6]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Free Installation', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[7]}</apex:outputText>
+                        
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[8]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[9]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[10]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[11]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[12]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[13]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[14]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[15]}</apex:outputText>
+                            
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[16]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[17]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[18]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[19]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[20]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[21]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[22]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'PM Service', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[23]}</apex:outputText>
+                        
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[24]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[25]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[26]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Local', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[27]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c <= 6)}">{!aspRateList[28]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 6,  oCase.AOSI_Resolution_Clock_Time__c <= 24)}">{!aspRateList[29]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 24, oCase.AOSI_Resolution_Clock_Time__c <= 48)}">{!aspRateList[30]}</apex:outputText>
+                            <apex:outputText rendered="{!AND(oCase.Reason == 'Dealer Stock', oCase.AOSI_ASP_Class_Type__c == 'Upcountry', oCase.AOSI_Resolution_Clock_Time__c > 48)}">{!aspRateList[31]}</apex:outputText> 
+                        </td>
+                        
+                        <td>{!oCase.casenumber}</td>
+                        <td>{!oCase.CreatedDate}</td>
+                        <td>{!oCase.AOSI_Appointment_Date__c}</td>
+                        <td>{!oCase.Assignment_Start_Time__c}</td>
+                        <td>{!oCase.Assignment_End_Time__c}</td> 
+                        <td>{!oCase.AOSI_Case_Close_Time__c}</td> 
+                        <td>{!oCase.AOSI_Partial_closed_Date_Time__c}</td>
+                        <td>{!oCase.Reason}</td>
+                        <td>{!oCase.AOSI_Customer_Concern__c}</td>
+                        <td>{!oCase.Status}</td>
+                        <td>{!oCase.AOSIProduct__r.Name}</td>
+                        <td>{!oCase.AOSI_Product_Vertical__c}</td>
+                        <td>{!oCase.Asset.Name}</td>
+                        <td>{!oCase.AOSI_Asset_Purchase_Date__c}</td>
+                        <td>{!oCase.AOSI_Asset_Status__c}</td>
+                        <td>{!oCase.Contact_Name__c}</td>
+                        <td>{!oCase.Contact_Address__c}</td>
+                        <td>{!oCase.AOSI_Contact_Mailing_City__c}</td>
+                        <td>{!oCase.Contact_State__c}</td>
+                        <td>{!oCase.AOSI_Region_picklist__c}</td>
+                        <td>{!oCase.Contact_MailingPostalCode__c}</td>
+                        <td>{!oCase.Contact_Phone__c}</td>
+                        <td>{!oCase.Service_Engineer_Name__c}</td>
+                        <td>{!oCase.Service_Engineer_Phone__c}</td>
+                        <td>{!oCase.Service_Engineer__r.Type__c}</td>
+                        <td>{!oCase.Account.Name}</td>
+                    </tr>
+                   <apex:variable var="i" value="{!i+1}"/>
+                </apex:repeat>
+            </table>
+            <br/>
+            <apex:panelGrid columns="7">
+                <apex:commandButton status="fetchStatus" value="|<" rerender="pb" action="{!beginning}" disabled="{!prev}" title="First Page"/>
+                <apex:commandButton status="fetchStatus" value="<" rerender="pb" action="{!previous}" disabled="{!prev}" title="Previous Page"/>
+                <apex:commandButton status="fetchStatus" value=">" rerender="pb" action="{!next}" disabled="{!nxt}" title="Next Page"/>
+                <apex:commandButton status="fetchStatus" value=">|" rerender="pb" action="{!end}" disabled="{!nxt}" title="Last Page"/> 
+                <apex:outputPanel style="color:#4AA02C;font-weight:bold">
+                    <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
+                </apex:outputPanel>
+            </apex:panelGrid>
+            <br/>
+            <h2>Total Number of Records : {!totalCaseRecs}</h2>
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

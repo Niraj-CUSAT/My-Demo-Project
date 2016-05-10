@@ -1,0 +1,539 @@
+<!-- 
+@PageName       :   AOSI_GPS_CaseDetailWithResourceAndMap
+@CreatedDate    :   17-03-2016
+@Description    :   Display the selected open case with their resource and Map on this vf-page.
+-->
+<apex:page id="GPSPage" controller="AOSI_GPS_CaseDetailWithResourceAndMap" sidebar="false">
+    
+    <!-- Include script for 'Resource' -->
+    <apex:includeScript value="{!URLFOR($Resource.KendoGPS, 'kendoLibrary/jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.KendoGPS, 'kendoLibrary/kendo.all.min.js')}"/>
+    <apex:stylesheet value="{! URLFOR($Resource.KendoGPS, 'kendoLibrary/kendo.common-material.min.css')}"/>
+    <apex:stylesheet value="{! URLFOR($Resource.KendoGPS, 'kendoLibrary/kendo.material.min.css')}"/>
+    <!-- <link rel="stylesheet" href="//kendo.cdn.telerik.com/2016.1.226/styles/kendo.highcontrast.min.css" /> -->
+    <link rel="stylesheet" href="//kendo.cdn.telerik.com/2016.1.412/styles/kendo.material.min.css" />
+    <style>
+        .caseTable{
+            width: 100%;
+        }
+        
+        /***********/
+        .countResource{
+           color: #BD400F;
+        } 
+        
+    </style>
+    
+    <apex:form id="gpsFRM">
+        <apex:pageBlock tabstyle="Account">
+        
+            <!-- Selected Case Details Section -->
+            <div class="errBack">
+                 <input type="Button" name="Button" value="Back" onClick="goBack();" class="k-button aos-button back-button"/>
+                 <apex:pagemessages id="errorMSG" />   <!-- rendered="{! IF(isMSG == true,true,false)}" -->
+            </div>
+            
+            <apex:outputpanel rendered="{! IF(objSelectedCase != null, true, false)}">
+            <apex:actionfunction name="saveCaseWithRes" action="{! saveCaseWithResource}" rerender="errorMSG">      <!-- oncomplete="updateURLWithCaseId()" CaseTablePanel, resourceSec.    onComplete="makeResourceNoneEdit()" -->
+            </apex:actionFunction>
+            
+            <!-- Updating case with new Appointment date     oncomplete="getRefreshPageOnPopUpSave('{! objSelectedCase.Id}')"-->
+            <apex:actionfunction name="updateCase" action="{! saveCaseByPopDetails}" rerender="CaseTablePanel, errorMSG">
+                <apex:param name="appDate" value=""/>
+                <apex:param name="description" value=""/>
+                <apex:param name="resId" value=""/>
+            </apex:actionFunction>
+            
+            <apex:pageBlockSection Id="caseDetailSec" columns="2" title="Case Detail Section" collapsible="false">
+                
+                <!-- <apex:facet name="header">
+                    <font float="left">
+                        Case Detail Section
+                    </font>
+                    <a href="url" style="float:right;">link text</a>
+                </apex:facet> -->
+   
+<!--            Case details panel -->
+                <apex:outputpanel id="CaseTablePanel">
+                    
+                    <div class="message infoM3">
+                       <apex:outputpanel rendered="{! IF(intAvailableRes != 0, true,false)}" styleclass="countResource">
+                            <h2>Total number of resources available: {! intAvailableRes} </h2>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{! IF(intAvailableRes == 0, true,false)}" styleclass="countResource">
+                            <h2>No resource is tagged to the current location</h2>
+                        </apex:outputpanel>
+                    </div>
+                    <table cellspacing="0" class="caseTable" >
+                        <tr >
+                            <td><apex:outputlabel value="Case Number : " for="text1"/> </td>
+                            <td><apex:outputField value="{! objSelectedCase.CaseNumber}" Id="text1"/></td>
+                        </tr>
+                        <tr class="k-alt">
+                            <td><apex:outputlabel value="Contact Name : " for="text2"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.Contact.Name}" Id="text2"/></td>
+                        </tr>
+                        <tr>
+                            <td><apex:outputlabel value="Resource Name : " /></td>
+                            <!-- <td><apex:outputField value="{! objSelectedCase.Service_Engineer__r.Name}"/></td> -->
+                            <td>
+                                <div id="out" > <!-- style="display: {!if(isDisplay,'block','none')};" -->
+                                <apex:outputField value="{! objSelectedCase.Service_Engineer__c}" />
+                                <a id="theLink" href="" onclick="showResourceLookUp()" style="float: right;color: #E47531;cursor: pointer;" class="k-button aos-button" >Update Resource</a>
+                                </div>
+                                
+                                <div id="in" style="display: none;">
+                                <apex:inputField value="{! objSelectedCase.Service_Engineer__c}"/>
+                                <a id="theCommandLink" href="" onclick="cancelResourceLookUp()" style="float: right;color: #E47531;cursor: pointer;" class="k-button aos-button">Cancel</a>
+                                <span style="float: right">&nbsp;&nbsp;</span>
+                                <a id="theCommandLink" href="" onclick="saveResourceLookUp();" style="float: right;color: #E47531;" class="k-button aos-button">Save</a> 
+                                <!-- <apex:commandLink action="{!saveCaseWithResource}" value="Save" id="theCommandLink1" style="float: right;color: #E47531;"  styleClass="k-button aos-button"/> -->
+                                </div>
+                                
+                                <!-- <div id="in" style="display: none;">
+                                <apex:inputField value="{! objSelectedCase.Service_Engineer__c}"/>
+                                <apex:commandLink action="{!null}" value="Cancel" id="theCommandLink" style="float: right;color: #E47531;" onclick="cancelResourceLookUp()"/>
+                                <span style="float: right">&nbsp;&nbsp;</span>
+                                <apex:commandLink action="{!saveCaseWithResource}" value="Save" id="theCommandLink1" style="float: right;color: #E47531;" /> 
+                                </div> -->
+                            </td>
+                        </tr>
+                        <tr class="k-alt">
+                            <td><apex:outputlabel value="Reason : " for="text4"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.Reason}" Id="text4"/></td>
+                        </tr>
+                        <tr>
+                            <td><apex:outputlabel value="Region : " for="text5"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.AOSI_Region__c}" Id="text5"/></td>
+                        </tr>
+                        <tr class="k-alt">
+                            <td><apex:outputlabel value="Case Status : " for="text6"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.Status}" Id="text6"/></td>
+                        </tr>
+                        <tr>
+                            <td><apex:outputlabel value="Product : " for="text7"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.AOSIProduct__r.Name}" Id="text7"/></td>
+                        </tr>
+                        <tr class="k-alt">
+                            <td><apex:outputlabel value="Product Vertical : " for="text8"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.AOSI_Product_Vertical__c}" Id="text8"/></td>
+                        </tr>
+                        <tr>
+                            <td><apex:outputlabel value="Contact Phone : " for="text9"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.Contact_Phone__c}" Id="text9"/></td>
+                        </tr>
+                        <tr class="k-alt">
+                            <td><apex:outputlabel value="Email : " for="text10"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.Contact.Email}" Id="text10"/></td>
+                        </tr>
+                        <tr>
+                            <td><apex:outputlabel value="Pin Code : " for="text11"/></td>
+                            <td><apex:outputField value="{! objSelectedCase.Contact.Pincode__c}" Id="text11"/></td>
+                        </tr>
+                    </table>
+                </apex:outputpanel>
+                
+                <!-- Map details panel for resources background-color: #7CA3AF;-->
+                <apex:outputpanel id="mapPanel">
+                    <div class="mapGoogle">
+                    <!-- {!lstResources} -->
+                        <apex:map width="100%" height="299px" zoomLevel="12" center="{!objSelectedCase.Contact.Pincode__c}+' India'"> <!-- center="{!objSelectedCase.Contact.Pincode__c}+' India'" -->
+                            <apex:mapMarker title="{!objSelectedCase.Contact.Name },{!objSelectedCase.Contact.Pincode__c }" position="{!objSelectedCase.Contact.Pincode__c}+' India'" />
+                            <apex:repeat value="{!lstResources}" Var="r">
+                                <apex:mapMarker title="{!r.name+', '+r.Type__c+', '+r.PIN_Code__c}" position="{!r.PIN_Code__c}" icon="{! URLFOR($Resource.MarkerIcon) }" /> <!-- getPinCode({!r.PIN_Code__c})  rendered = "{!IF(r.PIN_Code__c != NULL ,TRUE,FALSE)}" -->
+                            </apex:repeat>
+                        </apex:map>
+                    </div>
+                </apex:outputpanel>
+            </apex:pageBlockSection>
+            
+            <!-- Kendo scheduler section for Resources -->
+            <apex:pageBlockSection Id="resourceSchedulerSec" title="Case Resource Section" columns="1" collapsible="false">
+                <div id="example" class="k-content">
+                    <apex:outputpanel id="schedulerPanel" rendered="{! If(lstResources.size > 0, true,false)}">
+                        <div id="scheduler" />
+                    </apex:outputpanel>
+                    <apex:outputpanel id="schedulerPanelMSG" rendered="{! If(lstResources.size > 0, false,true)}">
+                        <div id="schedulerMSG">
+                            <h1 style="color: rgb(187, 46, 36);font-size: 15px;">There is no matching resources available </h1>
+                        </div>
+                    </apex:outputpanel>
+                </div>
+            </apex:pageBlockSection>
+            <!-- End of Kendo scheduler table for resources -->
+        	
+        	</apex:outputpanel>
+        	
+        	<apex:outputpanel rendered="{! IF(objSelectedCase == null, true, false)}">
+        		<div>There is no matching information available</div>
+   			</apex:outputpanel>
+   		
+        </apex:pageBlock>
+        
+		<script id="editorPopUp" type="text/x-kendo-template">
+            <div>
+                <div class="k-edit-label">
+                    <label>Case Number: </label>
+                </div>
+                <div class="k-edit-field">
+                    <span id="caseNo">{! objSelectedCase.CaseNumber} </span>
+                </div>
+                <div class="k-edit-label">
+                    <label>Appointment Date:</label>
+                </div>
+                <div class="k-edit-field">
+                    <input id="startDate" data-role="datetimepicker" name="start" />
+					<label id="dateError" style="display:none">Please select before 7 days date.</label>
+                </div>
+                <div class="k-edit-label">
+                    <label>Description:</label>
+                </div>
+                <div class="k-edit-field">
+                    <textarea id="description" name="description" class="k-textbox" ></textarea>
+                </div>
+                <div class="k-edit-label">
+                    <label> Select Option:</label>
+                </div>
+                <div class="k-edit-field">
+                     <select id="resource">
+                        <apex:repeat value="{! mapAvailableResource}" var="val">
+                            <option value="{! val}">{! mapAvailableResource[val]}</option>
+                        </apex:repeat>
+                    </select>
+                </div>
+            </div>
+        </script>
+    </apex:form>
+    
+    <!-- Start Case detail Sec Script -->
+    <script>
+        //console.log('Map lstResources---> ' + {!lstResources});
+        var par = '{!objSelectedCase.Id}';
+        /*****To show the Save and Cancel button*****/
+        function showResourceLookUp(){
+            console.log('Save....');
+            var divOut = document.getElementById('out');
+            divOut.style.display = 'none';
+            var divIn = document.getElementById('in');
+            divIn.style.display = 'block';
+        }
+        
+        /*****To hide the Save and Cancel button and append case id in url*****/
+        function cancelResourceLookUp(){
+            console.log('Cancel....');
+            var divOut = document.getElementById('in');
+            divOut.style.display = 'none';
+            var divIn = document.getElementById('out');
+            divIn.style.display = 'block';
+            //window.location.href = '/apex/AOSI_GPS_CaseDetailWithResourceAndMap?caseId='+ '{! objSelectedCase.Id}';
+            //window.open('/apex/AOSI_GPS_CaseDetailWithResourceAndMap?caseId='+ objSelectedCase.Id);
+        }
+        
+        /******** Save record from case detail sec********/
+		function saveResourceLookUp(){
+			saveCaseWithRes();
+        }
+		
+        /******** Back button to redirect Home page********/
+        function goBack(){
+            window.top.location.href = '/apex/AOSI_GPS_CaseDetailPage';
+        }
+    </script>
+    <!-- End Case detail Sec Script -->
+    
+    <!-- Start Kendo Script -->						
+    <script id="event-template" type="text/x-kendo-template">
+        <div class="movie-template  #if(strCaseAppointmentColor=='red'){# red-background #}else if(strCaseAppointmentColor=='green'){# green-background #}else if(strCaseAppointmentColor=='yellow'){# yellow-background #}else if(strCaseAppointmentColor=='grey'){# grey-background #}#" >
+            <h3>Case No: #: title #</h3><br/>                   
+            <h3>Booked Time: #: kendo.toString(start, "hh:mm") # - #: kendo.toString(end, "hh:mm") # </h3>
+        </div>
+    </script>
+          
+    <script>
+        console.log('---aaaaaa---'+ JSON.stringify({!ResourceCaseDetails}));
+        console.log('---bbbbb---'+ JSON.stringify({!ResourceDetails}));
+                        
+        /***To get Today date***/
+        function gettingdate(){
+            var val = new Date();
+            val.setSeconds(00);
+            val.setMinutes(00);
+            val.setHours(00);               
+            return val;
+        }
+        
+        /***To get Today date with specified start time***/
+        function starttime(){
+            var val = new Date();
+            val.setSeconds(00);
+            val.setMinutes(00);
+            val.setHours(00);
+            return val;
+        }
+        
+        /***To get Today date with specified end time***/
+        function endtime(){
+            var val = new Date();
+            val.setSeconds(00);
+            val.setMinutes(00);
+            val.setHours(24);
+            return val;
+        }
+         
+		/********* Passing popup value to action function ***********/
+        function passPopUpValues(param){
+           var appDate = document.getElementById('startDate').value;
+           var datestring = kendo.toString(appDate, "dd-mm-yyyy h:mm:ss tt");
+           //var caseNo = document.getElementById('caseNo').text;
+           var description = (document.getElementById('description').value == 'undefine'? null :  document.getElementById('description').value);
+           var res = document.getElementById('resource');
+           var resId = res.options[res.selectedIndex].value;
+           
+           console.log('--> param:' + param)
+           console.log('--> appDate:' + appDate)
+           console.log('--> datestring: ' + datestring );
+           console.log('--> description : ' + description );
+           console.log('--> resId : ' + resId );
+           var selectedDate = new Date();
+           var selectedDate2 = new Date();
+           console.log('--1111> selectedDate2.setDate(selectedDate2.getDate() + 7) : ' + new Date(selectedDate2.setDate(selectedDate2.getDate() + 7)) );
+           console.log('--1111> appDate : ' + new Date(appDate) );
+           //dateError
+           if(new Date(appDate) <= selectedDate.setDate(selectedDate.getDate() + 7)){
+           		updateCase(appDate, description, resId);
+           		return true;
+           }else{
+           		document.getElementById('dateError').className += 'clsDateError';
+           		//$("#dateError").addClass("dateError");
+           		return false;
+           }	
+           
+           
+           /*
+           if(new Date(appDate) >=  new Date()){
+                console.log('iffff');
+                updateCase(appDate, description, resId);
+           }
+           else{
+                var scheduler = $("#scheduler").data("kendoScheduler");
+                scheduler.cancelEvent();
+           }
+           */
+        }
+              
+        /***** Kendo script to draw time table ****/
+        $(document).ready(function () {
+                $("#scheduler").kendoScheduler({
+				date: gettingdate(),
+				startTime: starttime(),
+                endTime: endtime(),
+                eventHeight: 50,
+                majorTick: 60,          //To show time intervals in minuts.
+                   
+                views: [
+                   "timeline",
+                    { type: "timeline", eventHeight: 50}
+                ],
+                   
+                //timezone: "Etc/UTC",
+                eventTemplate: $("#event-template").html(),
+                   
+                editable: { template : $("#editorPopUp").html() },   //To override the Pop-Up functionality
+                edit: function(e) {$("#resource").kendoDropDownList()}, // Converting custom html dropdownlist to kendo 
+
+                dataSource: {
+                    batch: true,
+                    transport: {
+                        read: function(e) {
+                            // var data = resourceData;
+                            var data = {!ResourceCaseDetails};
+                            e.success(data);
+                        },
+                           
+                        create: function(e){
+                            if(passPopUpValues('create'))
+                            	e.success();
+                            //return true;
+                        },
+                          
+                        update: function(e) { 
+                            if(passPopUpValues('update'))
+                            	e.success();
+                        },
+                    }, 
+                       
+                    schema: {
+                        parse: function(response) {
+                            $.each(response,function(idx,elem) {
+                                if(elem.strCaseAppointmentColor && typeof elem.strCaseAppointmentColor == "string") {
+									console.log('elem.strCaseAppointmentColor: '+ elem.strCaseAppointmentColor); 
+                                }
+                            });
+                            return response;
+                        },
+                        
+                        model: {
+                            "id": "Id",
+                            "fields": {
+								"strCaseResource": {
+									"from": "strCaseResource",
+									"type": "string"
+								},
+                             
+								"strCaseAppointmentColor": {
+									"from": "strCaseAppointmentColor",
+									"type": "string"
+								},
+                             
+								"title":{
+									"from": "strCaseNo",
+									"type": "string",
+									editable: false
+								},
+                                                          
+								"start": {
+									"from": "dtAppointmentStart",
+									"type": "date"
+								},
+                             
+								"end": {
+									"from": "dtAppointmentEnd",
+									"type": "date"
+								},
+                             
+								attendees: { from: "Attendees", nullable: true }  
+							}
+						}
+					}
+				},
+                //editable: false,        // To make non-visible of Event Pop-up. 
+                   
+                group: {
+					resources: ["Attendees"],
+					orientation: "vertical"
+                },
+                    
+                resources: [
+                    {
+                        field: "strCaseResource",
+                        name: "Attendees",
+                        dataSource: {!ResourceDetails},
+                        title: "Attendees"
+                    }
+                ]
+			});
+		});
+	</script> 
+	<!-- End Kendo Script -->
+        
+	<style>
+        .k-event{
+            background: none;
+            border: none;
+        }
+        .movie-template {
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+        .red-background{
+            background-color: #E87F7F;
+        }
+        .green-background{
+            background-color: #42B5A9;
+        }
+        .yellow-background{
+            background-color: #ECC836;
+        }
+        .grey-background{
+            background-color: #B7B3B3;
+        }
+        .clsDateError{
+        	display:block;
+        }
+        
+        .movie-template img {
+            float: left;
+            margin: 0 8px;
+        }
+        .movie-template p {
+            margin: 5px 0 0;
+        }
+        .movie-template h3 {
+            padding: 0 8px 5px;
+            font-size: 12px;
+        }
+        .movie-template a {
+            color: #ffffff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .k-state-hover .movie-template a,
+        .movie-template a:hover {
+            color: #000000;
+        }
+        
+        .caseTable td{
+            border-style: solid;
+            border-width: 0 0 0 1px;
+            border-color: #c5c5c5 !important;
+            padding: .4em .6em;
+            overflow: hidden;
+            line-height: 1.6em;
+            vertical-align: middle;
+            text-overflow: ellipsis;
+
+        }
+        .caseTable tr td:last-child{
+            border-right: 1px solid #c5c5c5 !important;
+        }
+        .caseTable tr:first-child td{
+            border-top: 1px solid #c5c5c5 !important;
+        }
+        .caseTable tr:last-child td{
+            border-bottom: 1px solid #c5c5c5 !important;
+        }
+        .caseTable>tbody>tr {
+            background: #B6B6D2;
+        }
+         .caseTable>tbody>tr.k-alt {
+            background: #D6DDEF;
+        }
+       
+        .mapGoogle{
+            border: 1px solid #c5c5c5;
+            margin-top: 32px;
+        }
+        .errBack{min-height: 47px;}
+        .errBack>span {
+		    display: inline-block;
+		    position: absolute;
+		    margin-left: 20px;
+		}
+		.errBack>input {
+			bottom:5px;
+		}
+        .k-button.aos-button {
+            height: 20px;
+            padding: 4px;
+            position: relative;
+        }
+        .back-button{
+            position: absolute;
+            left: 4px;
+            height: 25px !important;
+   			margin-top: 8px !important;
+        }
+        .detailList table.k-scheduler-table th {
+            border-bottom-style: solid;
+        }
+        .k-scheduler-layout .k-scheduler-content .k-event .k-event-actions .k-event-delete,
+		.k-scheduler-layout .k-scheduler-content .k-event .k-resize-handle {
+		    display: none;
+		}    
+		#scheduler .k-header .k-scheduler-views {
+		    display: none;
+		}   
+    </style>
+    
+</apex:page>

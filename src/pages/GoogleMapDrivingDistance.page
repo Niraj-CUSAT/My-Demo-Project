@@ -1,0 +1,352 @@
+<apex:page controller="GoogleMapDrivingDistanceController"  id="classLocatorPage" showHeader="false" sidebar="false" action="{!showGoogleMap}" title="Service Provider Search">
+ 
+ 
+     <style>
+     .smallCaption
+            {
+                font-size: 11px;
+                font-weight: bold;
+            }
+             .listheader
+            {
+                font-size: 11px;
+                font-weight: bold;
+                font-family: 'Arial', 'Helvetica', sans-serif; 
+                background-color: #E3F3FF;
+                height:25px;
+                vertical-align:middle;
+                margin:13px; 
+                border:1;
+            }
+            
+     </style>
+    <link href="https://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&client=gme-aosmithwaterproducts&sensor=false"></script>
+    <apex:includeScript value="/support/console/27.0/integration.js"/>
+    <script type="text/javascript">
+ 
+  
+        var  directionsDisplay = new google.maps.DirectionsRenderer();
+        var directionsService = new google.maps.DirectionsService();
+        var map;
+        
+        function initialize() {
+          
+              var geocoder = new google.maps.Geocoder();
+              var address ="{!geoCodeAddress}";
+              var chicago = new google.maps.LatLng(41.850033, -87.6500523);
+              var myOptions = {
+                zoom:14,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                center: chicago
+              }
+            
+             geocoder.geocode( { address: address}, function(results, status) {
+                  if (status == google.maps.GeocoderStatus.OK && results.length) {
+                          if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+                  
+                                //create map
+                                 map = new google.maps.Map(document.getElementById("{!$Component.classLocatorPage.classLocatorForm.classLocatorPageBlock.map.mapcanvas}"), myOptions);
+                                // map.client = "gme-aosmithwaterproducts";
+                              
+                                //center map
+                                map.setCenter(results[0].geometry.location);
+                                directionsDisplay.setMap(map);
+                                //create marker
+                                marker = new google.maps.Marker({
+                                    position: results[0].geometry.location,
+                                    map: map,
+                                    title: "{!geoCodeAddress}"
+                              });
+                     
+                            }
+                        }
+                  });
+            }
+
+        var previousOnload = window.onload;        
+                window.onload = function() { 
+                    if (previousOnload) { 
+                        previousOnload();
+                    }
+                initialize();
+        
+            }  
+    
+    
+        function calcRoute(end) {
+        
+              var start = '{!fullAddress}';
+                 
+              var request = {
+                origin:start,
+                destination:end,
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC
+              };
+              directionsService.route(request, function(result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                  directionsDisplay.setDirections(result);
+                }
+              });
+        }
+        
+        
+        var accountURL;
+        var accountTitle;
+        
+        function redirectToAccDetailPg(subtabUrl, subTabTitle)
+        {
+        	accountURL = subtabUrl;
+        	accountTitle = subTabTitle;
+        	if(sforce.console.isInConsole())
+        		sforce.console.getEnclosingTabId(openAccountTab);
+        	else
+        		window.open(subtabUrl);
+        	
+        }
+        
+        var openAccountTab = function openAccountTab(result) {
+			//Now that we've got the tab ID, we can close it
+			
+			isNavigationTab = (result.id == 'null') ? true : false;
+			
+			if(!isNavigationTab)
+        		openSubtab(accountURL, accountTitle);
+        	else
+        		sforce.console.openPrimaryTab(null, accountURL , true, accountTitle, openSuccess, accountURL);
+		};
+        
+        var openSuccess = function openSuccess(result) {
+		};
+        
+        
+        function openSubtab(subtabUrl, subTabTitle)
+        {
+        	 var openSubtab = function(result)
+            {     
+               sforce.console.openSubtab(result.id, subtabUrl, true, subTabTitle, null); 
+               return false;    
+            };
+           sforce.console.getEnclosingPrimaryTabId(openSubtab);
+          
+         } 
+ 
+ 
+ </script>
+    <apex:form id="classLocatorForm">
+        <apex:pageBlock id="classLocatorPageBlock">
+                     <apex:pageMessages />
+                     <apex:pageBlockButtons location="Top">
+                          
+                           <apex:commandLink value=" Print " action="{!printPreview}" target="_blank" styleClass="btn" style="text-decoration:none"></apex:commandLink>
+                           &nbsp;&nbsp;   <apex:commandButton value=" Update Case " action="{!updateCase}" rendered="{!caseActionCallFlag}" disabled="{!disableFlag}"></apex:commandButton>
+                           &nbsp;&nbsp;     <apex:commandButton value="  Back "  action="{!backToParent}" immediate="true" ></apex:commandButton>
+                           &nbsp;&nbsp;    <apex:commandButton value="  Email "  action="{!sendEmail}"></apex:commandButton>
+                         
+                     </apex:pageBlockButtons> 
+            
+                    <apex:pageBlockSection title="Address" columns="1">
+            
+                        <apex:outputPanel id="address">  
+                            <table align="Center" border="0">
+                                <tr><td> 
+                                    <apex:outputLabel styleClass="smallCaption" value="Street  " for="street"/>
+                                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                                    <apex:inputText value="{!street}" id="street" size="30"/>
+                                    </td>
+                                </tr>   
+                                <tr><td>
+                                    <apex:outputLabel styleClass="smallCaption" value="City" for="city"/>
+                                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                                    <apex:inputText value="{!city}" id="city" size="30"/>
+                                    </td>
+                                </tr>   
+                                <tr><td>
+                                    <apex:outputLabel styleClass="smallCaption" value="State" for="state"/>
+                                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                                    <apex:inputText value="{!state}" id="state" size="30"/>
+                                    </td>
+                                </tr>   
+                                <tr><td>
+                                    <apex:outputLabel styleClass="smallCaption"  value="Zip Code" for="zipCode"/>
+                                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                                        <apex:inputText value="{!zipCode}" id="zipCode" size="30"/>
+                                    </td></tr>
+                                <tr><td>
+                                    <apex:outputLabel styleClass="smallCaption"  value="Country" for="country"/>
+                                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                                    <apex:inputText value="{!country}" id="country" size="30"/>
+                                    </td>
+                                    </tr>   
+                                    <tr><td>
+                                    <apex:outputLabel styleClass="smallCaption"  value="Email" for="email"/>
+                                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                                        <apex:inputText value="{!email}" id="email" size="30"/>
+                                    </td></tr>
+                            </table>
+                        </apex:outputPanel>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Filters" columns="1" id="Filter">
+                
+                    <apex:outputPanel id="type">
+                            <apex:actionRegion >
+                                  <apex:selectRadio value="{!selectProviderType}">
+                                         <apex:selectoption itemLabel="Service Provider" itemValue="ServiceProvider"></apex:selectoption>
+                                        <apex:selectoption itemLabel="Distributor" itemValue="Distributor"></apex:selectoption>
+                                        <apex:actionSupport event="onclick"  action="{!providerType}" rerender="Filter" immediate="false" status="processing"/>
+                                  </apex:selectRadio> 
+                              </apex:actionRegion>
+                    </apex:outputPanel> 
+                    
+                    <apex:actionStatus id="processing" onStart="document.body.style.cursor = 'wait';return true;start" onStop="document.body.style.cursor = 'default';return true;">
+                           <apex:facet name="start">  <center>Processing... <img src="{!$Resource.Processing}" style="vertical-align:center" width="25" height="25"/>  </center></apex:facet>
+                     </apex:actionStatus>
+                
+                    <apex:outputPanel id="serviceProvider" rendered="{!serviceProviderFlag}">
+                            <table border="0" WIDTH="100%">
+                                 <tr class="listheader"> 
+                                    <td>
+                                        <apex:outputLabel value="Select Product Service" for="zipCode"/>
+                                    </td><td>
+                                        <apex:outputLabel value="Brand" for="zipCode"/>
+                                    </td><td>
+                                        <apex:outputLabel value="Select Grade" for="selectGrade"/>
+                                    </td><td>
+                                        <apex:outputLabel value="Results to Return" for="randr"/>
+                                    </td>
+                                </tr> 
+                                <tr> 
+                                    <td>
+                                        <apex:inputField value="{!filtersObj.PL_Services__c}"  required="true"/>
+                                    </td><td>
+                                    <!-- filtersObj.Services__c filtersObj.Brands_Serviced__c filtersObj.PL_BrandsServiced__c-->
+                                        <apex:inputField value="{!filtersObj.PL_BrandsServiced__c}"  required="true"/>
+                                    </td><td>
+                                          <apex:inputField value="{!filtersObj.QSP_Co_Grade_Level__c}"/>
+                                    </td><td>
+                                         <apex:selectList id="randr" value="{!result}" size="1">
+                                                <apex:selectOption itemValue="3" itemLabel="3"/>
+                                                <apex:selectOption itemValue="5" itemLabel="5"/>
+                                                <apex:selectOption itemValue="9" itemLabel="9"/>
+                                                                  
+                                          </apex:selectList>  
+                                    </td> 
+                                </tr>
+                                <tr><td colspan="4"><apex:commandButton action="{!SearchService}" value=" Search " id="theButton"/></td></tr>
+                            </table>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel id="distrib" rendered="{!distributorFlag}">
+                            <table border="0" WIDTH="100%"> 
+                                <tr class="listheader"> 
+                                        <td>&nbsp;&nbsp; </td>
+                                        <td align="center">
+                                            <apex:outputLabel value="Market" for="market"/>
+                                        </td><td>&nbsp;&nbsp; </td><td>
+                                            <apex:outputLabel value="Results to Return" for="randr1"/>
+                                        </td>
+                                        </tr> 
+                                        <tr> <td>&nbsp;&nbsp; </td>
+                                        <td align="center">
+                                            <apex:inputField value="{!filtersObj.Market__c}"/>
+                                        </td><td>&nbsp;&nbsp; </td><td>
+                                             <apex:selectList id="randr2" value="{!result}" size="1">
+                                                    <apex:selectOption itemValue="3" itemLabel="3"/>
+                                                    <apex:selectOption itemValue="5" itemLabel="5"/>
+                                                    <apex:selectOption itemValue="9" itemLabel="9"/>
+                                                                     
+                                              </apex:selectList>  
+                                        </td> 
+                                    </tr>
+                                    <tr>    <td colspan="4"><apex:commandButton action="{!SearchDistributor}" value=" Search " id="theButtondis"/></td></tr>
+                                </table>
+                        </apex:outputPanel>
+                 
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Map"  columns="4" id="map" dir="LTR"> 
+                 
+                        <apex:outputPanel layout="block" style="overflow:auto;width: 100%;height:90%;">
+                                
+                                    <apex:dataTable value="{!accDistanceList}" var="accountList" id="theTable">
+                                        <apex:column >
+                                                <apex:facet name="header">Select</apex:facet>
+                                                <apex:inputCheckbox value="{!accountList.selectAccount}"/> 
+                                        </apex:column>
+                                        <apex:column >
+                                             <apex:facet name="header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Directions</apex:facet> 
+                                            <input type="radio" name="rad" value="{!accountList.address}" id="{!accountList.accutObj.Name}" onClick="calcRoute(this.value)"> 
+                                            <b> <font size="2">
+                                            <Table>
+                                                <tr>
+                                                    <td style="width:30px">Service Provider</td><td>:</td>
+                                                    <td><a href="javascript:redirectToAccDetailPg('/{!accountList.accutObj.Id}', '{!JSENCODE(accountList.accutObj.Name)}');">{!accountList.accutObj.Name}</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Distance </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.distance}"/>   </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Duration   </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.duration}"/>   </td>
+                                                </tr>
+                                               
+                                               <tr>
+                                               		<td> Services  </td><td>:</td>
+                                               		<td><apex:outputText value="{!accountList.accutObj.Services__c}"/>   </td>
+                                               	</tr>
+                                                
+                                                
+                                                <tr>
+                                                    <td>Brands  </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.accutObj.Brands_Serviced__c}"/>   </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>Grade      </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.accutObj.QSP_Co_Grade_Level__c}"/>   </td>
+                                                </tr>
+                                               
+                                                <tr>
+                                                    <td>Miles 1   </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.accutObj.QSP_Miles_1__c}"/>   </td>
+                                                </tr>
+                                                    
+                                                 <tr>
+                                                    <td>Miles 2   </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.accutObj.QSP_Miles_2__c}"/>   </td>
+                                                </tr>
+                                               
+                                                <tr>
+                                                    <td>Address    </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.address}"/>   </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>Phone    </td><td>:</td>
+                                                    <td><apex:outputText value="{!accountList.accutObj.Phone}"/>   </td>
+                                                </tr>
+                                                
+                                             </Table>
+                                             </font> </b>
+                                             </input>
+                                        </apex:column>
+                                    </apex:dataTable>
+                                    
+                        </apex:outputPanel>
+                         
+                         <apex:outputpanel id="gmapOutputPanel" style="position: relative; left:10px; width:700px;">
+                                 <apex:outputpanel id="mapcanvas" style="position: absolute;float:left; left:0px; top:10px; height:440px; width:850px;">
+                                 </apex:outputpanel>
+                         </apex:outputpanel>
+                         
+                 </apex:pageBlockSection>
+            </apex:pageBlock>
+     
+        </apex:form>
+ 
+
+</apex:page>

@@ -1,0 +1,322 @@
+<!--
+Written By :- Pawani GVK
+Written On :- 29th jan , 2014
+Description :- VF Page to generate PRR PDF for only those PRR's which have been approved
+-->
+<apex:page standardController="PRR__c" sidebar="false" showHeader="false" renderAs="pdf" extensions="PRRPdfcontroller">
+<head>  
+    <style type="text/css">        
+        @PageBreak{
+            page-break:always;
+            page-break-inside:avoid;
+        } 
+        @media print
+        {
+            table {page-break-inside:auto }
+            tr    {page-break-inside:avoid; page-break-after:auto }
+        } 
+        @page:first { 
+            
+            @top-Right {                   
+                content: element(header);               
+            }
+            @bottom-Right {
+                content: element(footer);
+            }           
+        }          
+        @page {
+            
+            margin-top:12%;  margin-bottom:120px;  
+                
+            @top-Right {                   
+                content: element(header);               
+            }
+            @bottom-Right {
+                content: element(footer);
+            }           
+        }            
+        div.footer {   
+            text-align: right;
+            font-size:7px;
+            position: running(footer);
+                    }                      
+        div.header { 
+            margin:0 50px 0 0;                         
+            position: running(header);           
+        }                                           
+    </style>            
+</head>
+<apex:form >
+         <div class="header" align="center">
+             <img  src='{!URLFOR($Resource.AOSI_Header)}' />
+         </div>  
+          <div class="footer"> 
+            <apex:outputtext style="text-align:right;" value="F-SER-26 R4"/>
+         </div>
+  <apex:panelGroup rendered="{!IF(PRR__c.AOSI_Approval_Status__c == 'Rejected',true,false)}">
+      PRR can be generated since the request was rejected
+  </apex:panelGroup>
+  
+  <apex:panelGroup rendered="{!IF(PRR__c.AOSI_Approval_Status__c == 'Submit For Approval' || PRR__c.AOSI_Approval_Status__c == 'Pending',true,false)}">
+      PRR can be generated once it is approved.
+  </apex:panelGroup>
+  
+  <apex:panelGroup rendered="{!IF(PRR__c.AOSI_Approval_Status__c == 'Approved',true,false)}">
+       <!--<apex:image style="margin-left:80%;" value="{!$Resource.SmithLogo}" width="20%" height="20%"/>-->
+     <b>PRODUCT REPLACEMENT REQUEST</b>
+    
+     <html>
+     <body>
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">
+         <tr>
+             <td><b>PRR NUMBER</b></td>
+             <td>{!PRR__C.AOSI_PRR_Number__c}</td>
+         </tr>
+       <!--  <tr>
+             <td><b>{!PRR__c.AOSI_Type__c}</b></td>
+             <td>{!PRR__c.AOSI_CRR_No__c}</td>
+         </tr> -->
+     </table>
+     
+     <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;" />
+     
+     <b>Customer Information</b><br/>
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;"> 
+         <tr>
+         <td><b>Customer Name</b></td>
+         <td>{!PRR__c.AOSI_Customer_Name__c}</td>
+         </tr>
+         <tr>
+         <td><b>Delivery Address</b></td>
+         <td>{!PRR__c.AOSI_Delivery_Address__c}</td>
+         </tr>
+         <tr>
+         <td><b>City</b></td>
+         <td>{!PRR__c.AOSI_Contact__r.MailingCity}</td>
+         </tr>
+         <tr>
+         <td><b>Pin</b></td>
+         <td>{!PRR__c.AOSI_Contact__r.MailingPostalCode}</td>
+         </tr>
+         <tr>
+         <td><b>Landmark</b></td>
+         <td>
+         {!PRR__c.Landmark__c}
+         </td>
+         </tr>
+         <tr>
+         <td><b>Contact Number</b></td>
+         <td>{!PRR__c.AOSI_Contact_Number__c}</td>
+         </tr>
+     </table>
+     
+     <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+     
+     <b>Product Information</b>
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;"> 
+         <tr>
+         <td><b>Product</b></td>
+         <td>{!PRR__c.AOSI_Product__r.Name}</td>
+         </tr>
+         <tr>
+         <td><b>Asset Number</b></td>
+         <td>{!PRR__c.AOSI_Asset__r.Name}</td>
+         </tr>
+         <tr>
+         <td><b>DOP</b></td>
+         <td><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!PRR__c.AOSI_DOP__c}" /></apex:outputText></td>         
+         </tr>
+         
+         <!--Following block is commented beacuse we may need it later while genrating PDF for Refund purpose-->
+         <!-- <tr>
+         <td><b>Invoice Number</b></td>
+         <td>{!PRR__c.AOSI_Model__c}</td>
+         </tr> -->
+         
+         <tr>
+         <td><b>Dealer Name</b></td>
+         <td>{!PRR__c.AOSI_Dealer_Name__c}</td>
+         </tr>
+     </table>
+     
+     <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+     
+     <b>Reason</b>
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">
+     <tr>
+     <td><apex:outputField value="{!PRR__c.AOSI_DOA_Dead_On_Arrival__c}"/>&nbsp;DOA-Dead On Arrival</td>
+     <td ><apex:outputField value="{!PRR__c.AOSI_Manufacture_Fault_Non_Repairable__c}"/>&nbsp;Manufacture Fault-Non Repairable</td>
+     </tr>
+     <tr>
+     <td><apex:outputField value="{!PRR__c.AOSI_Repeat_Failure__c}"/>&nbsp;Repeat Failure</td>
+     <td ><apex:outputField value="{!PRR__c.AOSI_Serious_Issue_Product_Burnt__c}"/>&nbsp;Serious Issue-Product Burnt</td>
+     </tr> 
+     <tr>
+     <td><apex:outputField value="{!PRR__c.AOSI_Transit_Damaged__c}"/>&nbsp;Transit damaged</td>
+     <td>&nbsp;</td>
+     </tr>
+     <tr>
+     <td><apex:outputField value="{!PRR__c.AOSI_Others__c}"/>&nbsp;Other Reason</td>
+     <td><apex:outputField value="{!PRR__c.AOSI_Other_Reason__c}"/></td>
+     </tr>
+     </table>
+     <apex:panelGroup rendered="{!PRR__c.Request_Type__c == 'Refund Processing' || PRR__c.Request_Type__c == 'Replacement Processing'}">
+         <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+         
+         <b>Refund Details</b>
+         <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">
+             <tr>
+                 <td width = "50%"><apex:outputtext value="Refund Value"/></td>
+                 <td width = "50%"><apex:outputtext value="{!PRR__c.AOSI_Refund_Value__c}"/></td>
+             </tr>
+             <tr>
+                 <td><apex:outputtext value="Invoice Attached"/></td>
+                 <td><apex:outputField value="{!PRR__c.AOSI_Invoice_Attached__c}"/></td>
+             </tr>
+             <tr>
+                 <td><apex:outputtext value="Depreciation Allowed"/></td>
+                 <td><apex:outputField value="{!PRR__c.AOSI_Depreciation_Allowed__c}"/></td>
+             </tr>
+             <tr>
+                 <td><apex:outputtext value="Depreciation value"/></td>
+                 <td><apex:outputtext value="{!PRR__c.AOSI_Depreciation_value__c}"/></td>
+             </tr>
+             <tr>
+                 <td><apex:outputtext value="Final Refund Value"/></td>
+                 <td><apex:outputtext value="{!PRR__c.AOSI_Final_Refund_Value__c}"/></td>
+             </tr>
+         </table>
+     </apex:panelGroup>
+     <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+     
+     <b>Service History and Failure Details</b>
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">
+      <caption><b>Current Case Detail</b></caption>
+     <tr>
+     <th>Case Number </th>
+     <th>Date </th>
+     <th>Customer Concern </th>
+     <th>Casue</th>
+     <th> ACtion</th>
+     </tr>
+     <tr>
+     <td><apex:outputtext value="{!PRR__c.AOSI_Case__r.CaseNumber}"/></td>
+      <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}"> <apex:param value="{!PRR__c.AOSI_Case__r.CreatedDate}" /> </apex:outputText>  </td>
+     <td><apex:outputtext value="{!PRR__c.AOSI_Case__r.AOSI_Customer_Concern__c}"/></td>
+     <td><apex:outputtext value="{!PRR__c.AOSI_Case__r.AOSI_Cause__c}"/></td>
+     <td><apex:outputtext value="{!PRR__c.AOSI_Case__r.AOSI_Action__c}"/></td>
+     </tr>
+     
+     </table>
+     
+      <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">
+      <caption><b>Previous Cases Detail</b></caption>
+     <tr>
+     <th>Case Number </th>
+     <th>Date </th>
+     <th>Customer Concern </th>
+     <th>Casue</th>
+     <th> ACtion</th>
+     </tr>
+    
+     <apex:repeat value="{!previousCaseRecord}" var="Pc">
+      <tr>
+     <td><apex:outputtext value="{!Pc.CaseNumber}"/></td>
+    <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}"> <apex:param value="{!Pc.CreatedDate}" /> </apex:outputText>  </td>
+     <td><apex:outputtext value="{!Pc.AOSI_Customer_Concern__c}"/></td>
+     <td><apex:outputtext value="{!Pc.AOSI_Cause__c}"/></td>
+     <td><apex:outputtext value="{!Pc.AOSI_Action__c}"/></td>
+    
+     </tr>
+      </apex:repeat>
+     </table>
+     
+    <!-- <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0">
+         <tr>
+             <td width = "30%" style="border:none;">
+                 
+             </td>
+             <td style="border:none;">
+             <center><apex:outputtext value="Current"/></center>
+             </td>
+             <td style="border:none;">
+             <center><apex:outputtext value="Previous"/></center>
+             </td>
+         </tr>
+         <tr>
+             <td width = "30%">
+                 <apex:outputtext value="Case Number"/><br/>
+             </td>
+             <td width = "35%">
+                 <apex:outputField value="{!PRR__c.AOSI_Case__r.CaseNumber}"/>
+             </td>
+             <td width = "35%">
+                 <apex:outputField value="{!previousCaseRecord.CaseNumber}"/>
+             </td>
+         </tr>
+         <tr>
+             <td>
+                 <apex:outputtext value="Date"/><br/>
+             </td>
+             <td>
+                 <apex:outputText value="{0,date,MM'/'dd'/'yyyy}"> <apex:param value="{!PRR__c.AOSI_Case__r.CreatedDate}" /> </apex:outputText>                 
+             </td>
+             <td>
+                 <apex:outputText value="{0,date,MM'/'dd'/'yyyy}"> <apex:param value="{!previousCaseRecord.CreatedDate}" /> </apex:outputText>
+             </td>
+         </tr>
+         <tr>
+             <td>
+                 <apex:outputtext value="Customer Concern"/><br/>    
+             </td>
+             <td>
+                 <apex:outputField value="{!PRR__c.AOSI_Case__r.AOSI_Customer_Concern__c}"/>
+             </td>
+             <td>
+                 <apex:outputField value="{!previousCaseRecord.AOSI_Customer_Concern__c}"/>
+             </td>
+         </tr>
+     </table> -->
+     <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+     
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">     
+    <caption><b>Justification</b></caption>
+     <tr>
+     <td>
+     <apex:outputfield value="{!PRR__c.AOSI_Justification__c}"/>
+     </td>
+     </tr>
+     </table>
+     <apex:panelGroup rendered="{!PRR__c.AOSI_PRR_Change__c != null}">
+         <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+         <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">     
+             <tr>
+                 <td width = "50%"><apex:outputtext value="PRR Change"/></td>
+                 <td width = "50%"><apex:outputtext value="{!PRR__c.AOSI_PRR_Change__c}"/></td>
+             </tr>
+             <tr>
+                 <td><apex:outputtext value="PRR Change Reason"/></td>
+                 <td><apex:outputField value="{!PRR__c.AOSI_PRR_Change_Reason__c}"/></td>
+             </tr>
+         </table>    
+     </apex:panelGroup>
+     <hr style="color:Grey;background-color:Black;border:0;width:100%;height:5px;"/>
+     <table border = '1' width = "100%" cellpadding = "0" cellspacing = "0" style="page-break-inside:avoid; page-break-after:auto;">     
+     <tr>
+     <td> <b>Requested By With Date :- </b>{!PRR__c.CreatedBy.Name}&nbsp;&nbsp;
+     <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!PRR__c.Createddate}" /></apex:outputText>
+    </td>
+     <td><b>Approved By With Date:- </b>{!PRR__c.AOSI_Approved_By__c}&nbsp;&nbsp;
+     <apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!PRR__c.AOSI_Approved_Date__c}" /></apex:outputText></td>
+     </tr>
+     </table>
+     
+     <table>
+     </table>
+     Note : This is system generated document after approval so signature not required
+     </body>
+     </html>
+     
+  </apex:panelGroup>
+</apex:form>
+</apex:page>

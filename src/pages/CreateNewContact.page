@@ -1,0 +1,60 @@
+<apex:page standardController="Contact"
+    Extensions="SetContactRecordType">
+
+    <apex:sectionHeader title="Contact Edit" subtitle="{!Contact.name}" />
+
+    <apex:form >
+        <apex:pageMessages escape="false" ></apex:pageMessages>
+        <apex:pageBlock title="Contact Edit" mode="edit">
+
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save" action="{!save}" />
+               <apex:commandButton value="case" action="{!Returntocase}" />                 
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Save" action="{!save}" />
+                <apex:commandButton value="Save & New" action="{!save}" />
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection title="Contact Information" columns="2">
+                <apex:inputField value="{!Contact.FirstName}" required="false" />
+                <apex:inputField value="{!Contact.Phone}" required="true" />
+                <apex:inputField value="{!Contact.LastName}" required="true" />
+                <apex:inputField value="{!Contact.OtherPhone}" required="false" />
+                <apex:inputField value="{!Contact.AccountId}" required="true" />
+                <apex:inputField value="{!Contact.Email}" required="false" />
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Address Information" columns="2">
+                <apex:inputField value="{!Contact.AOSI_Region__c}" required="true" />
+                <br />
+                <apex:inputField value="{!Contact.AOSI_State__c}" required="true" />
+                <br />
+
+                <apex:inputField value="{!Contact.MailingStreet}" required="false" />
+                <apex:inputField value="{!Contact.OtherStreet}" required="false" />
+                <apex:inputField value="{!Contact.MailingCity}" required="false" />
+                <apex:inputField value="{!Contact.OtherCity}" required="false" />
+                <apex:inputField value="{!Contact.MailingState}"  />
+                <apex:inputField value="{!Contact.OtherState}" required="false" />
+                <apex:inputField value="{!Contact.MailingPostalCode}"
+                    required="false" />
+                <apex:inputField value="{!Contact.OtherPostalCode}" required="false" />
+                <apex:inputField value="{!Contact.MailingCountry}" />
+                <apex:inputField value="{!Contact.OtherCountry}" required="false" />
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Remarks" columns="2">
+                <apex:inputField value="{!Contact.Owner_Notes__c}" required="false" />
+                <apex:outputField value="{!Contact.RecordtypeId}" />
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,19 @@
+<!--
+    Name:   PRRInlinePage
+    Created By:  Dhriti Krishna Ghosh Moulick
+    Created Date:  14/04/2015
+    Modified By:  
+    Last Modified Date: 
+    Description:Fetch Invoice Attached field from PRR
+    Methods Used:
+-->
+<apex:page standardController="PRR__c" showChat="false" extensions="PRRInline">
+  <apex:form >
+     <apex:outputPanel rendered="{!displayMessage}">
+         <div>
+         <font color="red">For refund processing, Invoice attachment is mandatory to submit for approval</font>
+         </div>
+     </apex:outputPanel>
+
+  </apex:form>
+</apex:page>

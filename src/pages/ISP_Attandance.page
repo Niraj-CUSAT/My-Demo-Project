@@ -1,0 +1,482 @@
+<apex:page standardcontroller="ISP_Promotor_Attendance__c" extensions="ISP_Attendance_Ext" showHeader="false" standardStylesheets="false" id="pg">
+ <style type="text/css">
+  .marginbtn{margin-top:100px;}
+    body {
+       
+        
+    }
+    #fixedheader {
+        width: 100%;
+        color: #CCC;
+        background: #57A21C;
+        padding: 20px 0;
+    }
+    #fixedfooter {
+        position:fixed;
+        bottom:0px;
+        left:0px;
+        width:100%;
+        color:#CCC;
+        background:#57A21C;
+        padding:8px;
+    }
+    
+    #circleimg{
+      color: #CCC;
+        background: #FFFFFF;
+        padding: 5px;
+       
+    }
+    .cls{clear:both;}
+    #out p {
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    #out {
+        border: 2px solid #f2f2f2;
+        padding: 10px 15px;    margin-bottom: 25px;
+    }
+    #out img{width:100%;}
+    
+    .buttonLink {
+        display: block;
+        width: 120px;
+        height: 25px;
+        background: #4E9CAF;
+        padding: 2px;
+        text-align: center;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+ 
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+ <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+ <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+ <apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"/>
+ <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+
+ <apex:includeScript value="../../soap/ajax/30.0/connection.js" />
+  
+   <style>
+              
+            #mask {
+                display: none;
+                background:#000;
+                position: fixed;
+                left: 0;
+                top: 0;
+                //z-index: 10;
+                width: 150%;
+                height: 100%;    
+                opacity:0.1;
+                
+               } 
+    </style>
+    
+ <script type="text/javascript">
+        var __sfdcSessionId = '{!GETSESSIONID()}';
+ </script> 
+
+ <script>
+ 
+        
+        /*****************************************************************************/
+                        /*Displaying Current location Map*/
+        /*****************************************************************************/
+         var docId;
+         var longitude = '';
+         var latitude  = '';
+         var currentLocation ;
+         $(document).ready(function(){
+            var isLogin  = '{!isLogIn}';
+            var isLogOut = '{!isLogOut}';
+            //alert(isLogin);
+            //alert(isLogOut);
+            if(isLogin == 'true'){
+                $('input[id$=checkin]').show();
+                $('input[id$=btnShow]').hide();
+               // $('input[id$=imageUploadBlk]').show();
+                //$('#btnShow').hide(); 
+                
+                 //document.getElementById("pg:frm:checkin").style.display = 'block';
+            }else{
+                $('input[id$=checkin]').hide();
+                $('input[id$=btnShow]').show();
+                //$('input[id$=imageUploadBlk]').hide();
+               // $('#checkin').hide();
+               // $('#btnShow').show(); 
+            }
+         });
+         
+         /***********************Methods for loader and fadein and fadeout screen ****************************/
+         function maskBody(){
+          /*  $('body').append('<div id="mask" style="position:fixed;width:100%;height:100%;top:49%;left:49%"><img src="{!$Resource.ISP_Preloader}"/></div>');
+             //$('body').append('<div id="mask" ></div>');
+            //alert('fadein');
+            $('#mask').fadeIn(100);
+           */ 
+          }
+          
+         function unmaskBody(){
+          /*  // alert('fadeOUT');
+            $('#mask').fadeOut(100);
+            $('#mask').remove();   */
+         }
+         
+         
+          /************************************** End  fadein and fadeout screen *******************************/
+         window.onload=function() {
+            
+           
+            //$document.ready(function(){
+            var output = document.getElementById("out");
+
+              //Condition to check whether device support Geolocation service or not.
+              if (!navigator.geolocation){
+                output.innerHTML = "<p>Geolocation is not supported by your browser</p>";
+                return;
+              }
+            
+              //If we get API result 
+              function success(position) {
+              
+                    latitude  = position.coords.latitude;
+                    longitude = position.coords.longitude;
+                    
+                    
+                     var latlng = new google.maps.LatLng(latitude,longitude);
+            var geocoder = geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[1]) {
+                      
+                        currentLocation = results[1].formatted_address;
+                        document.getElementById("add").innerHTML =currentLocation;
+                    }
+                }
+            });
+       
+                    
+                    if(latitude){
+                         
+                       //output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>';
+                       var img = new Image();
+                       img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude + "&zoom=13&size=300x300&maptype=hybrid&sensor=false&markers=color:red%7Clabel:G%7C"+ latitude + "," + longitude;
+                       output.appendChild(img);
+                    }
+              };
+             
+              //Enabling Mobile locaiton service
+              function error() {
+                  //alert("Turn on your Location Services");
+                  output.innerHTML = "Unable to retrieve your location";
+              };
+            
+              output.innerHTML = "<p>Your Current Location</p>";
+              
+              //Defined time limit for API call result
+              var options = {
+                  enableHighAccuracy: true,
+                  timeout: 1000,
+                  maximumAge: 0
+              }
+              
+              //Geolocation API call
+              navigator.geolocation.getCurrentPosition(success, error, options);
+        }
+        
+        //});
+        
+        
+        /***********************************************************************************/
+         
+      //Method to show the message when user logged in the system.
+      function checkout(){
+      
+         $('#dialog').show();
+         $('#loginTime').hide();
+         
+         setTimeout(function() { 
+            $('#dialog').fadeOut(); 
+         }, 3000);  
+     }
+     
+     
+     /*******************************************************************************************/
+        
+        function createAttedence(){
+                 
+                     //alert(longitude);
+                     //alert(latitude);
+                     //alert(currentLocation);
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.ISP_Attendance_Ext.createLogin}',
+                     docId,longitude,latitude,currentLocation,
+                    
+                      function(result, event) {
+                                if (event.status) {
+                                    if (result == null) {
+                                        alert('Unexpected Error. Message - insertion failed');
+                                    } else if (result.Id) {
+                                         //alert('successssss');
+                                           $('input[id$=checkin]').hide();
+                                           $('input[id$=btnShow]').show();
+                                           //unmaskBody();   //Method to unfade the body
+                                         //$('div[id$=imageUploadBlk]').hide();
+                                    } else {
+                                        alert('Unexpected Error');
+                                    }
+                                }
+                      }, {
+                          escape: true
+                         });
+    
+         } //end of remote Action      
+
+     
+        /* Method : Upload Promotor picture
+         * Description : Used to upload the attachment as per the attachment id 
+         * param : fileNumber is an Id of the seleted file
+         */
+        function uploadPicture() {
+
+            sforce.connection.sessionId = '{!$Api.Session_ID}';
+             if (document.getElementById('file').value == "") {
+                        alert('Please take the picture and click on check in');
+             } else {
+                //maskBody(); //method Fade the screen
+                var input = document.getElementById('file');
+                var filesToUpload = input.files;
+      
+                for (var i = 0, f; f = filesToUpload[i]; i++) {
+                    var reader = new FileReader();
+                    // alert('inside for');
+                    // Keep a reference to the File in the FileReader so it can be accessed in callbacks
+                    reader.file = f;
+      
+                    
+                    reader.onerror = function(e) {
+                        switch (e.target.error.code) {
+                            case e.target.error.NOT_FOUND_ERR:
+                                alert('File Not Found!');
+                                break;
+                            case e.target.error.NOT_READABLE_ERR:
+                                alert('File is not readable');
+                                break;
+                            case e.target.error.ABORT_ERR:
+                                break; // noop
+                            default:
+                                alert('An error occurred reading this file.');
+                        };
+                    };
+    
+                    reader.onabort = function(e) {
+                        alert('File read cancelled');
+                    };
+    
+                    reader.onload = function(e) {
+                        // alert('attachment creation');
+                        //var result = sforce.connection.query("Select id from Folder where Name = 'AOS India'");
+                        var doc      = new sforce.SObject("Document");
+                        doc.Name     = this.file.name;
+                        doc.Folderid = '00l40000000qFOvAAM'; //result.getRecords[0].id;
+                        doc.Type     = this.file.type;
+                       
+                         //Converting attachment body for insertion into salesforce 
+                         //And these Base64Binary supports even IE browser also.
+                        /*****************************************/
+                        var binary = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        var length = bytes.byteLength;
+    
+                        for (var i = 0; i < length; i++) {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+    
+                        doc.Body = (new sforce.Base64Binary(binary)).toString();
+                        /*****************************************/
+                        
+    
+                        sforce.connection.create([doc], {
+                        
+                                onSuccess: function(result, source) {
+                                
+                                    if (result[0].getBoolean("success")) {
+                                        docId = result[0].id;
+                                        createAttedence();
+                                        //alert('inside doc'+docId);
+                                        console.log("new attachment created with id " + result[0].id);
+                                        
+                                        //location.reload();
+                                        //window.parent.location = window.parent.location.href;
+                                        //document.getElementById('loadingimg').style.display = 'none';
+                                        //refreshAttachments();
+                                        document.getElementById('nwfile').value = null;
+                                        
+                                    } else {
+                                        console.log("failed to create attachment " + result[0]);
+                                    }
+                                },
+                                
+                                
+                                onFailure: function(error, source) {
+                                    console.log("An error has occurred " + error);
+                                }
+                            
+                        });
+                    };
+    
+                    //reader.readAsBinaryString(f);
+                    reader.readAsArrayBuffer(f);
+                }
+           }//end of else
+        }
+            /*******************************************************/
+            
+            /***************************Logout Method********************************/
+                function logOutAttendance(){
+                    //maskBody();   //Method to fade the screen
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.ISP_Attendance_Ext.UpdateLogout}',
+                        longitude,latitude,currentLocation,
+                        function(result, event){
+                            if(event.status){
+                                if(result == null){
+                                   alert('Updation failed');
+                                }
+                                else if(result.Id){
+                                     //alert('Loggout successfully');
+                                      $('input[id$=checkin]').show();
+                                      $('input[id$=btnShow]').hide();
+                                      //unmaskBody();   //Method to fadeout the screen
+                                }
+                            } else {
+                                alert('Unexpected Error');
+                            }
+                        },{
+                            escape: true
+                          }
+                    );
+                }
+            /************************************************************************/
+     
+     
+ </script>
+ 
+ <apex:form id="frm">
+ 
+ <!-- Header Start-->
+ <div id="fixedheader" class="text-center">
+     <img src="http://jdprecisionplumbing.com/wp-content/uploads/2013/10/aosmithlogo.png" alt="aosmith_logo" style="height: 32px;"/>
+ </div>
+<!-- Header End-->
+ 
+<div class="cls"></div>
+ 
+<!-- Content Start-->
+<div class="row" id="circleimg">
+
+    <div class="col-xs-6" id="imageUploadBlk">
+    
+        <img id="blah" src="http://blog.skilledup.com/wp-content/authors/default.gif" alt="your image" height="100" width="100" class="img-circle" style="margin-left:10px;" />
+        <p>
+        <!-- class="buttonLink" -->
+        &nbsp;&nbsp;<a href="" onclick="document.getElementById('file').click(); return false;" >
+        <img style="margin-left: 26px;" src="{!$Resource.Cam48}" alt="Smiley face" height="42" width="42"/>
+        </a>
+        <input id="file" type="file" name="file"  accept="image/*;" capture="camera" onComplete="convert();"  style="display:none"/>
+        </p>
+    </div>
+    
+    <div class="col-xs-6">
+    
+        <label>Address:</label><p id ="add"> </p>
+        <apex:commandButton value="Check in"  id="checkin" onclick="uploadPicture();return false;" status="sts" styleclass="btn-success btn-lg col-xs-12 "/>
+        <apex:commandButton value="Check out" id="btnShow" onclick="logOutAttendance();return false;"   status="sts" styleclass="btn-danger btn-lg col-xs-12 "/> <!--  oncomplete="checkout();"-->
+    
+    </div>
+    
+</div> 
+<!-- Content End-->
+
+<!--Map Start -->
+<div id="out"> </div>  
+<!--Map End -->
+
+<apex:actionstatus startText="Processing....." id="sts"></apex:actionstatus>     
+<apex:pageMessages ></apex:pageMessages>
+      
+      
+     
+  
+<!-- Footer Start-->    
+<div id="fixedfooter">Innovation has a name</div>
+<!-- Footer End-->     
+ </apex:form>
+ 
+ <script>
+    
+function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+            
+        }
+    }
+    
+    $("#file").change(function(){
+        readURL(this);
+        //convert();
+                
+    });
+    $("#blah").load(function() {
+    convert();
+});
+    
+    /*
+    $("#blah").change(function(){
+        //readURL(this);
+        convert();
+        
+    }); 
+    */
+    function convert(){
+        img = new Image();
+        img.src = document.getElementById("blah").src;
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width =100
+        canvas.height =50
+        ctx.drawImage(img, 0, 0, 100, 50);
+       // document.body.appendChild(canvas);
+};
+    </script>
+ 
+ <br/>
+ 
+     <div id="dialog" style="display:none;color:green;font-size:16px;" class="col-xs-offset-2 col-xs-8 row" >
+             Thank you for recording your attendence <br/>
+             <!--<apex:outputpanel id="login1">
+             <b>Check in :</b> <apex:outputText value="{0,date,M/d/yyyy hh:mm a}" >
+                                   <apex:param value="{!loginTime}" />
+                               </apex:outputText> <br/>
+             </apex:outputpanel>
+             <b style="color:red;">Check out :</b> <apex:outputText value="{0,date,M/d/yyyy hh:mm a}">
+                              <apex:param value="{!now()}"/>
+                        </apex:outputText> <br/>
+             -->
+     </div>
+     <div>
+               
+     
+     </div>  
+
+</apex:page>

@@ -1,0 +1,487 @@
+<apex:page controller="AOSI_caseTrackingController" showHeader="false" sidebar="false" id="mypage" cache="false">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+<meta name="viewport" content="width=device-width, initial-scale=1"/>    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+
+
+
+<style type="text/css">
+.button{
+    display: flex;
+    margin:0 auto;
+    align-items:center;
+}
+
+
+.track-btn input:hover{background:#000;color:#fff;}
+.footer {
+  background: #007934 none repeat scroll 0 0;
+  bottom: 0;
+  height: 110px;
+  left: 0;
+  
+  width: 100%;
+}
+.logout input{background: #231f20 none repeat scroll 0 0;
+    border: medium none;
+    border-radius: 5px;
+    color: #fff;
+    float: left;
+    padding: 5px 15px !important;}
+.logout input:hover{color:#fff;}
+
+.form-block label{padding-top:10px;}
+.logo {
+  float: left;
+  margin: 10px 0 15px;
+}
+.logout {
+  float: right;
+  margin: 15px 0;
+}
+.marginbottom15{margin-bottom:15px;}
+.track-btn input {
+  background: #026d3a none repeat scroll 0 0;
+  border: medium none;
+  color: #fff;
+  padding: 5px 20px !important;
+}
+.feedback-main {
+  color: #fff;
+  margin: 100px auto 0;
+  width: 200px;
+}
+.ese-btn input {
+  background: #fff none repeat scroll 0 0;
+  border-radius: 5px;
+  color: red;
+  padding: 4px 16px !important;
+}
+.feedback-main td{color:#fff;}
+
+    .custPopup {
+        background-color: white;
+        border-width: 5px;
+        border-style: solid;
+        z-index: 9999;
+        left: 50%;
+        padding: 10px;
+        position: absolute;
+        width: 503px;
+        margin-left: -250px;
+        top: 30%;
+        border-radius: 10px;
+        border-color: #007934;
+    }
+    .popupBackground{
+
+        opacity: 0.95;
+        filter: alpha(opacity = 20);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+        background-color: #222;
+    }
+    .customerfeedbackBackground{
+        opacity: 0.95;
+        filter: alpha(opacity = 20);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+        background-color: #222;
+    }
+
+    .alert {
+        padding: 8px 35px 8px 14px;
+        margin-bottom: 18px;
+        color: #c09853;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        background-color: #fcf8e3;
+        border: 1px solid #fbeed5;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+
+    }
+
+    .alert-heading {
+        color: inherit;
+    }
+
+    .alert .close {
+        position: relative;
+        top: -2px;
+        right: -21px;
+        line-height: 18px;
+    }
+    .alert-success {
+        color: #468847;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+
+    .alert-error {
+        color: #ff0000;
+        background-color: #ECC0C0;
+        border-color: #d6e9c6;
+    }
+
+    .close {
+        float: right;
+        font-size: 21px;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        text-shadow: 0 1px 0 #fff;
+        filter: alpha(opacity=20);
+        opacity: .2;
+    }
+
+    .bPageBlock.apexDefaultPageBlock .pbHeader {
+        border-bottom: 1px solid #fff;
+        padding: 0;
+        background-color: #007934;
+    }
+
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+
+       background-color: #fff!important;
+       border-top-color: #007934; 
+   }
+   body .bPageBlock .pbTitle h2, body .bPageBlock .pbTitle h3, body .bSubBlock h3.lbHeader {
+    color: #fff;
+    font-size: 1.3em;
+}
+input[type=text], textarea {
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    padding: 3px 0px 3px 3px;
+    margin: 5px 1px 3px 0px;
+    border: 1px solid #DDDDDD;
+}
+
+input[type=text]:focus, textarea:focus {
+    box-shadow: 0 0 5px #007934;
+    padding: 3px 0px 3px 3px;
+    margin: 5px 1px 3px 0px;
+    border: 1px solid #007934;
+}
+
+
+
+@media only screen and (min-width : 320px) and (max-width : 600px) {
+ .footer {
+  background: #007934 none repeat scroll 0 0;
+  bottom: 0;
+  height: auto;
+  left: 0;
+  padding: 10px 0;
+  position: inherit;
+  width: 100%;
+}  
+.custPopup{width:100%;}
+.custPopup {
+  left: 0;
+  margin: 0;
+  width: 100%;
+  top:75%;
+}
+.custPopup textarea{width:100%;}
+}
+.button{
+    display: flex;
+    margin:0 auto;
+    align-items:center;
+}
+</style>
+
+
+<!--<apex:messages style="color: red;"/> -->
+
+<apex:outputPanel rendered="{!displaysuccessfeedbackmessage}">
+<div class="alert alert-success">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Your concern is registered. Our team will get back to you shortly.
+
+</div>
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!displaymainpageerror}">
+<div class="alert alert-error">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <apex:outputLabel value="{!mainpageerror}"/>
+</div>
+</apex:outputPanel>
+<apex:form id="customerfeedbackform">
+<apex:outputPanel layout="block" styleClass="customerfeedbackBackground" rendered="{!displayfeedbackform && expired == false}" id="customerfedbackop1" >
+<div class="feedback-main" style="margin-top: 21%;">
+<table >
+    <tr>
+        <td colspan="2" align="center"   >Care for a feedback?</td>
+
+    </tr>
+    <tr>
+
+        <td ><apex:commandButton value="Yes, I'm In" action="{!showfeedbackform}" onclick="launchWindow();" /> </td>
+        <td><apex:commandButton value="Not Interested" action="{!hidefeedbackform}" /> </td>
+        
+    </tr>    
+</table> 
+</div>   
+
+</apex:outputPanel>
+
+</apex:form>
+<apex:form id="escalationform" target="_top">
+
+<apex:outputPanel id="tstpopup">
+<apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}" id="escalationformpopupBackground"/>
+<apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+<div class="row">
+<div class="col-lg-12 col-xs-12">
+<table width="100%">
+    <tr>
+        <apex:messages style="color: red;"/>
+    </tr>
+    <tr><td><center style="font-weight: bold;">Reason</center></td></tr>
+    <tr>
+        
+        <td><apex:inputTextarea cols="68" rows="10" value="{!escalation_mail_content}" style="width:100%"/></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="track-btn row">
+            <div class="text-center col-xs-12">
+            <apex:commandButton value="Escalate" action="{!escalationHandler}" />
+            <apex:commandButton value="Cancel" action="{!cancelescalation}"/>  
+            </div>
+            </div>
+            
+        </td>
+    </tr>
+</table>
+</div>
+</div>
+</apex:outputPanel>
+</apex:outputPanel>
+
+</apex:form>
+
+<apex:form id="myform">
+<!--Container Start -->
+<div class="container">
+
+<!-- Header Logo Start-->
+<div class="logo"><apex:image url="{!$Resource.aosmith_logo}"/></div>
+<div class="logout"><apex:commandButton value="Logout" action="{!logOut}" rendered="{!customer_case !=null}"/></div>
+
+<!-- Header Logo End-->
+
+<!--Form Start -->
+<apex:outputPanel layout="block" id="mypanel" rendered="{!customer_case==null}">
+
+<div class="form-block">
+
+<div class="row">
+<div class="col-lg-9 col-lg-offset-3">
+<div class="row">
+
+ <div class="form-group">
+<apex:outputLabel styleClass="col-lg-2 col-xs-12" for="casenumber" value="Case Number"/>
+<div class="col-lg-3 col-xs-12"><apex:inputText value="{!casenumber}" styleClass="form-control"  id="casenumber" html-placeholder="Case Number" title="Please enter your case number here"/></div>
+</div>
+
+<div class="marginbottom15 clearfix"></div>
+
+ <div class="form-group">
+<apex:outputLabel styleClass="col-lg-2 col-xs-12" for="contactnumber" value="Contact Number"/>
+<div class="col-lg-3 col-xs-12"><apex:inputText value="{!contactnumber}" styleClass="form-control" id="contactnumber" html-placeholder="Contact Number" title="Please enter your 10 digit contact number here. Eg: 98XXXXXXXX"/></div>
+</div>
+
+<div class="marginbottom15 clearfix"></div>
+
+ <div class="form-group">
+ 
+ <div class="track-btn row">
+ <div class="text-center col-lg-7 col-xs-12">
+ <apex:commandButton action="{!getCaseHistory}" value="Track"  />
+ </div>
+ </div>
+ 
+ </div>
+</div>
+</div>    
+</div>
+</div>
+</apex:outputPanel>
+<!--Form End-->
+</div>
+<!--Container End-->
+
+<apex:pageBlock title="Case Reference" rendered="{!customer_case!=null}" >
+<div class="table-responsive">
+<table style="width:100%" class="table">
+    <tr>
+        <th>Case Number</th>
+        <th>Contact Name</th>
+        <th>Mobile Number</th> 
+        <th>Other Phone</th>
+        <th>Email ID</th>
+        <th>Mailing Address</th> 
+        <th>Case Reason</th> 
+        <th>Status</th> 
+        <apex:outputPanel rendered="{!customer_case.Reason =='Color Panel (Chargeable)' || customer_case.Reason =='Color Panel (Free)'}">
+        <th>Preferred Color</th>
+        </apex:outputPanel>   
+    </tr> 
+    <tr>
+        <td>{!customer_case.CaseNumber}</td>   
+        <td>{!customer_case.Contact.FirstName}&nbsp;{!customer_case.Contact.LastName} </td>     
+        <td>{!customer_case.Contact_Phone__c}</td>  
+        <td>{!customer_case.Contact.MobilePhone}</td>   
+        <td>{!customer_case.Contact.Email}</td>
+        <td>{!customer_case.Contact.MailingStreet},<br/>{!customer_case.Contact.MailingCity},{!customer_case.Contact.MailingState}&nbsp;-&nbsp;{!customer_case.Contact.MailingPostalCode}</td>
+        <td>{!customer_case.Reason}</td>
+        <td>{!customer_case.Status}</td>
+        <apex:outputPanel rendered="{!customer_case.Reason =='Color Panel (Chargeable)' || customer_case.Reason =='Color Panel (Free)'}">
+        <td>{!customer_case.AOSI_Preferred_Color__c}</td>
+        </apex:outputPanel>   
+    </tr> 
+</table>
+</div>   
+</apex:pageBlock> 
+<apex:pageBlock id="pb" title="Case Details" rendered="{!customer_case!=null}" >
+<div class="table-responsive" >
+<table  width='100%' class="table">
+
+    <tr>
+        <th>Date/Time Opened</th>
+        <td> <apex:outputField value="{!customer_case.CreatedDate}"/> </td>
+        <th>Product</th>
+        <td>{!customer_case.AOSIProduct__r.Name}</td> 
+    </tr>
+    <tr>
+
+        <th>Responded Time</th>
+        <td><apex:outputField value="{!customer_case.Assignment_Start_Time__c}"/></td> 
+        <th>Asset</th>
+        <td>{!customer_case.Asset.Name}</td> 
+    </tr>
+
+   <apex:outputPanel rendered="{!customer_case.Status!='Closed'}"> 
+        <tr id="hidethis">
+            <th>Cancelled/On Hold Reason</th>
+            <td>{!customer_case.AOSI_Cancelled_On_HOLD_Reason__c}</td>
+            <th>Date Of Purchase</th>
+            <td> <apex:outputField value="{!customer_case.Asset.PurchaseDate}" /></td>    
+        </tr>
+    
+        <tr>
+            <th>Appointment Date/Time</th>
+            <td><apex:outputField value="{!customer_case.AOSI_Appointment_Date__c}" /></td>
+            <th>Asset Status</th>
+            <td>{!customer_case.Asset.AOSI_Asset_Status__c}</td>
+        </tr>
+   </apex:outputPanel> 
+    <tr>
+        <th>Resource Name</th>
+        <td>{!customer_case.Service_Engineer__r.Name}</td>
+    </tr>
+
+    <tr>
+        <th>Resource Number</th>
+        <td>{!customer_case.Service_Engineer_Phone__c}</td>
+    </tr>
+    <tr>
+
+        <th>Request Resolved Date/Time</th>
+        <td><apex:outputText value="{!RequestResolvedDateTime}">
+        </apex:outputText>
+
+        </td>
+    </tr>
+</table>
+</div>
+</apex:pageBlock> 
+<apex:pageBlock title="Spare/Charges Details" rendered="{!customer_case!=null}">
+<apex:outputPanel rendered="{!customer_case.Status='Closed' && customer_case.AOSI_New_Final_Amount__c!=0}">
+<div class="table-responsive">
+<table style="width:100%" class="table">
+    <tr>
+        <th>Transaction Number</th>
+        <th>Bank Branch Details</th>
+        <th>Cheque Number</th> 
+        <th>Mode of Payment</th>
+        <th>Total Charges</th>
+        <th>Discount</th>    
+        <th>Final Amount</th>
+    </tr> 
+    <tr>
+        <td>{!customer_case.AOSI_Transaction_Number__c}</td>   
+        <td>{!customer_case.AOSI_Bank_Branch_Details__c}</td>  
+        <td>{!customer_case.AOSI_Cheque_Number__c}</td>  
+        <td>{!customer_case.AOSI_Mode_of_Payment__c}</td>  
+        <td>{!customer_case.AOSI_Total_Charges__c}</td>   
+        <td>{!customer_case.AOSI_Discount__c}</td> 
+        <td>{!customer_case.AOSI_New_Final_Amount__c}</td>     
+    </tr> 
+</table> 
+</div>
+</apex:outputPanel> 
+<apex:pageBlockTable value="{!servicecharges}" var="item" rendered="{!servicecharges!=null && servicecharges.size > 0}">
+<apex:column value="{!item.Type__c}"/>
+<apex:column value="{!item.Spares__r.Name}"/>
+<apex:column value="{!item.Final_Charges__c}"/>
+</apex:pageBlockTable> 
+</apex:pageBlock>
+<apex:outputPanel rendered="{!customer_case !=null}">
+
+<div class="footer">
+<div class="container-fluid">
+
+<div class="row border-bottom-15">
+<div class="margintop10">
+  <div class="col-lg-10 ese-btn">
+    <h2 style="color: #fff;font-size: 1.2em;">If not satisfied, click on the button to escalate</h2>
+  </div>
+  <div class="col-lg-2 ese-btn">
+    <apex:commandButton id="raiseanescalation" value="Escalate" rendered="{!customer_case !=null}" action="{!showPopup}" rerender="tstpopup"/>
+  </div>
+</div>
+</div>
+<div class="marginbottom15 clearfix"></div>
+<center>
+<div class="row">
+<div class="col-lg-12">
+    <h2 style="color: #fff;font-size: 1.2em;">For more information or any assistance please call at 1800 103 2468 or email us: aosmithcs@aosmithindia.com</h2><br/>            
+<h2 style="color: #fff;font-size: 1.2em;">NOTE : ** Page will expire after 90 days from request closure date</h2>            
+</div>
+</div>
+</center>  
+   
+</div>
+</div>
+
+</apex:outputPanel>
+</apex:form>
+<!--- script to open link in new window--->
+<script>
+
+    function launchWindow()
+    {
+        window.open('{!showfeedback }');
+    }
+    
+</script>
+
+</apex:page>

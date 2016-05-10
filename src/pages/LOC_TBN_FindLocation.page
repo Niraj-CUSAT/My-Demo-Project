@@ -1,0 +1,69 @@
+<apex:page controller="LOC_TBN_FindLocation" >
+	<apex:form >
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="/soap/ajax/20.0/connection.js"></script>
+	<script>
+	var result;
+	
+	geocoder = new google.maps.Geocoder();
+	sforce.connection.sessionId = '{!$Api.Session_ID}'; 
+	if('{!strType}'=='Contact' )
+	{
+		var objContact = new sforce.SObject("Contact");
+		
+		objContact.Id = '{!strRecId}';
+		
+		geocoder.geocode( { 'address': '{!strAddress}'}, function(results, status) 
+		{
+			if (status == google.maps.GeocoderStatus.OK) 
+			{
+				objContact.LOC_Latitude_x__c = results[0].geometry.location.lat();
+				objContact.LOC_Longitude_x__c = results[0].geometry.location.lng();
+				result = sforce.connection.update([objContact]);
+				
+			}
+			redirectToDetail();
+		});
+	}
+	if('{!strType}'=='User' )
+	{
+		var objUser = new sforce.SObject("User");
+		
+		objUser.Id = '{!strRecId}';
+		geocoder.geocode( { 'address': '{!strAddress}'}, function(results, status) 
+		{
+			if (status == google.maps.GeocoderStatus.OK) 
+			{
+				objUser.LOC_Latitude__c = results[0].geometry.location.lat();
+				objUser.LOC_Longitude__c = results[0].geometry.location.lng();
+				result = sforce.connection.update([objUser]);
+				
+			}
+			redirectToDetail();
+		});
+	}
+	if('{!strType}'=='Account' )
+	{
+		var objAccount = new sforce.SObject("Account");
+		
+		objAccount.Id = '{!strRecId}';
+		
+		geocoder.geocode( { 'address': '{!strAddress}' }, function(results, status) 
+		{
+			if (status == google.maps.GeocoderStatus.OK) 
+			{
+				objAccount.LOC_Latitude_x__c = results[0].geometry.location.lat();
+				objAccount.LOC_Longitude_x__c = results[0].geometry.location.lng();
+				result = sforce.connection.update([objAccount]);
+			}
+			redirectToDetail();
+		  
+			 
+		});
+		
+	}
+	
+	</script>
+	<apex:actionFunction name="redirectToDetail" action="{!returnToDetailPage}" /> 
+	</apex:form>
+</apex:page>

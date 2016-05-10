@@ -1,0 +1,569 @@
+<apex:page StandardController="Case" extensions="LOC_TSExtension" tabstyle="Case">
+
+    <apex:includescript value="/soap/ajax/20.0/connection.js"/>
+    <apex:includescript value="/soap/ajax/24.0/apex.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.LOC_jsFiles, 'jquery-1.7.1.min.js')}"/>
+       <apex:form id="caseFormStd" rendered="{!!isLochinvarCase}">
+<!--        <apex:pageMessages id="idPgMsg"/> -->
+        <apex:actionFunction name="gatherFieldAPIName" action="{!gatherFieldAPINames}" reRender="virtualContainer" status="saveSatus" onComplete="describeLayout.drawPageLayout();">
+            <apex:param value="" name="fieldAPINames"/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="saveInfo" action="{!saveCase}" reRender="caseFormStd,virtualContainer" status="saveSatus" onComplete="describeLayout.isOpportunityInserted('{!objCase.Id}');"/>
+        <apex:actionFunction name="saveAndClsInfo" action="{!saveAndClose}" reRender="caseFormStd" status="saveSatus" onComplete="describeLayout.isOpportunityInserted('{!objCase.Id}');"/>
+        
+        <apex:sectionHeader title="Case Edit" subtitle="New Case"/>
+        <apex:pageBlock id="CaseEditLayout" title="Case Edit" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <input type="button" value="Save" class="btn" onClick="saveInfo();"/>
+<!--                 <input type="button" value="Cancel" class="btn" onClick="window.location.href='/500/o'"/> -->
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+                <input type="button" value="Save And Close" class="btn" onClick="saveAndClsInfo();"/>
+<!--                 <apex:commandButton value="Save and Close" action="{!saveAndClose}" immediate="false" /> -->
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <apex:outputPanel id="virtualContainer" style="display:none;" >
+            <apex:pageBlock >
+                <apex:repeat value="{!lstFieldAPINames}" var="CaseField">
+                    <span id="{!CaseField}">
+                        <apex:pageBlockSection >
+                            <apex:inputField value="{!objCase[CaseField]}"/>
+                        </apex:pageBlockSection>
+                    </span>
+                    <span id="{!CaseField}-READONLY"> 
+                        <apex:outputField value="{!objCase[CaseField]}"/>
+                    </span>
+                </apex:repeat> 
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:form>
+    
+    <script>
+        
+        var describeLayout = function () {
+        
+            var pageLayoutFieldAPINames = '';
+            var recordTypeId = '';
+            var mainBody;
+            
+            var isInitialLoad = true;
+            
+            var describePageLayout = function() {
+            
+                var result;
+                var recordTypeArray;
+                
+                sforce.connection.sessionId = '{!$Api.Session_ID}';
+                
+                if(recordTypeId != '') {
+                    
+                    recordTypeArray = new Array(recordTypeId);
+                    result = sforce.connection.describeLayout('Case', recordTypeArray);
+                }
+                else {
+                
+                    result = sforce.connection.describeLayout('Case');
+                }
+                
+                var layouts = result.getArray("layouts");
+                //alert('--layouts---------------'+layouts);
+                
+                if(!isInitialLoad) {
+                
+                    var pageBlock = document.getElementById('{!$Component.caseFormStd:CaseEditLayout}');
+                    
+                    mainBody = $(pageBlock).find('.pbBody').eq(0);
+                    
+                    mainBody.append('<div class="pbError" id="errorDiv_ep" style="display: none">Error: Invalid Data. <br>Review all error messages below to correct your data.</div>');
+                }
+                
+                detailLayoutSections(layouts[0].editLayoutSections);
+            }
+            
+            var detailLayoutSections = function(sections) {
+                
+                for (var i=0; i<sections.length; i++) {
+                    
+                    var section = sections[i];
+                    
+                    if(!isInitialLoad) {
+                    
+                        var headerTitleBar;
+                    
+                        if(i == 0)
+                            headerTitleBar = $('<div class="pbSubheader brandTertiaryBgr first tertiaryPalette" id="head_1_ep"><span class="pbSubExtra"><span class="requiredLegend brandTertiaryFgr"><span class="requiredExampleOuter"><span class="requiredExample">&nbsp;</span></span><span class="requiredMark">*</span><span class="requiredText"> = Required Information</span></span></span><h3>' + section['heading'] + '<span class="titleSeparatingColon">:</span></h3></div>')
+                        else
+                            headerTitleBar = $('<div class="brandTertiaryBgr pbSubheader tertiaryPalette" id="head_' + (i+1) + '_ep"><h3>' + section['heading'] + '<span class="titleSeparatingColon">:</span></h3></div>')
+                        
+                        mainBody.append(headerTitleBar);
+                        mainBody.append(layoutRows(section.getArray("layoutRows"), section['columns']));
+                    }
+                    else {
+                    
+                        pageLayoutFieldAPINames += layoutRows(section.getArray("layoutRows"));
+                    }
+                }
+                
+                if(isInitialLoad) {
+                    
+                    pageLayoutFieldAPINames = pageLayoutFieldAPINames.substring(0, pageLayoutFieldAPINames.length - 1);
+                    gatherFieldAPIName(pageLayoutFieldAPINames);
+                }
+            }
+            
+            var layoutRows = function(rows, columns) {
+                
+                var eachSectionElement;
+                var sectionFieldAPIName = '';
+                
+                if(typeof columns !== 'undefined') {
+                
+                    eachSectionElement = '<div class="pbSubsection"><table class="detailList" border="0" cellpadding="0" cellspacing="0"><tbody>';
+                } 
+            
+                for (var i=0; i<rows.length; i++) {
+                
+                    var row = rows[i];
+                    
+                    if(typeof columns !== 'undefined') {
+                    
+                        eachSectionElement += layoutItems(row.getArray("layoutItems"), columns);
+                    }
+                    else {
+                    
+                        sectionFieldAPIName += layoutItems(row.getArray("layoutItems"));
+                    }
+                }
+            
+                if(typeof columns !== 'undefined') {
+                
+                    eachSectionElement += '</tbody></table></div>';
+                    return eachSectionElement;
+                }
+                else
+                    return sectionFieldAPIName;
+            }
+            
+            var layoutItems = function(items, columns) {
+            
+                var rowFieldAPINames = '';
+                var tdElements = '';
+                
+                if(typeof columns !== 'undefined') {
+                
+                    if(columns == '2')
+                        tdElements = '<td class="labelCol"><label>FIELD-LABEL</label></td><td class="dataCol col02">FIELD-HTMLMARKUP</td><td class="labelCol"><label>FIELD-LABEL</label></td><td class="dataCol col02">FIELD-HTMLMARKUP</td>'
+                    else
+                        tdElements = '<td class="labelCol"><label>FIELD-LABEL</label></td><td class="data2Col" colspan="3">FIELD-HTMLMARKUP</td>'
+                }
+                    
+                for (var i=0; i<items.length; i++) {
+                
+                    var item = items[i];
+                    
+                    if(typeof columns !== 'undefined') {
+                    
+                        if(item['label'] == '') {
+                        
+                            tdElements = tdElements.replace('FIELD-LABEL', item['label']);
+                            tdElements = tdElements.replace('FIELD-HTMLMARKUP', '');
+                        }
+                        else {
+                        
+                            tdElements = layoutComponents(item.getArray("layoutComponents"), tdElements, item['editable']);
+                        }
+                    }
+                    else {
+                    
+                        rowFieldAPINames += layoutComponents(item.getArray("layoutComponents"));
+                    }                       
+                }
+                
+                if(typeof columns !== 'undefined') {
+                
+                    return '<tr>' + tdElements + '</tr>';
+                }
+                else {
+                
+                    return rowFieldAPINames;
+                }                   
+            }
+            
+            var layoutComponents = function(components, tdMarkup, isEditable) {
+                
+                var columnFieldAPINames = '';
+                
+                for(var i=0; i<components.length; i++) {
+                
+                    var component = components[i];
+                    
+                    if(typeof tdMarkup !== 'undefined') {
+                    
+                        tdMarkup = tdMarkup.replace('FIELD-LABEL', $('#'+component.value).find('th').eq(0).html());
+                        
+                        if(isEditable == 'true') {
+                        
+                            tdMarkup = tdMarkup.replace('FIELD-HTMLMARKUP', $('#'+component.value).find('td').eq(0).html());
+                        }
+                        else {
+                        
+                            tdMarkup = tdMarkup.replace('FIELD-HTMLMARKUP', document.getElementById(component.value + '-READONLY').innerHTML);
+                        }
+                    }
+                    else
+                        columnFieldAPINames += component.value + '#';
+                }
+                
+                if(typeof tdMarkup !== 'undefined')
+                    return tdMarkup;
+                else
+                    return columnFieldAPINames
+            }
+            
+            var drawPageLayout = function() {
+            
+                isInitialLoad = false;
+                describePageLayout();
+            }
+            
+            var init = function(recordType) {
+            
+                recordTypeId = recordType;
+                describePageLayout();
+            }
+            
+            var isOpportunityInserted = function(caseId) {
+            
+                if(caseId != '')
+                    commitProducts();
+                else
+                    describeLayout.drawPageLayout();
+                //alert(caseId);    
+            }
+            
+            return {
+            
+                init : init,
+                drawPageLayout: drawPageLayout,
+                isOpportunityInserted: isOpportunityInserted
+            }
+            
+        }();
+        
+        describeLayout.init('{!recordTypeId}');
+        
+    </script>
+    
+   <!-- --------------------------------Lochinvar Custom vf page overriden on New and Edit---------------------------------------------------------- -->
+       <apex:form id="caseFormOverriden"  rendered="{!isLochinvarCase}" >
+               <script type="text/javascript">
+                        var __sfdcSessionId = '{!GETSESSIONID()}';
+                    </script>
+                    <script language="JavaScript1.2" src="/js/functions.js"></script>
+                    <script src="/soap/ajax/26.0/connection.js" type="text/javascript"></script>
+               <apex:outputpanel id="popupScriptId">
+                   
+                    <script type="text/javascript"> 
+  function openLookup(baseURL, width, modified, searchParam){
+    
+    var originalbaseURL = baseURL;
+    var originalwidth = width;
+    var originalmodified = modified;
+    var originalsearchParam = searchParam;
+ 
+    var lookupType = baseURL.substr(baseURL.length-3, 3);
+    if (modified == '1') baseURL = baseURL + searchParam;
+ 
+    var isCustomLookup = false;
+    
+    //for customer
+    
+    if(lookupType == "003"){
+ 
+      var urlArr = baseURL.split("&");
+      var txtId = '';
+      if(urlArr.length > 2) {
+        urlArr = urlArr[1].split('=');
+        txtId = urlArr[1];
+      }
+ 
+      // Following is the url of Custom Lookup page. You need to change that accordingly
+      baseURL = "/apex/LOC_contCustomLookupCustomer?txt=" + txtId;
+ 
+      // Following is the id of apex:form control "myForm". You need to change that accordingly
+      baseURL = baseURL + "&frm=" + escapeUTF("{!$Component.myForm}");
+      if (modified == '1') {
+        baseURL = baseURL + "&lksearch=" + searchParam;
+      }
+ 
+      // Following is the ID of inputField that is the lookup to be customized as custom lookup
+      if(txtId.indexOf('Co') > -1 ){
+        isCustomLookup = true;
+      }
+    }
+ 
+ 
+    if(isCustomLookup == true){
+      openPopup(baseURL, "lookup", 350, 580, "width="+width+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=yes", true);     
+    }
+    else {
+      if (modified == '1') originalbaseURL = originalbaseURL + originalsearchParam;
+        openPopup(originalbaseURL, "lookup", 350, 580, "width="+originalwidth+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=yes", true);            
+    } 
+    
+  }
+</script>
+                  
+                    <script>
+                    
+                        var url ;
+                        function openWind(URL)
+                        {  
+                                curPopupWindow  = window.open(URL, "_blank","width=500, height=500,dependent=no,toolbar=no,status=no,directories=no,menubar=no,scrollbars=1,resizable=no", true);
+                        }
+
+                        /*To Set the selected Details Of the Course from the popup window*/
+                        function setSelectedRelatedToDetails(Id, Name)
+                        {
+                            var inputArr = currConColumn.getElementsByTagName('input');
+                            inputArr[0].value = Id;
+                            inputArr[1].value = Name;
+                            curPopupWindow.close();
+                            currConColumn = null;
+                            callRefreshJS()
+                        }
+
+                        function noEnter(e)
+                        {
+                                var event = e || window.event;
+                                if(event.keyCode == 13)
+                                {
+                                    event.cancelBubble = true;  
+                                    return false;
+                                }
+                        }
+
+                    </script>
+               </apex:outputpanel>
+<!--                <apex:pageMessages id="idPgMsgLoc"/> -->
+<!--            <apex:actionfunction name="checkErrorCode" action="{!checkErrorCode}" rerender="casetypeId,pbs" oncomplete="focusDescription();"/> -->
+               <apex:actionfunction name="onChangeOpenPopupAF" action="{!insertCaseOnChange}"  rerender="dummy" >
+                       <apex:param name="serialLength" value="" assignTo="{!strSerialLength}"/>
+               </apex:actionfunction>
+               <apex:actionfunction name="callReloadAF" action="{!reloadMethod}">
+                       <apex:param name="strError" value="" assignTo="{!strErrorCodeId}"/>
+               </apex:actionfunction>
+               <apex:actionfunction name="callrenderAF" action="{!insertCaseOnChange}"/>
+               <apex:actionFunction name="callAF" rerender="test"/>
+<!--            <apex:actionFunction name="InitializeAF" action="{!insertCaseOnChange}"/> -->
+           <apex:pageBlock title="Edit Case" id="thePageBlock" mode="edit">
+               <apex:pageBlockButtons >
+                   <apex:commandButton value="Save" action="{!saveCase}" rerender="idPgMsgLoc"/>  
+                   <apex:commandButton value="Save and Close" action="{!saveAndCloseLoc}" />
+                   <apex:commandButton value="Cancel" action="{!cancel}" />
+               </apex:pageBlockButtons>
+               <apex:pageBlockSection columns="2" title="Case Details" id="caseDetails">
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.Details}" var="f" >
+                       <apex:inputField value="{!objCase[f]}"/>
+                   </apex:repeat>
+                   <br/>
+
+                   <apex:inputField value="{!objCase.AssetID}" id="caseAssetId" onchange="onSerialChange(this);" onkeyup="onSerialChange(this);" required="true">
+                       <script>
+
+                               window.onload = function ()
+                                                {
+                                                    if('{!objCase.Type}' == 'No Error Code')
+                                                        focusDescription();
+                                                    else
+                                                       document.getElementById('{!$Component.caseAssetId}').focus();
+                                                }
+
+                               function onSerialChange(obj)
+                                {
+                                        var strQuery="Select Id, SerialNumber,Name From  Asset where SerialNumber = '" + obj.value + "' LIMIT 1";
+                                        var assetIds = sforce.connection.query(strQuery);
+                                        if(obj.value.length == 0)  
+                                        {
+                                            var serialLength =  obj.value.length;
+                                            onChangeOpenPopupAF(serialLength);
+                                        }
+                                        
+                                }
+
+                               function getAssetIdValue()
+                               {
+                                       return document.getElementById('{!$Component.caseAssetId}').value;
+                               }
+
+                       </script>
+
+                   </apex:inputField>
+
+<!--                     <apex:repeat value="{!$ObjectType.Case.FieldSets.Details3}" var="f" > -->
+<!--                         <apex:outputField value="{!objCase[f]}"/> -->
+<!--                     </apex:repeat> -->
+                   <br/>
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.Details2}" var="f" >
+                       <apex:inputField value="{!objCase[f]}">
+                       </apex:inputField>
+                   </apex:repeat>
+                   <apex:actionStatus id="reqstatus" startText="fetching the relevant info.." />
+               </apex:pageBlockSection>
+               <apex:pageBlockSection columns="2" title="Contact Information" id="contactPSBID">
+                       <apex:pageBlockSectionItem >
+                               <apex:outputLabel value="Contact Name" />
+                               <apex:outputPanel >
+                                        <div class = "requiredInput">
+                                                <div class = "requiredBlock"></div>
+                                                <!-- <apex:inputField Label="Contact Name" value="{!objCase.ContactId}"> -->
+                                                <apex:inputField value="{!objCase.ContactId}" id="Co" required="true" label="Contact Name"> 
+                                                <apex:actionsupport event="onchange" action="{!insertCaseOnChange}"/>
+                                            </apex:inputField>
+                                        </div>
+                               </apex:outputPanel>
+
+                       </apex:pageBlockSectionItem>    
+
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.ContactDetails1}" var="f">
+
+                       <apex:outputField value="{!objCase[f]}"/>
+
+                   </apex:repeat>
+
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.ContactDetails}" var="f">
+
+                       <apex:outputField label="Contact Phone" value="{!objCase[f]}"/>
+
+                   </apex:repeat>
+                   <br/>
+
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.ContactDetails2}" var="f">
+
+                       <apex:outputField label="Contact Mobile" value="{!objCase[f]}"/>
+
+                   </apex:repeat>
+
+                   <br/>
+
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.ContactDetails3}" var="f">
+
+                       <apex:outputField label="Contact Email" value="{!objCase[f]}"/>
+
+                   </apex:repeat>
+
+                   
+
+               </apex:pageBlockSection>
+
+               <apex:pageBlockSection columns="2" title="Asset Details" id="assetPSBID">
+
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.AssetDetails}" var="f">
+
+                       <apex:outputField value="{!objCase[f]}"/>
+
+                   </apex:repeat>
+
+                   
+
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.AssetDetails2}" var="f">
+
+                       <apex:outputField value="{!objCase[f]}"/>
+
+                   </apex:repeat>
+
+               </apex:pageBlockSection>
+
+               <apex:outputPanel id="dummy">
+
+                       <script>
+                       /*To Open Conference PopUp*/
+                              function openRelatedToPopup(obj,id)
+
+                              {
+                                  url = '';
+                                  if('{!objCase.AssetID}' != '' && getAssetIdValue() != '')
+                                  {
+                                          currConColumn = obj;
+                                          var likeString = '';
+                                          likeString = document.getElementById(id).value; 
+                                          url = "TBN_LOC_CustomLookupForErrorCodePg?likestring=" + likeString+'&AssetId='+'{!objCase.AssetID}';
+                                  }
+                                  //checkErrorCode();
+                                  focusDescription();
+                                  return false;
+                              }
+
+                        function focusDescription()
+                        {
+
+                               if('{!objCase.Type}' == 'No Error Code')
+                               {
+                                       url = '';
+                                       document.getElementById('{!$Component.caseDescId}').focus();
+                                       clearErrorCodes();
+                               }
+                               else if(url != '')
+                               {
+                                       timeout = setTimeout('openWind(url)', 500);
+                               }
+                       }
+
+                       </script>
+               </apex:outputPanel>
+               <apex:pageBlockSection columns="2" title="Troubleshooting Details" id="TroubleshootingPBSID">
+                   <apex:inputField value="{!objCase.Type}" id="casetypeId" onchange="callDummy();"></apex:inputField>
+                   <apex:pageblocksectionitem id="errorCodePBSID">
+                           <apex:outputlabel value="Error Code"/>
+                           <apex:outputpanel id="test">
+                                   <apex:inputHidden value="{!strErrorCodeId}" id="RelatedId" />
+                                   <apex:inputtext value="{!strErrorCodeName}" id="RelatedName" onkeydown="return noEnter(event);" />
+                                   <a href ="" style="cursor: pointer" id="lookupIconId" onclick="javascript:return openRelatedToPopup(this.parentNode,('{!$Component.RelatedName}'))">
+                                          <img src="/s.gif" alt="Error Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';"
+                                           onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';"
+                                           onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Error Lookup (New Window)" />
+                                   </a>
+                                   <script>
+                                    function callRefreshJS()
+                                    {
+                                         var str = document.getElementById('{!$component.RelatedId}').value;
+                                         callReloadAF(str);
+                                    }
+                                    function clearErrorCodes()
+                                    {
+                                         document.getElementById('{!$component.RelatedId}').value = '';
+                                         document.getElementById('{!$component.RelatedName}').value = '';
+                                    }
+                                   </script>
+                           </apex:outputpanel>
+                   </apex:pageblocksectionitem>
+               <apex:repeat value="{!$ObjectType.Case.FieldSets.TroubleshootingDetails}" var="f">
+                    <apex:inputField value="{!objCase[f]}" style="{!IF(f.Label == 'Product Parameters' || f.label == 'System Guide', 'width:370px; height:250px;','color:green;')}"/>
+               </apex:repeat> 
+                <apex:inputField id="caseDescId" value="{!objCase.Description}" style="width:370px;height:150px;" />
+               </apex:pageBlockSection>
+
+<!--                            <apex:pageBlockSection columns="1" title="Additional Information" id="additionalInfoId"> -->
+
+<!--                     <apex:repeat value="{!$ObjectType.Case.FieldSets.Additional_Information_Section}" var="f" > -->
+
+<!--                         <apex:inputField value="{!objCase[f]}" style="width:500px;height:150px;"/> -->
+
+<!--                     </apex:repeat> -->
+
+<!--                 </apex:pageBlockSection> -->
+
+               <apex:pageBlockSection columns="2" title="System Information" id="sysDetailsId">
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.System}" var="f">
+                       <apex:inputField value="{!objCase[f]}"/>
+                   </apex:repeat>
+                   <br/>
+                   <apex:repeat value="{!$ObjectType.Case.FieldSets.System_Close_Date_section}" var="f">
+                       <apex:outputField value="{!objCase[f]}"/>
+                   </apex:repeat>
+               </apex:pageBlockSection>
+           </apex:pageBlock>
+           <apex:actionFunction name="callDummy" rerender="dummy" />
+       </apex:form>
+</apex:page>

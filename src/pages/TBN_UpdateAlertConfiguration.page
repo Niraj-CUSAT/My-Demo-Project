@@ -1,0 +1,175 @@
+<apex:page StandardController="Alert_Relationship__c" extensions="TBN_UpdateAlertConfiguration"> 
+	<apex:sectionHeader title="Alert Configuration" subtitle="New Alert Configuration" rendered="{!if(objAlertRelationship.Id == null, true, false)}"/>
+	<apex:sectionHeader title="Alert Configuration" subtitle="{!objAlertRelationship.Name}" rendered="{!if(objAlertRelationship.Id == null, false, true)}"/>
+	
+	<apex:form >
+		<apex:actionFunction name="getRelatedViews" action="{!getViews}" rerender="viewsList, block" status="processingImg">
+			<apex:param name="strSelectedSObject" value="" assignTo="{!strSelectedSObject}"/>
+		</apex:actionFunction>
+		<apex:actionFunction name="callController" action="{!fetchViewRecords}" rerender="viewsList, block, viewRecords" status="processingImg">
+			<apex:param name="strSelectedView" value="" assignTo="{!strSelectedView}"/>
+		</apex:actionFunction>
+		<script>
+			function fetchViews(selectedObject)
+			{ 
+				getRelatedViews(selectedObject);   
+			}
+			
+		</script> 
+		
+		<apex:pageblock id="block">
+			<apex:pageMessages />
+			<div class="pbHeader"> 
+				<table border="0" cellpadding="0" cellspacing="0"> 
+					<tbody>
+						<tr>
+							<td class="pbTitle">
+								<img src="/s.gif" alt="" class="minWidth" title="" height="1" width="1"/>
+								<h2 class="mainTitle" align="left">Alert Configuration Edit</h2>
+							</td>
+							<td class="pbButton" id="topButtonRow"> 
+								<apex:commandButton value="Save" action="{!saveRecord}" rerender="dummy"/>
+								<apex:commandButton value="Cancel" action="{!cancel}" rerender="dummy"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			 
+			<apex:pageBlockSection collapsible="false" title="Information" columns="1">
+				<apex:inputField value="{!objAlertRelationship.Alert__c}" label="Step-1:  Select an Active Alert"/>
+				<apex:inputField value="{!objAlertRelationship.Related_SObject__c}" label="Step-2:  Select an Object" onchange="fetchViews(this.value);"/>
+				<apex:selectList value="{!strSelectedView}" id="viewsList" size="1" label="Step-3: Select View" style="width: 200px;" onChange="callController(this.value)">
+					<apex:selectOptions value="{!lstViews}"/>
+				</apex:selectList>
+				<apex:inputField value="{!objAlertRelationship.Active__c}"/>
+			</apex:pageBlockSection> 
+			<br/><br/>
+			
+			<apex:outputPanel id="viewRecords">
+				<apex:outputPanel title="Sample Preview of selected View Records"  rendered="{!If(lstAccounts.size == 0 && lstContacts.size == 0 && lstAssets.size == 0 && lstCases.size == 0 && lstProducts.size == 0 && LEN(strSelectedView) == 18, true, false)}" >
+					<div style="border: thin; background-color: rgb(159, 159, 168); padding: 10px; font-size: 15px; font-weight: 600;">
+						<apex:outputText value="No Records exist under selcted view" style=""/>	
+					</div>
+				</apex:outputPanel>
+				
+				<apex:pageBlockTable value="{!lstAccounts}" var="view" title="Sample Preview of selected View Records"  rendered="{!If(lstAccounts.size > 0, true, false)}" id="Accounts">
+					<apex:repeat value="{!AccountFields}" var="f">
+						<apex:column headerValue="Record Name">
+							<apex:facet name="header">
+			            		{!f.Label}
+		            		</apex:facet>
+		            		<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', true, false)}">
+		            			<a href="/{!view['Id']}">{!view[f.fieldPath]}</a>
+	            			</apex:outputPanel>
+	            			<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', false, true)}">
+	            				{!view[f.fieldPath]}
+	            			</apex:outputPanel>
+						</apex:column>
+					</apex:repeat>
+				</apex:pageBlockTable>
+				
+				<apex:pageBlockTable value="{!lstContacts}" var="view" title="Sample Preview of selected View Records"  rendered="{!If(lstContacts.size > 0, true, false)}" id="Contacts">
+					<apex:repeat value="{!AccountFields}" var="f">
+						<apex:column headerValue="Record Name">
+							<apex:facet name="header">
+			            		{!f.Label}
+		            		</apex:facet>
+		            		<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', true, false)}">
+		            			<a href="/{!view['Id']}">{!view[f.fieldPath]}</a>
+	            			</apex:outputPanel>
+	            			<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', false, true)}">
+	            				{!view[f.fieldPath]}
+	            			</apex:outputPanel>
+						</apex:column>
+					</apex:repeat>
+				</apex:pageBlockTable>
+				
+				<apex:pageBlockTable value="{!lstCases}" var="view" title="Sample Preview of selected View Records"  rendered="{!If(lstCases.size > 0, true, false)}" id="Cases">
+					<apex:repeat value="{!AccountFields}" var="f">
+						<apex:column headerValue="Record Name">
+							<apex:facet name="header">
+			            		{!f.Label}
+		            		</apex:facet>
+		            		<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', true, false)}">
+		            			<a href="/{!view['Id']}">{!view[f.fieldPath]}</a>
+	            			</apex:outputPanel>
+	            			<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', false, true)}">
+	            				{!view[f.fieldPath]}
+	            			</apex:outputPanel>
+						</apex:column>
+					</apex:repeat>
+				</apex:pageBlockTable>
+				
+				<apex:pageBlockTable value="{!lstProducts}" var="view" title="Sample Preview of selected View Records"  rendered="{!If(lstProducts.size > 0, true, false)}" id="Products">
+					<apex:repeat value="{!AccountFields}" var="f">
+						<apex:column headerValue="Record Name">
+							<apex:facet name="header">
+			            		{!f.Label}
+		            		</apex:facet>
+		            		<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', true, false)}">
+		            			<a href="/{!view['Id']}">{!view[f.fieldPath]}</a>
+	            			</apex:outputPanel>
+	            			<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', false, true)}">
+	            				{!view[f.fieldPath]}
+	            			</apex:outputPanel>
+						</apex:column>
+					</apex:repeat>
+				</apex:pageBlockTable>
+				
+				<apex:pageBlockTable value="{!lstAssets}" var="view" title="Sample Preview of selected View Records"  rendered="{!If(lstAssets.size > 0, true, false)}" id="Assets">
+					<apex:repeat value="{!AccountFields}" var="f">
+						<apex:column headerValue="Record Name">
+							<apex:facet name="header">
+			            		{!f.Label}
+		            		</apex:facet>
+		            		<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', true, false)}">
+		            			<a href="/{!view['Id']}">{!view[f.fieldPath]}</a>
+	            			</apex:outputPanel>
+	            			<apex:outputPanel rendered="{!If(f.fieldPath == 'Name', false, true)}">
+	            				{!view[f.fieldPath]}
+	            			</apex:outputPanel>
+						</apex:column>
+					</apex:repeat>
+				</apex:pageBlockTable>
+			</apex:outputPanel>
+			
+			<div class="pbBottomButtons"> 
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody> 
+						<tr>
+							<td class="pbTitle">
+							</td>
+							<td class="pbButton" id="topButtonRow">
+								<apex:commandButton value="Save" action="{!saveRecord}" rerender="dummy"/>
+								<apex:commandButton value="Cancel" action="{!cancel}" rerender="dummy"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div> 
+		</apex:pageblock>
+		
+		<apex:outputPanel id="dummy"/>
+		<apex:actionstatus id="processingImg" startText="Loading...">
+            <apex:facet name="start">
+                <div id="salesforceSource_blurybackground" style="z-index: 9999; position: absolute; left: 1px; top: 1px; width: 100%; height: 100%; text-align: center; vertical-align: middle; background-color: #dcdcdc; opacity: 0.5; filter: alpha(opacity = 50)"></div>
+                <div id="ManageMembersViewport_loading" class="waitingSearchDiv" style="width: 100%; height: 80%; display: '';">
+                    <div style="width: 144px; vertical-align: middle;" class="waitingHolder">
+                        <table align="center" valign="top" style="width: 100%; height: 30%">
+                            <tr align="center" valign="top" style="width: 100%; height: 30%">
+                                <td valign="top"><img class="waitingImage"
+                                    src="/img/loading.gif" /><span class="waitingDescription">Loading......</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div id="ManageMembersViewport_loading" class="waitingSearchDiv" style="width: 100%; height: 100%; display:'';" />
+                <script>
+                    document.getElementById('ManageMembersViewport_loading').height = window.innerHeight * (3/4);
+                </script>
+            </apex:facet>
+            <apex:facet name="stop"></apex:facet>
+        </apex:actionstatus>
+	</apex:form>
+</apex:page>

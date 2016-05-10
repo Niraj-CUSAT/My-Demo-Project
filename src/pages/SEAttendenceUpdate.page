@@ -1,0 +1,103 @@
+<apex:page controller="SEAttendenceUpdate" sidebar="false" id="pageId">
+    <style type="text/css">
+        h1{
+            font-family:"Times New Roman";
+            color:#2F4F4F;
+            text-align:center;
+            font-size:18px;
+        }
+    </style>
+    <script type="text/javascript">
+         function displayAll()
+         { 
+           if(document.getElementById("{!$Component.pageId.formId.SEblock.region}").value == 'All') 
+            display();
+         }
+         
+    </script>
+    <apex:form id="formId">
+        <apex:actionFunction name="display" reRender="thepanel1" action="{!displaySE}" />
+        <apex:pageBlock id="SEblock" >   
+       
+            <h1> Service Engineer Attendence From : <u><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!firstDayOfWeek}" /></apex:outputText></u> To : <u><apex:outputText value="{0,date,dd'/'MM'/'yyyy}">  <apex:param value="{!lastDayOfWeek_Disp}" /></apex:outputText></u></h1>
+            <br/><br/>
+            <!--The below field must not be displayed for the all the profiles. But since it's a parent picklist we use it on the page but we don't display it-->
+       <!-- <span style="display:none"><apex:inputField value="{!Serv_Eng.Region__c}"  /></span> -->
+            <apex:outputpanel rendered="{!IF($UserRole.Name == 'AO Smith India Manager'  || $UserRole.Name == 'Integration', true, false)}" id="regionPanel" >
+                <b>REGION:</b>  <apex:selectList value="{!regionval}" size="1">
+        <apex:selectOptions value="{!regiondata}"/>
+         <apex:actionSupport event="onchange" rerender="state"/> 
+        </apex:selectList>
+        
+           <!--   <br/>
+                <b>Region :</b><apex:inputField value="{!Serv_Eng.Region__c}"   onchange="displayAll();" id="region" />
+                           -->
+            </apex:outputpanel><br/>
+            <apex:outputpanel rendered="{!IF($UserRole.Name != 'ASP South', true, false)}">
+             <b>STATE:</b>  <apex:selectList value="{!stateval}" size="1" id="state">
+                <apex:selectOptions value="{!statedata}"/>
+                 <apex:actionSupport event="onchange" rerender="city"/>
+        </apex:selectList>
+        <br/>
+           <!-- <br/> <b>State  &nbsp; &nbsp;: </b><apex:inputField value="{!Serv_Eng.State__c}"/>
+                <br/> -->
+                    <b>CITY:</b>  <apex:selectList label="REGION" value="{!Cityval}" size="1" id="city">
+                <apex:selectOptions value="{!Citydata}"/>
+               <!--  <apex:actionSupport event="onchange" rerender="milestone"/>-->
+        </apex:selectList><br/>
+            <!--<b> City &nbsp; &nbsp;&nbsp;&nbsp;:  </b><apex:inputField Label="City" value="{!Serv_Eng.AOSI_City__c}"/>
+             <br/> -->
+            
+            <!-- <apex:actionRegion > -->
+            <!-- <b> Type &nbsp;&nbsp;&nbsp;&nbsp;:  </b><apex:inputField Label="Type" value="{!Serv_Eng.Type__c}"  onchange="display()"/> -->
+                              <!--  <apex:actionSupport event="onchange" reRender="thepanel1" action="{!displaySE}"/> -->
+                            
+            <!-- </apex:actionRegion>       -->
+               <apex:outputLabel ><b>TYPE    &nbsp;&nbsp;&nbsp;:</b></apex:outputLabel>
+            <apex:selectlist size="1" value="{!selectedEnggType}" onchange="display()">
+                <apex:selectoptions value="{!servEnggType}"></apex:selectoptions>
+                
+            </apex:selectlist>    
+                <br/>
+            
+            </apex:outputpanel>
+            <apex:outputpanel id="thepanel1" >
+            <br/><br/>
+            <table style="table-layout:fixed;" border="1" width="500">
+                <tr>
+                    <td bgcolor="#989898"  style="font-family:Times New Roman;color:black;font-size:15px;" width="150"><b>Name</b></td>
+                    <apex:repeat value="{!Intlist}"  var="lst">
+                        <th bgcolor="#989898"  style="font-family:Times New Roman;color:black;font-size:15px;" width="50">   
+                            <apex:outputText value="{!lst}"></apex:outputText>
+                        </th>
+                    </apex:repeat>
+                </tr>
+                <tr>
+                    <td bgcolor="#989898"  style="font-family:Times New Roman;color:black;font-size:15px;" width="50">&nbsp;</td>
+                    <apex:repeat value="{!Daylist}"  var="ddd">
+                        <th bgcolor="#989898"  style="font-family:Times New Roman;color:black;font-size:15px;" width="50">   
+                            <apex:outputText value="{!ddd}"></apex:outputText>
+                        </th>
+                    </apex:repeat>
+                </tr>
+                <apex:repeat value="{!SEList}" var="SE">
+                <tr>
+                
+                    <td bgcolor="#989898"  style="font-family:Times New Roman;color:black;font-size:15px;" >{!SE.name}
+                        
+                    </td>
+                    <apex:repeat value="{!lstdates}" var="D"><td>
+                        <apex:repeat value="{!SE.Attendance__r}" var="a">
+                        <apex:outputpanel rendered="{!D==a.AOSI_Date__c}">
+                        <apex:inputfield id="Abset" value="{!a.AOSI_Present__c}"/>
+                        
+                        </apex:outputpanel></apex:repeat></td></apex:repeat>
+                </tr>
+                </apex:repeat>
+            </table>
+            </apex:outputpanel>
+            <br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <apex:commandButton action="{!Save}" value="Save" style="Width:100px;Hight:30px;" reRender="ss"/>
+        </apex:pageBlock>
+       </apex:form>
+</apex:page>

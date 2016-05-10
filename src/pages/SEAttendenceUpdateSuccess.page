@@ -1,0 +1,6 @@
+<apex:page sidebar="false">
+         <apex:pageBlock >
+        <apex:pageMessage summary="Successfully Updated Service Engineer Attendance." severity="confirm" strength="3" />
+        <apex:pageMessages />
+        </apex:pageBlock>
+        </apex:page>

@@ -1,0 +1,157 @@
+<!------------------------------------------------------------------
+Createdby     :    Bhanu Vallabhu, KVP Business Solutions.
+Created on    :    19/2/2013
+Modified by   :    Pawani GVK, KVP Business Solutions.
+Modified on   :    6/1/2014
+-------------------------------------------------------------------->
+<apex:page standardController="Case" extensions="SetRecordtype">
+
+
+
+    <script>
+
+function createContact()
+{
+window.open('/apex/CreateNewContact','_blank','width=800,height=800');
+
+
+}
+function createNewContact()
+{
+
+window.open('{!URLFOR($Action.Contact.NewContact)}','_blank','width=800,height=800'); 
+
+
+}
+function createAsset()
+{
+window.open('/apex/CreateNewAsset','_blank','width=800,height=800');
+
+}
+function doShowPanel(){    
+    aSelectPanel();
+}
+
+</script>
+
+    <apex:sectionHeader title="Case Edit" />
+
+    <apex:form id="frmId">
+        <apex:pageMessages id="pgmsg"></apex:pageMessages>
+       <apex:actionFunction name="aSelectPanel" action="{!ShowPartDetail}"  reRender="frmId"/>  
+        <apex:pageBlock title="Case Edit" mode="edit">
+
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save" action="{!CustomeSave}"  />
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Save" action="{!CustomeSave}" />
+           
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection title="Case Information" columns="2">
+                <apex:inputField value="{!caseRecord.CaseNumber}" required="false" />
+                <apex:inputField value="{!caseRecord.WE_CARE__c}" required="false"/>                
+                <apex:inputField value="{!caseRecord.Status}" required="true" onchange="doShowPanel();" rendered="{!$Profile.Name!='Call Centre Agent - AOS India'}"/> <!----onchange="doShowPanel();"---->
+                <apex:inputField value="{!caseRecord.AOSI_Call_Escalated__c}" required="false" />               
+                <apex:inputField value="{!caseRecord.AOSI_Cancelled_On_HOLD_Reason__c}" required="false" onchange="doShowPanel();" rendered="{!$Profile.Name!='Call Centre Agent - AOS India'}" /> <!-----onchange="doShowPanel();"--->               
+                <apex:inputField value="{!caseRecord.AOSI_Escalate_to_HO__c}" required="false" />
+                <apex:pageBlockSectionItem >            
+                <apex:outputpanel style="overflow:scroll;height:150px;"  layout="block" id="partpanelid" rendered="{!showPanel}">
+                    <apex:pageBlockTable value="{!Partcodedetil}" var="par">
+                        <apex:column headerValue="Spares"><apex:inputfield value="{!par.Spares__c}" required="true"/></apex:column>
+                        <apex:column headerValue="Part code"><apex:Outputfield value="{!par.Spares__r.Part_Code__c}" /></apex:column>
+                    </apex:pageBlockTable>
+                    <apex:commandButton value="Add Row" action="{!addMore}"/>
+                    <apex:commandButton value="Delete Row" action="{!deleteRow}"/>
+                    <apex:commandButton value="Save" action="{!savePartCode}"/>
+                </apex:outputpanel></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem> 
+                <apex:inputField value="{!caseRecord.Origin}" required="true" />
+                <apex:inputField value="{!caseRecord.Reason}" required="true" /><br/>
+                 <apex:inputField value="{!caseRecord.AOSI_Sales_Query_Reference__c}" />
+                 <apex:inputField value="{!caseRecord.AOSI_Category_of_Sales_Query__c}" />
+                 <apex:inputField value="{!caseRecord.AOSI_Vertical__c}" />
+                <apex:inputField value="{!caseRecord.ContactId}"  />
+              
+                <apex:commandButton value="New Contact" id="ContactButtonn" onClick="createNewContact();" /> 
+                
+                <apex:inputField value="{!caseRecord.AOSIProduct__c}"/>
+                <apex:inputField value="{!caseRecord.AOSI_Preferred_Color__c}" required="false" />
+
+                <apex:inputField value="{!caseRecord.AssetId}" required="false" />
+                <apex:commandButton value="New Asset" id="AssetButton" onClick="createAsset();" />
+               
+                <br />
+                <apex:inputField value="{!caseRecord.AOSI_City__c}" required="false" />
+                <apex:inputField value="{!caseRecord.AOSI_Appointment_Date__c}"
+                    required="false" />
+                 <apex:inputField value="{!caseRecord.AOSI_Warranty_Status_I__c}" required="false" />
+                 <apex:inputField value="{!caseRecord.Quantity__c}" required="false" />
+               <!--  <apex:outputField value="{!caseRecord.AOSI_Region_picklist__c}" /> <br/>
+                 <apex:outputField value="{!caseRecord.AOSI_State_Picklist__c}"/><br/>
+                 <apex:inputField value="{!caseRecord.AOSI_City_Master__c}"/>--->
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Owner and Registration Information" columns="2">               
+                <apex:inputField value="{!caseRecord.AccountId}" required="false" />               
+                <apex:inputField value="{!caseRecord.Service_Engineer__c}"  required="false" />
+               <!-- <apex:inputField value="{!caseRecord.AOSI_ASP_Class_Type__c}"  required="false" />---->
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Description Information" columns="2">
+                <apex:inputField value="{!caseRecord.AOSI_Customer_Concern__c}" required="true" />
+                <apex:inputField value="{!caseRecord.AOSI_Promoter_Name__c}" required="false" />
+                <br/>
+                <apex:inputField value="{!caseRecord.AOSI_Promoter_Counter_Name__c}" required="false" />
+                <apex:inputField value="{!caseRecord.Subject}" required="false" />
+                <apex:inputField value="{!caseRecord.AOSI_Cause__c}" required="false" />
+                <apex:inputField value="{!caseRecord.Description}" required="false" />
+                <apex:inputField value="{!caseRecord.AOSI_Action__c}" required="false" />
+                <apex:inputField value="{!caseRecord.AOSI_Work_Done__c}" required="false" />
+                <apex:inputField value="{!caseRecord.Courier_Number__c}" required="false" />
+                
+                
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Case Closure Details" columns="2">
+                <apex:outputField value="{!caseRecord.AOSI_Total_Charges__c}" />
+                <apex:inputField value="{!caseRecord.Assignment_Start_Time__c}" required="false" />
+                <apex:inputField value="{!caseRecord.AOSI_Discount__c}" required="false" />
+                <apex:inputField value="{!caseRecord.Assignment_End_Time__c}" required="false" />
+                <apex:outputField value="{!caseRecord.AOSI_Final_Amount__c}" />
+                <apex:inputField value="{!caseRecord.AOSI_Case_Close_Time__c}" required="false" />
+                <apex:inputfield value="{!caseRecord.AOSI_Mode_of_Payment__c}" />
+                <apex:inputField value="{!caseRecord.Customer_Satisfaction_Status__c}" required="false" />                
+                <apex:inputfield value="{!caseRecord.AOSI_Cheque_Number__c}" />                
+                <br />
+                <apex:inputfield value="{!caseRecord.AOSI_Bank_Branch_Details__c }" />
+                <apex:inputField value="{!caseRecord.AOSI_Contract_Charges__c}" required="false" />
+                <apex:inputfield value="{!caseRecord.AOSI_Transaction_Number__c}" />
+                <apex:inputfield value="{!caseRecord.AOSI_Purchase_Value__c}" />
+                
+                <apex:inputField value="{!caseRecord.AOSI_Hardness__c}" />                               
+                <apex:inputfield value="{!caseRecord.AOSI_Water_Source__c}" />
+                <apex:inputfield value="{!caseRecord.AOSI_Water_Storage__c}" />
+                <apex:inputfield value="{!caseRecord.AOSI_TDS_Input__c }" />
+                <apex:inputfield value="{!caseRecord.AOSI_TDS_Output__c}" />
+                <apex:inputfield value="{!caseRecord.AOSI_pH__c}" />
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="System Information" columns="2">
+
+                <apex:outputField value="{!caseRecord.RecordTypeId}" />
+                <apex:outputField value="{!caseRecord.OwnerId}" />
+
+            </apex:pageBlockSection>
+
+
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

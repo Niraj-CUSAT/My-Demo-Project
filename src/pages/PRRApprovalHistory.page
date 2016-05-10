@@ -1,0 +1,93 @@
+<!--File Name: PRRApprovalHistory
+    Created By:Dhriti Krishna Ghosh Moulick
+    Modified By:
+    Description:This Page is used to Display records of PRR Approval History 
+ -->
+<apex:page controller="PRRApprovalHistory" sideBar="false" standardStylesheets="false" docType="html-5.0">
+    <!--  <link href="{!URLFOR($Resource.bootStrap, 'bootstrap/css/bootstrap.min.css')}" rel="stylesheet" media="screen"/>
+    <apex:includeScript value="{!URLFOR($Resource.bootstrap, 'js/bootstrap.min.js')}"/> -->
+    <style> 
+       .headerRow .TableTitle {
+           background-color: #F0F8FF !important;
+           background-image: Grey !important; //This is needed if you want to overwrite the header background
+           color: #CC0000 !important; 
+           font-size:100% !important; 
+    </style>
+    <apex:form > 
+        <apex:sectionHeader title="PRR Approval History"/>
+         <apex:pagemessages id="pgmsg"/> 
+        <apex:pageBlock > 
+            <apex:pageBlockButtons > 
+                <apex:commandButton value="Export Current Records" action="{!Download}"/> 
+                <apex:commandButton value="Export All" action="{!DownloadAll}"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection title="Filter By:" columns="3" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="From" for="fromDate"/>
+                    <apex:input type="date"  value="{!startDate}" id="fromDate"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="To" for="toDate"/>
+                    <apex:input type="date" value="{!endDate}" id="toDate"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:commandButton value="Go" action="{!filterDate}" rendered="{!startDate!=null}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:outputPanel id="pb">
+               <apex:pageBlockTable value="{!AllPRR}" var="PRRHistory">
+                    <apex:column headerValue="PRR Name" headerClass="TableTitle">
+                        <apex:outputLink value="/{!PRRHistory.Id}">{!PRRHistory.Name}</apex:outputLink>     
+                    </apex:column>
+                    <apex:column headerValue="Case Number" headerClass="TableTitle">
+                        <apex:outputLink value="/{!PRRHistory.AOSI_Case__c}">{!PRRHistory.AOSI_Case__r.CaseNumber}</apex:outputLink>    
+                    </apex:column>
+                    <apex:column headerValue="Case Open Date" headerClass="TableTitle">
+                        <apex:outputField value="{!PRRHistory.AOSI_Case__r.CreatedDate}"/>     
+                    </apex:column>
+                    <apex:column headerValue="GIN Date" headerClass="TableTitle">
+                        <apex:outputField value="{!PRRHistory.GIN_Date__c}"/>     
+                    </apex:column>
+                    <apex:column headerValue="Delivered Date" headerClass="TableTitle">
+                        <apex:outputField value="{!PRRHistory.Delivered_Date__c}"/>     
+                    </apex:column>
+                    <apex:column headerValue="Approval History Details" headerClass="TableTitle">
+                        <apex:pageBlockTable value="{!PRRHistory.processsteps}" var="pin" rendered="{!PRRHistory.processsteps.size>0}">
+                            <apex:column headerValue="Assigned To" headerClass="TableTitle">
+                                <apex:outputField value="{!pin.OriginalActorId}"/>      
+                            </apex:column>
+                            <apex:column headerValue="Actual Approver" headerClass="TableTitle">
+                                <apex:outputField value="{!pin.ActorId}"/>      
+                            </apex:column>
+                            <apex:column headerValue="Status" headerClass="TableTitle">
+                                <apex:outputField value="{!pin.StepStatus}"/>      
+                            </apex:column>
+                            <apex:column headerValue="Created Date" headerClass="TableTitle">
+                                <apex:outputField value="{!pin.CreatedDate}"/>      
+                            </apex:column>
+                            <apex:column headerValue="Completed Date" headerClass="TableTitle">
+                                <apex:outputField value="{!pin.SystemModstamp}"/>      
+                            </apex:column>
+                            <apex:column headerValue="Comments" headerClass="TableTitle">
+                                <apex:outputField value="{!pin.Comments}"/>      
+                            </apex:column>
+                        </apex:pageBlockTable>  
+                    </apex:column>
+                </apex:pageBlockTable>
+                    <apex:panelGrid columns="7"> 
+                        <apex:commandButton status="fetchStatus" reRender="pb" value="|<" action="{!first}" disabled="{!!hasPrevious}" title="First Page"/>
+                        <apex:commandButton status="fetchStatus" reRender="pb" value="<" action="{!previous}" disabled="{!!hasPrevious}" title="Previous Page"/>
+                        <apex:commandButton status="fetchStatus" reRender="pb" value=">" action="{!next}" disabled="{!!hasNext}" title="Next Page"/>
+                        <apex:commandButton status="fetchStatus" reRender="pb" value=">|" action="{!last}" disabled="{!!hasNext}" title="Last Page"/>
+                        <apex:outputText >{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
+                        <apex:commandButton status="fetchStatus" reRender="pb" value="Refresh" action="{!refresh}" title="Refresh Page"/>
+                        <apex:outputPanel style="color:#4AA02C;font-weight:bold">
+                            <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
+                        </apex:outputPanel>
+                    </apex:panelGrid>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

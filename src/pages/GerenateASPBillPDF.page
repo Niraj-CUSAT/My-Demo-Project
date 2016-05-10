@@ -1,0 +1,1603 @@
+<apex:page standardController="ASP__c" extensions="GenarateASPBillPDF" renderAs="PDF" sidebar="false">
+<head>
+<style>
+     
+  @page {
+      size: A4;
+      page-break-inside:avoid; 
+         
+  }
+  @body {
+      font-size:10px;
+        
+    }
+
+ </style>
+</head>
+
+      <table border="2" width="100%" style="border-collapse:collapse;font-size:12px" bgcolor="#FFFACD" >
+                <tr>
+                    <td colspan="2">
+                    
+                        M/s &nbsp; <apex:outputText style="font-size:12px;font-weight:bold;" value="{!aspRecord.AOSI_Company_Name__c}"/><br/>                   
+                        <apex:outputText ><b>Address: </b> {!aspRecord.AOSI_Address__c}</apex:outputText><br/>                    
+                        <apex:outputText ><b>City: </b> {!aspRecord.AOSI_City__c}</apex:outputText>&nbsp;&nbsp;
+                        <apex:outputText ><b>State: </b> {!aspRecord.AOSI_State__c}</apex:outputText>&nbsp;&nbsp;
+                        <apex:outputText ><b>Pin Code: </b> {!aspRecord.AOSI_Pin_Code__c}</apex:outputText>&nbsp;&nbsp;
+                        <apex:outputText ><b>Phone Number: </b> {!aspRecord.AOSI_Telephone_1__c}</apex:outputText><br/>
+                    </td>
+                    <td align="right" valign="top">
+                        <apex:outputText value="Authorised Service Partner" style="font-size:12px;font-weight:bold;"/><br/>
+                        <apex:outputText value="A.O.Smith India Water Products Pvt. Ltd." style="font-size:12px;font-weight:bold;"/>
+                    </td>
+                </tr>
+                </table>
+                <table border="2" width="100%" style="border-collapse:collapse;font-size:12px" bgcolor="#FFFACD">
+                <tr>
+                    <td width ="40%" valign="top">
+                        <apex:outputText value="Bill to:" style="font-size:12px;font-weight:bold;"/><br/>
+                        <apex:outputText value="M/s A.O.Smith India Water Products Pvt. Ltd." style="font-size:12px;font-weight:bold;"/><br/>
+                        <apex:outputText value="Plot No.300, Phase - 2, KIADB Industrial Area,"/><br/>
+                        <apex:outputText value="Harohalli (V) & (P), Kanakpura (TQ)"/><br/>
+                        <apex:outputText value="Ramanagara District. Bangalore, Karnataka"/><br/>
+                        <apex:outputText value="Ph : 080-28011200 Pin: 562112"/><br/>
+                    </td>
+                    <td width ="60%" valign="top" colspan="2">
+                    <table width="100%" border="1" cellspacing="0">
+                        <tr><td><apex:outputText value="Invoice No: " style="font-size:12px;font-weight:bold;"/></td><td> <apex:outputText value="{!billingList.AOSI_Invoice_Auto_Number__c}"/></td></tr>
+                        <tr><td><apex:outputText value="Invoice Date: " style="font-size:12px;font-weight:bold;"/></td><td><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"> <apex:param value="{!billingList.AOSI_Invoice_Date__c}" /></apex:outputText></td></tr>                
+                        <tr><td><apex:outputText value="Agreement No.: " style="font-size:12px;font-weight:bold;"/></td><td> <apex:outputText value="{!aspRecord.AOSI_Agreement_Number__c}"/></td></tr>
+                        <tr><td><apex:outputText value="Effective From: " style="font-size:12px;font-weight:bold;"/> </td><td><apex:outputText value="{!aspRecord.AOSI_Contract_Effective_From_Date__c} - {!aspRecord.AOSI_Contract_Effective_To_Date__c}"/></td></tr>
+                        <tr><td><apex:outputText value="PAN No: " style="font-size:12px;font-weight:bold;"/></td><td> <apex:outputText value="{!aspRecord.AOSI_PAN_No__c}"/></td></tr>
+                        <tr><td><apex:outputText value="TIN No: " style="font-size:12px;font-weight:bold;"/></td><td> <apex:outputText value="{!aspRecord.AOSI_VAT_Registration_No__c}"/></td></tr>
+                        <tr><td><apex:outputText value="Service Tax No: " style="font-size:12px;font-weight:bold;"/></td><td> <apex:outputText value="{!aspRecord.AOSI_Service_Tax_Registration_No__c}"/></td></tr>
+                        <tr><td><apex:outputText value="Vendor Code: " style="font-size:12px;font-weight:bold;"/> </td><td> <apex:outputText value="{!aspRecord.AOSI_Vendor_Code__c}"/></td></tr> 
+                      </table>  
+                    </td>
+                </tr>
+                <tr>
+                    <td width ="33%"><apex:outputText value="Billing Period" style="font-size:12px;font-weight:bold;"/></td>
+                    <td width ="34%"><b>From:</b>   <apex:outputText value="{0, date, dd-MM-yyyy}"><apex:Param value="{!monthStart}" /></apex:OutputText></td>
+                    <td width ="33%"><b>To:</b> <apex:outputText value="{0, date, dd-MM-yyyy}"><apex:Param value="{!monthend}" /></apex:OutputText></td>
+                </tr>
+            </table>
+            
+            <!--- Table to display the service calls ---------------->
+            <table border="2" width="100%" bgcolor="#FFFACD" style="border-collapse:collapse;font-size:12px"> 
+            <tr>
+                <th colspan="2" bgcolor="#DCDCDC"> &nbsp;</th>
+                <th colspan="3" bgcolor="#DCDCDC"><center> WH Calls</center> </th>
+                <th colspan="4" bgcolor="#DCDCDC"><center> WT Calls</center> </th>
+                </tr>
+                <tr>
+                    <th width="10" bgcolor="#DCDCDC"> S.No </th>
+                    <th width="15" bgcolor="#DCDCDC"> SLAB</th>
+                    <th width="15" bgcolor="#DCDCDC"> RATE</th>
+                    <th width="15" bgcolor="#DCDCDC"> No of Calls</th>
+                    <th width="15" bgcolor="#DCDCDC"> AMOUNT</th>
+                    
+                    <th width="15" bgcolor="#DCDCDC"> RATE</th>
+                    <th width="15" bgcolor="#DCDCDC"> No of Calls</th>
+                    <th width="15" bgcolor="#DCDCDC"> AMOUNT</th>
+                    <th width="15" bgcolor="#DCDCDC"> TOTAL Amount</th>
+                    
+                </tr>
+                <!--Display information of Service call Local ---->
+                <tr>
+                <th>1</th><th colspan="8" bgcolor="#FFFACD">Service (Local) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td > Less Than  6 Hrs</td>
+                <td  align="right">
+                    <apex:outputText value="{!WHserviceCity_Lees6}" rendered="{!IF(WHserviceCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceCity_Lees6==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Less_6hrs}" rendered="{!IF(WH_Serv_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Less_6hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_Less_6HrsCity}" rendered="{!IF(WHServiceCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_Less_6HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceCity_Lees6}" rendered="{!IF(WTserviceCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceCity_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Less_6hrs}" rendered="{!IF(WT_Serv_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_Less_6HrsCity}" rendered="{!IF(WTServiceCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_Less_6HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right"> 
+                    <apex:outputText value="{!TotalServiceLess6hrs}" rendered="{!IF(TotalServiceLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalServiceLess6hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td > 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHserviceCity_6_24}" rendered="{!IF(WHserviceCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceCity_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_6_24hrs}" rendered="{!IF(WH_Serv_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_6_24HrsCity}" rendered="{!IF(WHServiceCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_6_24HrsCity==0,true,false)}"/>
+               </td>
+                    
+                <td align="right">
+                    <apex:outputText value="{!WTserviceCity_6_24}" rendered="{!IF(WTserviceCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceCity_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_6_24hrs}" rendered="{!IF(WT_Serv_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_6_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_6_24HrsCity}" rendered="{!IF(WTServiceCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_6_24HrsCity==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalService6_24hrs}" rendered="{!IF(TotalService6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalService6_24hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHserviceCity_24_48}" rendered="{!IF(WHserviceCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceCity_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Greater_24hrs}" rendered="{!IF(WH_Serv_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_greater_24HrsCity}" rendered="{!IF(WHServiceCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_greater_24HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceCity_24_48}" rendered="{!IF(WTserviceCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceCity_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Greater_24hrs}" rendered="{!IF(WT_Serv_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_greater_24HrsCity}" rendered="{!IF(WTServiceCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_greater_24HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalService_greater_24hrs}" rendered="{!IF(TotalService_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalService_greater_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHserviceCity_greater48}" rendered="{!IF(WHserviceCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceCity_greater48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Greater_48hrs}" rendered="{!IF(WH_Serv_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_greater_48HrsCity}" rendered="{!IF(WHServiceCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_greater_48HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceCity_greater48}" rendered="{!IF(WTserviceCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceCity_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Greater_48hrs}" rendered="{!IF(WT_Serv_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_greater_48HrsCity}" rendered="{!IF(WTServiceCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_greater_48HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalService_greater_48}" rendered="{!IF(TotalService_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalService_greater_48==0,true,false)}"/>
+               </td>
+                </tr>
+                <!--End Display information of Service call Local---->
+                
+                <!--Display information of Service call Upcounty ---->
+               <tr>
+                <th>2</th><th colspan="8" bgcolor="#FFFACD">Service (Up Country) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHserviceUpcountry_Lees6}" rendered="{!IF(WHserviceUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceUpcountry_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Upcountry_Less_6hrs}" rendered="{!IF(WH_Serv_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Upcountry_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_Less_6HrsUpcountry}" rendered="{!IF(WHServiceCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_Less_6HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceUpcountry_Lees6}" rendered="{!IF(WTserviceUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceUpcountry_Lees6==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Upcountry_Less_6hrs}" rendered="{!IF(WT_Serv_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Upcountry_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_Less_6HrsUpcountry}" rendered="{!IF(WTServiceCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_Less_6HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalServiceLess6hrs}" rendered="{!IF(UCTotalServiceLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalServiceLess6hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHserviceUpcountry_6_24}" rendered="{!IF(WHserviceUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceUpcountry_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Upcountry_6_24hrs}" rendered="{!IF(WH_Serv_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Upcountry_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_6_24HrsUpcountry}" rendered="{!IF(WHServiceCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_6_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceUpcountry_6_24}" rendered="{!IF(WTserviceUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceUpcountry_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Upcountry_6_24hrs}" rendered="{!IF(WT_Serv_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Upcountry_6_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_6_24HrsUpcountry}" rendered="{!IF(WTServiceCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_6_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!UCTotalService6_24hrs}" rendered="{!IF(UCTotalService6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalService6_24hrs==0,true,false)}"/>
+              </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHserviceUpcountry_24_48}" rendered="{!IF(WHserviceUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceUpcountry_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Upcountry_Greater_24hrs}" rendered="{!IF(WH_Serv_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Upcountry_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_greater_24HrsUpcountry}" rendered="{!IF(WHServiceCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_greater_24HrsUpcountry==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceUpcountry_24_48}" rendered="{!IF(WTserviceUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceUpcountry_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Upcountry_Greater_24hrs}" rendered="{!IF(WT_Serv_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Upcountry_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_greater_24HrsUpcountry}" rendered="{!IF(WTServiceCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_greater_24HrsUpcountry==0,true,false)}"/>
+                </td>
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalService_greater_24hrs}" rendered="{!IF(UCTotalService_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalService_greater_24hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>   
+                <td align="right">
+                    <apex:outputText value="{!WHserviceUpcountry_greater48}" rendered="{!IF(WHserviceUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHserviceUpcountry_greater48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Serv_Upcountry_Greater_48hrs}" rendered="{!IF(WH_Serv_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Serv_Upcountry_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHServiceCall_greater_48HrsUpcountry}" rendered="{!IF(WHServiceCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHServiceCall_greater_48HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTserviceUpcountry_greater48}" rendered="{!IF(WTserviceUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTserviceUpcountry_greater48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Serv_Upcountry_Greater_48hrs}" rendered="{!IF(WT_Serv_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Serv_Upcountry_Greater_48hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTServiceCall_greater_48HrsUpcountry}" rendered="{!IF(WTServiceCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTServiceCall_greater_48HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalService_greater_48}" rendered="{!IF(UCTotalService_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalService_greater_48==0,true,false)}"/>
+                </td>
+                </tr> 
+                <!--End Display information of Service call Up county---->
+                
+                  <!--Display information of PM Service call Local ---->
+                <tr>
+                <th>3</th><th colspan="8" bgcolor="#FFFACD">PM Service (Local) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceCity_Lees6}" rendered="{!IF(WHPMserviceCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceCity_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Less_6hrs}" rendered="{!IF(WH_PMServ_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_Less_6HrsCity}" rendered="{!IF(WHPMServiceCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_Less_6HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceCity_Lees6}" rendered="{!IF(WTPMserviceCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceCity_Lees6==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Less_6hrs}" rendered="{!IF(WT_PMServ_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Less_6hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_Less_6HrsCity}" rendered="{!IF(WTPMServiceCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_Less_6HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!TotalPMServiceLess6hrs}" rendered="{!IF(TotalPMServiceLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalPMServiceLess6hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceCity_6_24}" rendered="{!IF(WHPMserviceCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceCity_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_6_24hrs}" rendered="{!IF(WH_PMServ_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_6_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_6_24HrsCity}" rendered="{!IF(WHPMServiceCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_6_24HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceCity_6_24}" rendered="{!IF(WTPMserviceCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceCity_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_6_24hrs}" rendered="{!IF(WT_PMServ_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_6_24HrsCity}" rendered="{!IF(WTPMServiceCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_6_24HrsCity==0,true,false)}"/>
+                </td>
+                <td align="right"> 
+                    <apex:outputText value="{!TotalPMService6_24hrs}" rendered="{!IF(TotalPMService6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalPMService6_24hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceCity_24_48}" rendered="{!IF(WHPMserviceCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceCity_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Greater_24hrs}" rendered="{!IF(WH_PMServ_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_greater_24HrsCity}" rendered="{!IF(WHPMServiceCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_greater_24HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceCity_24_48}" rendered="{!IF(WTPMserviceCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceCity_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Greater_24hrs}" rendered="{!IF(WT_PMServ_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_greater_24HrsCity}" rendered="{!IF(WTPMServiceCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_greater_24HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalPMService_greater_24hrs}" rendered="{!IF(TotalPMService_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalPMService_greater_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceCity_greater48}" rendered="{!IF(WHPMserviceCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceCity_greater48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Greater_48hrs}" rendered="{!IF(WH_PMServ_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Greater_48hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_greater_48HrsCity}" rendered="{!IF(WHPMServiceCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_greater_48HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceCity_greater48}" rendered="{!IF(WTPMserviceCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceCity_greater48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Greater_48hrs}" rendered="{!IF(WT_PMServ_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_greater_48HrsCity}" rendered="{!IF(WTPMServiceCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_greater_48HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalPMService_greater_48}" rendered="{!IF(TotalPMService_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalPMService_greater_48==0,true,false)}"/>
+                </td>
+                </tr>
+                <!--End Display information of Service call Local---->
+                
+                <!--Display information of Service call Upcounty ---->
+               <tr>
+                <th>4</th><th  colspan="8" bgcolor="#FFFACD">PM Service (Up Country) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceUpcountry_Lees6}" rendered="{!IF(WHPMserviceUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceUpcountry_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Upcountry_Less_6hrs}" rendered="{!IF(WH_PMServ_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Upcountry_Less_6hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_Less_6HrsUpcountry}" rendered="{!IF(WHPMServiceCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_Less_6HrsUpcountry==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceUpcountry_Lees6}" rendered="{!IF(WTPMserviceUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceUpcountry_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Upcountry_Less_6hrs}" rendered="{!IF(WT_PMServ_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Upcountry_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_Less_6HrsUpcountry}" rendered="{!IF(WTPMServiceCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_Less_6HrsUpcountry==0,true,false)}"/>
+              </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!UCTotalPMServiceLess6hrs}" rendered="{!IF(UCTotalPMServiceLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalPMServiceLess6hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td > 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceUpcountry_6_24}" rendered="{!IF(WHPMserviceUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceUpcountry_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Upcountry_6_24hrs}" rendered="{!IF(WH_PMServ_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Upcountry_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_6_24HrsUpcountry}" rendered="{!IF(WHPMServiceCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_6_24HrsUpcountry==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceUpcountry_6_24}" rendered="{!IF(WTPMserviceUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceUpcountry_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Upcountry_6_24hrs}" rendered="{!IF(WT_PMServ_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Upcountry_6_24hrs==0,true,false)}"/>
+              </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_6_24HrsUpcountry}" rendered="{!IF(WTPMServiceCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_6_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalPMService6_24hrs}" rendered="{!IF(UCTotalPMService6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalPMService6_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceUpcountry_24_48}" rendered="{!IF(WHPMserviceUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceUpcountry_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Upcountry_Greater_24hrs}" rendered="{!IF(WH_PMServ_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Upcountry_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_greater_24HrsUpcountry}" rendered="{!IF(WHPMServiceCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_greater_24HrsUpcountry==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceUpcountry_24_48}" rendered="{!IF(WTPMserviceUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceUpcountry_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Upcountry_Greater_24hrs}" rendered="{!IF(WT_PMServ_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Upcountry_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_greater_24HrsUpcountry}" rendered="{!IF(WTPMServiceCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_greater_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!UCTotalPMService_greater_24hrs}" rendered="{!IF(UCTotalPMService_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalPMService_greater_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>   
+                <td align="right">
+                    <apex:outputText value="{!WHPMserviceUpcountry_greater48}" rendered="{!IF(WHPMserviceUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMserviceUpcountry_greater48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_PMServ_Upcountry_Greater_48hrs}" rendered="{!IF(WH_PMServ_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_PMServ_Upcountry_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHPMServiceCall_greater_48HrsUpcountry}" rendered="{!IF(WHPMServiceCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHPMServiceCall_greater_48HrsUpcountry==0,true,false)}"/>
+              </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTPMserviceUpcountry_greater48}" rendered="{!IF(WTPMserviceUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMserviceUpcountry_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_PMServ_Upcountry_Greater_48hrs}" rendered="{!IF(WT_PMServ_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_PMServ_Upcountry_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTPMServiceCall_greater_48HrsUpcountry}" rendered="{!IF(WTPMServiceCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTPMServiceCall_greater_48HrsUpcountry==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!UCTotalPMService_greater_48}" rendered="{!IF(UCTotalPMService_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalPMService_greater_48==0,true,false)}"/>
+               </td>
+                </tr> 
+                <!--End Display information of Service call Up county---->
+                
+                 <!--Display information of Free Installation call Local ---->
+                <tr>
+                <th>5</th><th colspan="8" bgcolor="#FFFACD">Free Installation (Local) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCity_Lees6}" rendered="{!IF(WHFreeinstCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCity_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Less_6hrs}" rendered="{!IF(WH_Freeinst_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_Less_6HrsCity}" rendered="{!IF(WHFreeinstCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_Less_6HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCity_Lees6}" rendered="{!IF(WTFreeinstCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCity_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Less_6hrs}" rendered="{!IF(WT_Freeinst_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_Less_6HrsCity}" rendered="{!IF(WTFreeinstCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_Less_6HrsCity==0,true,false)}"/>
+              </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!TotalFreeinstLess6hrs}" rendered="{!IF(TotalFreeinstLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalFreeinstLess6hrs==0,true,false)}"/>
+              </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCity_6_24}" rendered="{!IF(WHFreeinstCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCity_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_6_24hrs}" rendered="{!IF(WH_Freeinst_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_6_24HrsCity}" rendered="{!IF(WHFreeinstCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_6_24HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCity_6_24}" rendered="{!IF(WTFreeinstCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCity_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_6_24hrs}" rendered="{!IF(WT_Freeinst_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_6_24HrsCity}" rendered="{!IF(WTFreeinstCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_6_24HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalFreeinst6_24hrs}" rendered="{!IF(TotalFreeinst6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalFreeinst6_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCity_24_48}" rendered="{!IF(WHFreeinstCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCity_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Greater_24hrs}" rendered="{!IF(WH_Freeinst_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_greater_24HrsCity}" rendered="{!IF(WHFreeinstCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_greater_24HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCity_24_48}" rendered="{!IF(WTFreeinstCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCity_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Greater_24hrs}" rendered="{!IF(WT_Freeinst_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_greater_24HrsCity}" rendered="{!IF(WTFreeinstCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_greater_24HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalFreeinst_greater_24hrs}" rendered="{!IF(TotalFreeinst_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalFreeinst_greater_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCity_greater48}" rendered="{!IF(WHFreeinstCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCity_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Greater_48hrs}" rendered="{!IF(WH_Freeinst_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_greater_48HrsCity}" rendered="{!IF(WHFreeinstCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_greater_48HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCity_greater48}" rendered="{!IF(WTFreeinstCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCity_greater48==0,true,false)}"/>
+              </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Greater_48hrs}" rendered="{!IF(WT_Freeinst_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_greater_48HrsCity}" rendered="{!IF(WTFreeinstCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_greater_48HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right"> 
+                    <apex:outputText value="{!TotalFreeinst_greater_48}" rendered="{!IF(TotalFreeinst_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalFreeinst_greater_48==0,true,false)}"/>
+               </td>
+                </tr>
+                <!--End Display information of free installation call Local---->
+                
+                <!--Display information of Free installation call Upcounty ---->
+               <tr>
+                <th>6</th><th colspan="8" bgcolor="#FFFACD">Free Installation (Up Country) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstUpcountry_Lees6}" rendered="{!IF(WHFreeinstUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstUpcountry_Lees6==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Upcountry_Less_6hrs}" rendered="{!IF(WH_Freeinst_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Upcountry_Less_6hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_Less_6HrsUpcountry}" rendered="{!IF(WHFreeinstCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_Less_6HrsUpcountry==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstUpcountry_Lees6}" rendered="{!IF(WTFreeinstUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstUpcountry_Lees6==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Upcountry_Less_6hrs}" rendered="{!IF(WT_Freeinst_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Upcountry_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_Less_6HrsUpcountry}" rendered="{!IF(WTFreeinstCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_Less_6HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalFreeinstLess6hrs}" rendered="{!IF(UCTotalFreeinstLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalFreeinstLess6hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstUpcountry_6_24}" rendered="{!IF(WHFreeinstUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstUpcountry_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Upcountry_6_24hrs}" rendered="{!IF(WH_Freeinst_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Upcountry_6_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_6_24HrsUpcountry}" rendered="{!IF(WHFreeinstCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_6_24HrsUpcountry==0,true,false)}"/>
+                 </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstUpcountry_6_24}" rendered="{!IF(WTFreeinstUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstUpcountry_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Upcountry_6_24hrs}" rendered="{!IF(WT_Freeinst_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Upcountry_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_6_24HrsUpcountry}" rendered="{!IF(WTFreeinstCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_6_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalFreeinst6_24hrs}" rendered="{!IF(UCTotalFreeinst6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalFreeinst6_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstUpcountry_24_48}" rendered="{!IF(WHFreeinstUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstUpcountry_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Upcountry_Greater_24hrs}" rendered="{!IF(WH_Freeinst_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Upcountry_Greater_24hrs==0,true,false)}"/>
+              </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_greater_24HrsUpcountry}" rendered="{!IF(WHFreeinstCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_greater_24HrsUpcountry==0,true,false)}"/>
+              </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstUpcountry_24_48}" rendered="{!IF(WTFreeinstUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstUpcountry_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Upcountry_Greater_24hrs}" rendered="{!IF(WT_Freeinst_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Upcountry_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_greater_24HrsUpcountry}" rendered="{!IF(WTFreeinstCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_greater_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!UCTotalFreeinst_greater_24hrs}" rendered="{!IF(UCTotalFreeinst_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalFreeinst_greater_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>   
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstUpcountry_greater48}" rendered="{!IF(WHFreeinstUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstUpcountry_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Freeinst_Upcountry_Greater_48hrs}" rendered="{!IF(WH_Freeinst_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Freeinst_Upcountry_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHFreeinstCall_greater_48HrsUpcountry}" rendered="{!IF(WHFreeinstCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHFreeinstCall_greater_48HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstUpcountry_greater48}" rendered="{!IF(WTFreeinstUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstUpcountry_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Freeinst_Upcountry_Greater_48hrs}" rendered="{!IF(WT_Freeinst_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Freeinst_Upcountry_Greater_48hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTFreeinstCall_greater_48HrsUpcountry}" rendered="{!IF(WTFreeinstCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTFreeinstCall_greater_48HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalFreeinst_greater_48}" rendered="{!IF(UCTotalFreeinst_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalFreeinst_greater_48==0,true,false)}"/>
+               </td>
+                </tr> 
+                <!--End Display information of free installation call Up county---->
+                
+                <!--Display information of Dealer Stock call Local ---->
+                <tr>
+                <th>7</th><th colspan="8" bgcolor="#FFFACD">Dealer Stock (Local) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCity_Lees6}" rendered="{!IF(WHDealerstockCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCity_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Less_6hrs}" rendered="{!IF(WH_Dealerstock_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_Less_6HrsCity}" rendered="{!IF(WHDealerstockCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_Less_6HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCity_Lees6}" rendered="{!IF(WTDealerstockCity_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCity_Lees6==0,true,false)}"/>
+                 </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Less_6hrs}" rendered="{!IF(WT_Dealerstock_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Less_6hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_Less_6HrsCity}" rendered="{!IF(WTDealerstockCall_Less_6HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_Less_6HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!TotalDealerstockLess6hrs}" rendered="{!IF(TotalDealerstockLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalDealerstockLess6hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCity_6_24}" rendered="{!IF(WHDealerstockCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCity_6_24==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_6_24hrs}" rendered="{!IF(WH_Dealerstock_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_6_24HrsCity}" rendered="{!IF(WHDealerstockCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_6_24HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCity_6_24}" rendered="{!IF(WTDealerstockCity_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCity_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_6_24hrs}" rendered="{!IF(WT_Dealerstock_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_6_24HrsCity}" rendered="{!IF(WTDealerstockCall_6_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_6_24HrsCity==0,true,false)}"/>
+              </td>
+                <td align="right"> 
+                    <apex:outputText value="{!TotalDealerstock6_24hrs}" rendered="{!IF(TotalDealerstock6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalDealerstock6_24hrs==0,true,false)}"/>
+              </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCity_24_48}" rendered="{!IF(WHDealerstockCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCity_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Greater_24hrs}" rendered="{!IF(WH_Dealerstock_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_greater_24HrsCity}" rendered="{!IF(WHDealerstockCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_greater_24HrsCity==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCity_24_48}" rendered="{!IF(WTDealerstockCity_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCity_24_48==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Greater_24hrs}" rendered="{!IF(WT_Dealerstock_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Greater_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_greater_24HrsCity}" rendered="{!IF(WTDealerstockCall_greater_24HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_greater_24HrsCity==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalDealerstock_greater_24hrs}" rendered="{!IF(TotalDealerstock_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalDealerstock_greater_24hrs==0,true,false)}"/>
+              </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCity_greater48}" rendered="{!IF(WHDealerstockCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCity_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Greater_48hrs}" rendered="{!IF(WH_Dealerstock_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_greater_48HrsCity}" rendered="{!IF(WHDealerstockCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_greater_48HrsCity==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCity_greater48}" rendered="{!IF(WTDealerstockCity_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCity_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Greater_48hrs}" rendered="{!IF(WT_Dealerstock_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_greater_48HrsCity}" rendered="{!IF(WTDealerstockCall_greater_48HrsCity==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_greater_48HrsCity==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!TotalDealerstock_greater_48}" rendered="{!IF(TotalDealerstock_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(TotalDealerstock_greater_48==0,true,false)}"/>
+              </td>
+                </tr>
+                <!--End Display information of Dealer stock call Local---->
+                
+                <!--Display information of Dealer stock call Upcounty ---->
+               <tr>
+                <th>8</th><th colspan="8" bgcolor="#FFFACD">Dealer Stock (Up Country) calls</th>
+                </tr>
+                
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Less Than  6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockUpcountry_Lees6}" rendered="{!IF(WHDealerstockUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockUpcountry_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Upcountry_Less_6hrs}" rendered="{!IF(WH_Dealerstock_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Upcountry_Less_6hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_Less_6HrsUpcountry}" rendered="{!IF(WHDealerstockCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_Less_6HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockUpcountry_Lees6}" rendered="{!IF(WTDealerstockUpcountry_Lees6==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockUpcountry_Lees6==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Upcountry_Less_6hrs}" rendered="{!IF(WT_Dealerstock_Upcountry_Less_6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Upcountry_Less_6hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_Less_6HrsUpcountry}" rendered="{!IF(WTDealerstockCall_Less_6HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_Less_6HrsUpcountry==0,true,false)}"/>
+              </td>
+                
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalDealerstockLess6hrs}" rendered="{!IF(UCTotalDealerstockLess6hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalDealerstockLess6hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 6 Hrs To  24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockUpcountry_6_24}" rendered="{!IF(WHDealerstockUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockUpcountry_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Upcountry_6_24hrs}" rendered="{!IF(WH_Dealerstock_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Upcountry_6_24hrs==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_6_24HrsUpcountry}" rendered="{!IF(WHDealerstockCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_6_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockUpcountry_6_24}" rendered="{!IF(WTDealerstockUpcountry_6_24==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockUpcountry_6_24==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Upcountry_6_24hrs}" rendered="{!IF(WT_Dealerstock_Upcountry_6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Upcountry_6_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_6_24HrsUpcountry}" rendered="{!IF(WTDealerstockCall_6_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_6_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!UCTotalDealerstock6_24hrs}" rendered="{!IF(UCTotalDealerstock6_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalDealerstock6_24hrs==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> 24 Hrs To  48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockUpcountry_24_48}" rendered="{!IF(WHDealerstockUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockUpcountry_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Upcountry_Greater_24hrs}" rendered="{!IF(WH_Dealerstock_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Upcountry_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_greater_24HrsUpcountry}" rendered="{!IF(WHDealerstockCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_greater_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockUpcountry_24_48}" rendered="{!IF(WTDealerstockUpcountry_24_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockUpcountry_24_48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Upcountry_Greater_24hrs}" rendered="{!IF(WT_Dealerstock_Upcountry_Greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Upcountry_Greater_24hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_greater_24HrsUpcountry}" rendered="{!IF(WTDealerstockCall_greater_24HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_greater_24HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right"> 
+                    <apex:outputText value="{!UCTotalDealerstock_greater_24hrs}" rendered="{!IF(UCTotalDealerstock_greater_24hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalDealerstock_greater_24hrs==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td> Greater Than 48 hrs</td>   
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockUpcountry_greater48}" rendered="{!IF(WHDealerstockUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockUpcountry_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WH_Dealerstock_Upcountry_Greater_48hrs}" rendered="{!IF(WH_Dealerstock_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WH_Dealerstock_Upcountry_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WHDealerstockCall_greater_48HrsUpcountry}" rendered="{!IF(WHDealerstockCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WHDealerstockCall_greater_48HrsUpcountry==0,true,false)}"/>
+                </td>
+                
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockUpcountry_greater48}" rendered="{!IF(WTDealerstockUpcountry_greater48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockUpcountry_greater48==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WT_Dealerstock_Upcountry_Greater_48hrs}" rendered="{!IF(WT_Dealerstock_Upcountry_Greater_48hrs==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WT_Dealerstock_Upcountry_Greater_48hrs==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!WTDealerstockCall_greater_48HrsUpcountry}" rendered="{!IF(WTDealerstockCall_greater_48HrsUpcountry==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(WTDealerstockCall_greater_48HrsUpcountry==0,true,false)}"/>
+               </td>
+                <td align="right">
+                    <apex:outputText value="{!UCTotalDealerstock_greater_48}" rendered="{!IF(UCTotalDealerstock_greater_48==0,false,true)}"/>
+                    <apex:outputText value="-" rendered="{!IF(UCTotalDealerstock_greater_48==0,true,false)}"/>
+              </td>
+                </tr> 
+                </table>
+                <!--End Display information of Dealer Stock call Up county---->
+                
+                <table border="2" width="100%" bgcolor="#FFFACD" style="border-collapse:collapse;font-size:12px;page-break-before: always;">                                       
+                <tr style="border-collapse:collapse;font-size:12px;">
+                <th colspan="2" bgcolor="#DCDCDC"> &nbsp;</th>
+                <th colspan="3" bgcolor="#DCDCDC"><center> WH Calls</center> </th>
+                <th colspan="4" bgcolor="#DCDCDC"><center> WT Calls</center> </th>
+                </tr>
+                <tr>
+                    <th width="10" bgcolor="#DCDCDC"> S.No </th>
+                    <th width="15" bgcolor="#DCDCDC"> SLAB</th>
+                    <th width="15" bgcolor="#DCDCDC"> RATE</th>
+                    <th width="15" bgcolor="#DCDCDC"> No of Calls</th>
+                    <th width="15" bgcolor="#DCDCDC"> AMOUNT</th>
+                    
+                    <th width="15" bgcolor="#DCDCDC"> RATE</th>
+                    <th width="15" bgcolor="#DCDCDC"> No of Calls</th>
+                    <th width="15" bgcolor="#DCDCDC"> AMOUNT</th>
+                    <th width="15" bgcolor="#DCDCDC"> TOTAL Amount</th>
+                    
+                </tr>
+                <tr >
+                <th>9 a.</th><th colspan="3" bgcolor="#FFFACD">80% Call completed City</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WHpercentof80callCity!=0,true,false)}">
+                        <apex:param value="{!WHpercentof80callCity}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WHpercentof80callCity==0,true,false)}"/>       
+                 </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTpercentof80callCity!=0,true,false)}">
+                        <apex:param value="{!WTpercentof80callCity}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTpercentof80callCity==0,true,false)}"/>       
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(total80callvalueCity!=0,true,false)}">
+                        <apex:param value="{!total80callvalueCity}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(total80callvalueCity==0,true,false)}"/>       
+                </td>
+                </tr>
+                 <tr>
+                <th>9 b.</th><th colspan="3" bgcolor="#FFFACD">80% Call completed Upcountry</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WHpercentof80callUpc!=0,true,false)}">
+                        <apex:param value="{!WHpercentof80callUpc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WHpercentof80callUpc==0,true,false)}"/>       
+                </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTpercentof80callUpc!=0,true,false)}">
+                        <apex:param value="{!WTpercentof80callUpc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTpercentof80callUpc==0,true,false)}"/>       
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(total80callvalueUpc!=0,true,false)}">
+                        <apex:param value="{!total80callvalueUpc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(total80callvalueUpc==0,true,false)}"/>       
+                </td>
+                </tr>
+                <tr>
+                <th>10</th><th colspan="3" bgcolor="#FFFACD">Fixed compensation</th>
+               <td align="right">
+                   <apex:outputText value="{0, number, integer}" rendered="{!IF(WHfixedcompAmount!=0,true,false)}">
+                       <apex:param value="{!WHfixedcompAmount}"/></apex:outputText>
+                   <apex:outputText value="-" rendered="{!IF(WHfixedcompAmount==0,true,false)}"/>
+               </td>     
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTfixedcompAmount!=0,true,false)}">
+                        <apex:param value="{!WTfixedcompAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTfixedcompAmount==0,true,false)}"/>             
+                </td>
+                <td align="right">
+                <apex:outputText value="{0, number, integer}" rendered="{!IF(Totalfixedcomp!=0,true,false)}">
+                    <apex:param value="{!Totalfixedcomp}"/></apex:outputText>
+                <apex:outputText value="-" rendered="{!IF(Totalfixedcomp==0,true,false)}"/> 
+                </td>
+                </tr>
+                <tr>
+                <td align="right">&nbsp;</td>
+                <td colspan="3">Minimum Number Of Calls</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WHMinimunCall!=0,true,false)}">
+                        <apex:param value="{!WHMinimunCall}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WHMinimunCall==0,true,false)}"/> 
+               </td>
+                <td align="right" colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTMinimunCall!=0,true,false)}">
+                        <apex:param value="{!WTMinimunCall}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTMinimunCall==0,true,false)}"/> 
+                </td>
+                <td align="right">&nbsp;</td>
+                </tr>
+                <tr>
+               <td align="right">a</td>
+                <td colspan="3">Calls closed in less than 6 Hrs</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WH_Less_6Hrs_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WH_Less_6Hrs_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WH_Less_6Hrs_UnderFC==0,true,false)}"/> 
+               </td>
+                <td align="right" colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WT_Less_6Hrs_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WT_Less_6Hrs_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WT_Less_6Hrs_UnderFC==0,true,false)}"/> 
+               </td>
+                <td align="right">&nbsp;</td>
+                </tr>
+                <tr>
+                <td align="right">b</td>
+                <td colspan="3">Calls closed in 6 Hrs To 24 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WH_6_24HrsCity_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WH_6_24HrsCity_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WH_6_24HrsCity_UnderFC==0,true,false)}"/> 
+                </td>
+                <td align="right" colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WT_6_24HrsCity_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WT_6_24HrsCity_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WT_6_24HrsCity_UnderFC==0,true,false)}"/> 
+                </td>
+                <td align="right">&nbsp;</td>
+                </tr>
+                <tr>
+                <td align="right">c</td>
+                <td colspan="3">Calls closed in 24 Hrs To 48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WT_greater_24Hrs_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WT_greater_24Hrs_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WT_greater_24Hrs_UnderFC==0,true,false)}"/> 
+               </td>
+                <td align="right" colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WH_greater_24Hrs_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WH_greater_24Hrs_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WH_greater_24Hrs_UnderFC==0,true,false)}"/> 
+               </td>
+                <td align="right">&nbsp;</td>
+                </tr>
+                <tr>
+                <td align="right">d</td>
+                <td colspan="3">Calls closed in Greater Than 48 hrs</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WH_greater_48HrsCity_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WH_greater_48HrsCity_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WH_greater_48HrsCity_UnderFC==0,true,false)}"/> 
+                </td>
+                <td align="right" colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WT_greater_48HrsCity_UnderFC!=0,true,false)}">
+                        <apex:param value="{!WT_greater_48HrsCity_UnderFC}"/></apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WT_greater_48HrsCity_UnderFC==0,true,false)}"/> 
+               </td>
+                <td align="right">&nbsp;</td>
+                </tr>
+                
+                <tr>
+                <th>11</th><th colspan="3" bgcolor="#FFFACD"> Greater Than70% Call completed within 24 Hrs</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(Amount70_79calls!=0,true,false)}">
+                        <apex:param value="{!Amount70_79calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(Amount70_79calls==0,true,false)}"/>
+                </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTAmount70_79calls!=0,true,false)}" >
+                        <apex:param value="{!WTAmount70_79calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTAmount70_79calls==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number,integer}" rendered="{!IF(total70perc!=0,true,false)}" >
+                        <apex:param value="{!total70perc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(total70perc==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>12</th><th colspan="3" bgcolor="#FFFACD"> 60 to 69 % completed </th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}"  rendered="{!IF(Amount60_69calls!=0,true,false)}">
+                        <apex:param value="{!Amount60_69calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(Amount60_69calls==0,true,false)}"/>
+                </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTAmount60_69calls!=0,true,false)}">
+                        <apex:param value="{!WTAmount60_69calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTAmount60_69calls==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(total60_69perc!=0,true,false)}" >
+                        <apex:param value="{!total60_69perc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(total60_69perc==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>13</th><th colspan="3" bgcolor="#FFFACD"> 50 to 59 % completed </th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(Amount50_59calls!=0,true,false)}">
+                        <apex:param value="{!Amount50_59calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(Amount50_59calls==0,true,false)}"/>
+                </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number,integer}" rendered="{!IF(WTAmount50_59calls!=0,true,false)}">
+                        <apex:param value="{!WTAmount50_59calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTAmount50_59calls==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(total50_59perc!=0,true,false)}" >
+                        <apex:param value="{!total50_59perc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(total50_59perc==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>14</th><th colspan="3" bgcolor="#FFFACD"> Less Than 50 % completed </th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(AmountLess_50calls!=0,true,false)}" >
+                        <apex:param value="{!AmountLess_50calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(AmountLess_50calls==0,true,false)}"/>
+                </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}"  rendered="{!IF(WTAmountLess_50calls!=0,true,false)}">
+                        <apex:param value="{!WTAmountLess_50calls}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTAmountLess_50calls==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}"  rendered="{!IF(totalless50perc!=0,true,false)}">
+                        <apex:param value="{!totalless50perc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(totalless50perc==0,true,false)}"/>
+                 </td>
+                </tr>
+                <tr>
+                <th>15</th><th colspan="3" bgcolor="#FFFACD"> PO1 </th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WHOneoneonetotalAmount!=0,true,false)}">
+                        <apex:param value="{!WHOneoneonetotalAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WHOneoneonetotalAmount==0,true,false)}"/>
+                  </td>
+                <td colspan="2">&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(WTOneoneonetotalAmount!=0,true,false)}" >
+                        <apex:param value="{!WTOneoneonetotalAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(WTOneoneonetotalAmount==0,true,false)}"/>
+                </td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(TotalOneoneonetotalAmount!=0,true,false)}" >
+                        <apex:param value="{!TotalOneoneonetotalAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(TotalOneoneonetotalAmount==0,true,false)}"/>
+                 </td>
+                </tr>
+                
+                <tr>
+                <th>16</th><th colspan="6" bgcolor="#FFFACD"></th>
+                       
+                <th align="right">Total Amount</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(TaxableTotalAmountCalc!=0,true,false)}">
+                        <apex:param value="{!TaxableTotalAmountCalc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(TaxableTotalAmountCalc==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>17</th><th colspan="3" bgcolor="#FFFACD">Service Tax(%) </th>
+                <td align="right"><apex:outputtext value="{!ServiceTax}" /></td>
+                <td colspan="2">&nbsp;</td>
+                <td >&nbsp;</td>
+                <td align="right">{!ServiceTax}</td>
+                </tr>
+                <tr>
+                <th>18</th><th colspan="6" bgcolor="#FFFACD"></th>
+                       
+                <th align="right">Tax Amount</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(taxAmount!=0,true,false)}">
+                        <apex:param value="{!taxAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(taxAmount==0,true,false)}"/>
+                  </td>
+                </tr>
+                <tr>
+                <th>18</th><th colspan="6" bgcolor="#FFFACD"></th>
+                       
+                <th align="right">Total Amount(With tax)</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(Amoutwithtax!=0,true,false)}" >
+                        <apex:param value="{!Amoutwithtax}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(Amoutwithtax==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>19</th><th colspan="3" bgcolor="#FFFACD">Upcountry Travel Claim </th>
+                <td align="right"><apex:outputtext value="{!Upcountrytravelclaom}" /></td>
+                <td colspan="2">&nbsp;</td>
+                <td >&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(Upcountrytravelclaom!=0,true,false)}" >
+                        <apex:param value="{!Upcountrytravelclaom}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(Upcountrytravelclaom==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>20</th><th colspan="3" bgcolor="#FFFACD">Other Charges (If any) </th>
+                <td align="right"><apex:outputtext value="{!Othercharges}" /></td>
+                <td colspan="2">&nbsp;</td>
+                <td >&nbsp;</td>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(Othercharges!=0,true,false)}" >
+                        <apex:param value="{!Othercharges}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(Othercharges==0,true,false)}"/>
+               </td>
+                </tr>
+                <tr>
+                <th>21</th><th colspan="6" bgcolor="#FFFACD"></th>
+                       
+                <th align="right">Total</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(TotalAmountCalc!=0,true,false)}" >
+                        <apex:param value="{!TotalAmountCalc}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(TotalAmountCalc==0,true,false)}"/>
+                </td>
+                </tr>
+                <tr>
+                <th>22</th><th colspan="3" bgcolor="#FFFACD">Deduction Amount (If any) </th>
+                <td align="right"><apex:outputtext value="{!Deduction}" /></td>
+                <td colspan="2">&nbsp;</td>
+                <td >&nbsp;</td>
+                <td align="right">{!Deduction}</td>
+                </tr>
+                <tr>
+                <th>23</th><th colspan="6" bgcolor="#FFFACD"></th>
+                       
+                <th align="right">Grand Total</th>
+                <td align="right">
+                    <apex:outputText value="{0, number, integer}" rendered="{!IF(finalAmount!=0,true,false)}" >
+                        <apex:param value="{!finalAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="-" rendered="{!IF(finalAmount==0,true,false)}"/>
+                </td>
+                </tr>
+            </table>
+            <table border="2" width="100%" style="border-collapse:collapse;font-size:12px" bgcolor="#FFFACD">
+            <tr>
+            <td height="50%"><b> Amount in Word :</b> {!wordText} </td>
+            </tr>
+            <tr align="right">
+            <td height="50px" valign="bottom"><b> Signature with Seal</b></td>
+            </tr>
+            </table>
+            <table border="2" width="100%" style="border-collapse:collapse;font-size:12px" bgcolor="#FFFACD">
+            <tr>
+            <td align="left" colspan="3"> <b>For Official Use</b> </td>
+            </tr>
+            <tr >
+            <td> Branch Approved On :  </td>
+            <td> Final claimed approved CSHO : Rs. </td>
+            <td rowspan="2" valign="top"> CSHO control seal </td>
+            </tr>   
+            <tr >
+            <td height="50px" valign="top"> Branch Service Signature </td>
+            <td height="50px" valign="top"> Reason for deduction if any : <apex:outputText value="{!reasonDeduction}" /></td>
+            </tr>
+            <tr>
+            <td colspan="3"> Remarks if any: <apex:outputText value="{!Remarks}" /></td>
+            </tr> 
+            <tr>
+            <td align="right" colspan='3'> <b>This is computer generated Bill</b></td>
+            </tr>
+            </table>
+    </apex:page>

@@ -1,0 +1,10 @@
+<apex:component controller="LOC_TBN_RenderAsExcelAssetImportCntrl" access="global" > 
+   Reason Of Failure, SerialNbr, Itm, Item, ItemDescription1,ItemDescription2,Branch,SONbr, SOType, WONbr, WOType, ShipDate, SOLine, BillTo, ShipTo, RequestedDate, TransactionDate,PromisedDate, OrigPromDate, InvoiceDate, CustomerPO1, CustomerPO2, SRP1, SRP2, SRP3, UOM, QtyOrdered, QtyShipped, UnitPrice, ExtendedAmount, FreightCode, Territory1, Territory2, TakenBy, BillToName, BillToAddress1, BillToAddress2, BillToAddress3, BillToAddress4, BillToCity, BillToStateCode, BillToZipCode, BillToCountryCode, BillToCountryName, Region, BillToDistributorType, BillToDistributorClass, ShipToName, ShipToAddress1, ShipToAddress2, ShipToAddress3, ShipToAddress4, ShipToCity, ShipToStateCode, ShipToZipCode, ShipToCountryCode, ShipToCountryName, ShipToRegion, ShipToDistributorType, ShipToDistributorClass, ConfiguredString, InvoiceNbr
+
+      
+<apex:repeat value="{!mapMainAssetImportLog}" var="varMain">
+  <apex:repeat value="{!mapMainAssetImportLog[varMain]}" var="varErrorLog">
+          {!varErrorLog.Reason_of_failure__c},{!varErrorLog.CSVLogData__c}
+  </apex:repeat>
+</apex:repeat>
+</apex:component>

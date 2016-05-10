@@ -1,0 +1,81 @@
+<!--File Name: uploadCashReceipt
+    Created By:Dhriti Krishna Ghosh Moulick
+    Modified By:
+    Description:This Page is used to upload data in cash receipt object
+ -->
+<apex:page sidebar="false" controller="UploadCashReceipt">
+    <head>
+        <apex:includeScript value="{!$Resource.jqueryken}"/>
+        <apex:includeScript value="{!$Resource.kendoui}"/>
+        <apex:includeScript value="{!$Resource.KendoJS}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS1}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS2}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS3}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS4}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS5}"/>
+        <apex:stylesheet value="{!$Resource.KendoCSS6}"/>
+        <apex:stylesheet value="{!$Resource.Angularjs}"/>
+        <apex:stylesheet value="{!$Resource.JS}"/>
+   </head>  
+    <script>   
+            $(document).ready(function () {
+                var gridData =({!strJsonData});
+                var dataSource = new kendo.data.DataSource({
+                                   
+                autoSync: true,                        
+                batch: true, 
+                pageSize:20,  
+                transport: {  
+                    read: function(e) {
+                        dataSource.sync();
+                        e.success(gridData);
+                    }                                                         
+                }                           
+                });
+                                  
+                gridOverview = $("#accountItem").kendoGrid ({
+                    dataSource: dataSource, 
+                    pageSize: 20,
+                    editable:false,           
+                    sortable: true,
+                    scrollable: false,
+                    pageable: {
+                                refresh: true,
+                                pageSizes: true,                           
+                              },
+                    columns: [             
+                            {
+                                field: "cashReceiptNumber",
+                                title: "Cash Receipt Number",                                               
+                            },                      
+                            {
+                                field: "resourceName   ",
+                                title: "Resource Name",
+                            },                    
+                           /* <!--{
+                                field: "caseReceiptDate",
+                                title: "Case Receipt Date",                     
+                            },                    
+                            {
+                                field: "caseAmount",
+                                title: "Case Amount",                     
+                            },-->*/
+                           
+                            ],
+                });                                                                       
+            });
+    </script> 
+    <apex:form >
+        <apex:sectionHeader title="Upload Cash Receipt data from CSV file"/>
+        <apex:pagemessages id="pgmsg"/>
+        <apex:pageBlock > 
+            <center>
+                    <apex:inputFile value="{!contentFile}" filename="{!nameFile}" /><font color="red"> <b>Click here to Upload Data</b> </font> <apex:commandButton action="{!ReadFile}" value="Upload File" id="theButton" style="width:70px;" title="Click to start Uploading Data" />
+                    <br/> <br/> 
+            </center>  
+           <apex:outputPanel rendered="{!wrapperListCash.size>0}"><b>Total number of Records inserted:{!wrapperListCash.size}</b></apex:outputPanel> 
+        </apex:pageBlock> 
+        <div id="accountItem" />      
+    </apex:form>   
+</apex:page>

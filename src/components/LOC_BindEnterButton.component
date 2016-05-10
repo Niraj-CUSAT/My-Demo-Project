@@ -1,0 +1,19 @@
+<apex:component selfClosing="true" >
+<script type="text/javascript">
+function replaceEnter(e){
+    if (e.keyCode == 13){
+        var allElements = document.getElementsByTagName('*');
+        for (var i = 0; i < allElements.length; i++){
+            if (allElements[i].id.indexOf("btnGo") !=-1){
+                allElements[i].click();
+            }
+        }
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+window.onkeypress = replaceEnter;
+</script>
+</apex:component>

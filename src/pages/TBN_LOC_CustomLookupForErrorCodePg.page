@@ -1,0 +1,63 @@
+<apex:page controller="TBN_LOC_CustomLookupForErrorCodeCntrl" sidebar="false" showHeader="false">
+	<!--Form Begins -->
+	<script> 
+       function populateParent(errorId, errorName) 
+       {
+          top.window.opener.setSelectedRelatedToDetails(errorId, errorName);      
+          return false;
+       }
+       
+       //function to identify whether enter has been pressed
+       function pressEnter(e, searchInput)
+        {
+        	var theEvent = e || window.event;
+			var key = theEvent.keyCode || theEvent.which;
+			if(key == 32 && searchInput.value.length == 0)
+			{
+				theEvent.returnValue = false;
+				if (theEvent.preventDefault) 
+					theEvent.preventDefault();
+			}
+            if(e.keyCode == 13)
+            {
+                AFEnter(); 
+                return false;
+            }
+            else
+                return true;
+        }
+   </script>
+   
+   <apex:form >
+     	<apex:actionFunction name="AFEnter" action="{!searchRelatedTo}" rerender="detail" status="loading"/>
+		<table id="tblSearch">
+			<tr>
+		        <td><B>Search</B></td>
+		        <td><apex:inputText value="{!strSearch}" onKeyPress="return pressEnter(event, this);"/></td>
+		        <td>
+		        	<apex:CommandButton value="Go!" action="{!searchRelatedTo}" rerender="detail" status="loading"/> <br />
+		        </td> 
+	    	</tr>
+		</table>
+		<br />
+           
+		<apex:outputPanel id="detail" >
+			<apex:pageBlock title="Choose Error Code" >
+				<apex:pageBlockTable id="idPBT" value="{!lstErrorCode}" var="varErrorCode">
+					<apex:column headervalue="Error Name">
+						<apex:outputLink value="" onClick="return populateParent('{!varErrorCode.Id}','{!varErrorCode.Name}');">{!varErrorCode['Name']}</apex:outputLink>
+					</apex:column>
+					<apex:column headervalue="Error Details">
+						<apex:outputtext value="{!varErrorCode.LOC_Error_Details__c}"/>
+					</apex:column>
+					<apex:column headervalue="Error Code">
+						<apex:outputtext value="{!varErrorCode.LOC_Error_Code__c}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+				<apex:outputPanel rendered="{!lstErrorCode.size == 0}">
+					No records to display.
+				</apex:outputPanel>
+			</apex:pageBlock>
+		</apex:outputPanel> 
+	</apex:form>
+</apex:page>

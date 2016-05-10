@@ -1,0 +1,68 @@
+<apex:page standardController="Case" extensions="CaseNewController">
+
+<apex:form >
+
+<apex:pageBlock id="pb" >
+<apex:pageBlockSection title="Case Information" columns="2"  id="pbs">
+<apex:actionRegion immediate="true">
+<apex:inputField value="{!Case.status}" rendered="{!$Profile.Name!='Call Centre Agent - AOS India'}" required="true">
+<apex:actionSupport action="{!processconcerens}" event="onchange" reRender="aa"/>
+</apex:inputField>
+</apex:actionRegion>
+<apex:outputLabel id="aa" value="{!s}"></apex:outputLabel>
+<apex:inputField value="{!Case.SMS_Status__c}"/>
+<apex:inputField value="{!Case.AOSI_Cancelled_On_HOLD_Reason__c}"/>
+<apex:inputField value="{!Case.FeedbackSMS_Firing_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_Appointment_Date__c}"/>
+<apex:inputField value="{!Case.SMSFiringTime__c}"/>
+<apex:inputField value="{!Case.Origin}" required="true"/>
+<apex:inputField value="{!Case.SMS_SENT_TO_CONTACT__c}"/>
+<apex:inputField value="{!Case.ContactId}" required="true"/>
+<apex:inputField value="{!Case.SMS_SENT_TO_INSTALLER__c}"/>
+<apex:inputField value="{!Case.AOSIProduct__c}" id="product"/>
+<apex:inputField value="{!Case.WE_CARE__c}"/>
+<apex:inputField value="{!Case.AssetId}"/>
+<apex:inputField value="{!Case.AOSI_Case_Closed__c}"/>
+<apex:inputField value="{!Case.AOSI_Replaced_Asset__c}"/>
+<apex:inputField value="{!Case.AOSI_Call_Escalated__c}"/>
+<apex:inputField value="{!Case.AOSI_Resend_SMS__c}"/>
+<apex:inputField value="{!Case.AOSI_Escalate_to_HO__c}"/>
+<apex:inputField value="{!Case.AOSI_Warranty_Status_I__c}"/>
+<apex:inputField id="casereason" value="{!Case.Reason}" required="true"></apex:inputField>
+
+<apex:inputField value="{!Case.Quantity__c}"/>
+<apex:inputField value="{!Case.AOSI_Vertical__c}"/>
+<apex:inputField value="{!Case.CC_SSV__c}"/>
+<apex:inputField value="{!Case.AOSI_Preferred_Color__c}"/>
+<apex:inputField value="{!Case.AOSI_Count_Sales_Query_On_Hold__c}"/>
+<apex:inputField value="{!Case.AOSI_City__c}"/>
+<apex:inputField value="{!Case.AOSI_City__c}"/> 
+<apex:inputField value="{!Case.AOSI_Sales_Query_Reference__c}"/>
+<apex:inputField value="{!Case.AOSI_PO_Criteria_1__c}"/> 
+<apex:inputField value="{!Case.AOSI_Category_of_Sales_Query__c}"/>
+<apex:inputField value="{!Case.AOSI_PO_Criteria_2__c}"/>
+<apex:inputField value="{!Case.AOSI_Call_Escalated_Date__c}"/>
+<apex:inputField value="{!Case.AOSI_Power_of_1__c}"/>
+<apex:inputField value="{!Case.AOSI_Call_Escalated_to_HO_Date__c}"/>
+<apex:inputField value="{!Case.AOSI_PO_Criteria_3__c}"/>
+<apex:inputField value="{!Case.AOSI_WECARE_Escaltion_Date_Time__c}"/>
+<apex:inputField value="{!Case.AOSI_SMS_TO_CUST_ON_SERVCHARGE__c}"/>
+<apex:inputField value="{!Case.AOSI_Purchase_Date__c}"/>
+<apex:inputField value="{!Case.AOSI_Repeat_Call__c}"/>
+<apex:inputField value="{!Case.AOSI_Purchase_Value__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.ParentId}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_Region_picklist__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_State_Picklist__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_City_Master__c}"/>
+<apex:outputLabel />
+<apex:inputField value="{!Case.AOSI_No_Of_Parts__c}"/>
+
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:form>       
+</apex:page>
